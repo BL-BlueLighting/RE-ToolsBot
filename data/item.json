@@ -1,0 +1,37 @@
+[
+    {
+        "Name": "签到5倍票",
+        "Effect": [
+            "sign 5x"
+        ],
+        "Cost": 10.0
+    },
+    {
+        "Name": "签到3倍票",
+        "Effect": [
+            "sign 3x"
+        ],
+        "Cost": 5.0
+    },
+    {
+        "Name": "签到2倍票",
+        "Effect": [
+            "sign 2x"
+        ],
+        "Cost": 2.5
+    },
+    {
+        "Name": "[整活]签到0.5倍票",
+        "Effect": [
+            "sign 0.5x"
+        ],
+        "Cost": 1.0
+    },
+    {
+        "Name": "彩票",
+        "Effect": [
+            "ticket random"
+        ],
+        "Cost": 2.0
+    }
+]

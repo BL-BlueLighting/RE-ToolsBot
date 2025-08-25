@@ -1,0 +1,16 @@
+pydantic==1.8.2
+loguru==0.5.3
+pygtrie==2.4.2
+httpx==0.21.1
+python-dotenv==0.19.2
+uvicorn==0.15.0
+fastapi==0.68.2
+requests==2.26.0
+selenium==4.0.0
+aiocqhttp==1.4.2
+ffmpeg==1.4
+aiohttp==3.8.1
+nb-cli==0.5.1
+nonebot2==2.0.0a16
+nonebot-plugin-apscheduler==0.1.2
+nonebot-adapter-cqhttp==2.0.0a16

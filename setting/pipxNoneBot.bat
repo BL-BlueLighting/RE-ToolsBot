@@ -1,0 +1,3 @@
+@echo off
+echo Installing Nonebot...
+pipx install nb-cli

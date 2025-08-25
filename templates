@@ -1,0 +1,14 @@
+"""
+ 函数
+
+
+@author: Latingtude
+"""
+
+_function = on_command("", aliases={""}, priority=10)
+
+@_function.handle()
+async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+    msg = TITLE = " "
+    user = User(event.get_user_id())
+    _msg = args.extract_plain_text()
