@@ -1,6 +1,6 @@
 <center><h1>RE: ToolsBot</h1></center>
-![Version](https://img.shields.io/badge/Version-1.0.0-blue)
-![Onebot Version](https://img.shields.io/badge/OneBot-v11-blue)
+
+![Version](https://img.shields.io/badge/Version-1.0.0-blue) ![Onebot Version](https://img.shields.io/badge/OneBot-v11-blue)
 
 <center><a href="./README.zh-cn.md">中文</a> | <a href="./README.md">English</a></center>
 
