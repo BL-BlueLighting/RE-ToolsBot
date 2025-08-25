@@ -51,6 +51,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
 ^accountStatus 查看当前账户状态
 ^check Bot 你还活着吗？？
 ^banlist 封禁列表（普通用户可用）
+^redpacket 发红包
+^openredpacket 抢红包
 """
     await help_function.finish(msg)
 

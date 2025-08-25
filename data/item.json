@@ -33,5 +33,19 @@
             "ticket random"
         ],
         "Cost": 2.0
+    },
+    {
+        "Name": "娱乐模式启用券",
+        "Effect": [
+            "playmode enable"
+        ],
+        "Cost": 0.0
+    },
+    {
+        "Name": "娱乐模式禁用券",
+        "Effect": [
+            "playmode disable"
+        ],
+        "Cost": 0.0
     }
 ]

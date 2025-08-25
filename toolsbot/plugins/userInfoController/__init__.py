@@ -109,21 +109,24 @@ class User:
         self.banned = False
         self.data = Data(self.id)
         
-        # check
-        _info("Data Checking.")
-        if self.data.check():
-            _info("Data Exists.")
-            self.jsonData = self.data.readData()
-            
-            # load data from jsonData
-            self.id = self.jsonData.get("ID", "10000")
-            self.name = self.jsonData.get("Name", "暂未设置")
-            self.score = self.jsonData.get("Score", 0.0)
-            self.banned = self.jsonData.get("Ban", False)
-            self.boughtItems = self.jsonData.get("boughtItems", [])
-        else:
-            _info("Data Not Found.")
-            self.data.writeData(self)
+        try:
+            # check
+            _info("Data Checking.")
+            if self.data.check():
+                _info("Data Exists.")
+                self.jsonData = self.data.readData()
+                
+                # load data from jsonData
+                self.id = self.jsonData.get("ID", "10000")
+                self.name = self.jsonData.get("Name", "暂未设置")
+                self.score = self.jsonData.get("Score", 0.0)
+                self.banned = self.jsonData.get("Ban", False)
+                self.boughtItems = self.jsonData.get("boughtItems", [])
+            else:
+                _info("Data Not Found.")
+                self.data.writeData(self)
+        except Exception as ex:
+            _erro("Error: Failed to read or write data." + ex.__str__())
     
     def save(self):
         """
@@ -139,6 +142,7 @@ class User:
             item (str): Item name. 
         """
         self.boughtItems.append(item)
+        self.save()
         
     def useItem(self, item: str) -> str:
         """
@@ -204,8 +208,23 @@ class User:
                 self.boughtItems.remove(item)
                 self.save()
                 return f"未中奖。但获得安慰奖 {_randomMoney}"        
+            
+        elif "playmode" in itemEffect [0]: #type: ignore
+            if "enable" in itemEffect [0]: #type: ignore
+                self.boughtItems.remove(item)
+                self.boughtItems.append("play")
+                self.save()
+                return "已启用娱乐模式。" 
+            else:
+                if "play" in self.boughtItems:
+                    self.boughtItems.remove("play")
+                    self.save()
+                return "已关闭娱乐模式。"
+        
         else:
             return "很抱歉。内部出现错误。"
+        
+        
         
     def addScore(self, score: float):
         """
@@ -239,6 +258,18 @@ class User:
         Is this user banned?
         """
         return self.banned #type: ignore
+    
+    def playMode(self) -> bool:
+        """
+        Is this user enabled play mode (娱乐模式 \\ 骂人模式？) ?
+        """
+        return "play" in self.boughtItems
+    
+    def existsItem(self, item: str) -> bool:
+        """
+        Is this user has got this item?
+        """
+        return item in self.boughtItems
     
 """
 检测at了谁，返回[qq, qq, qq,...]
@@ -296,7 +327,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             msg += f"\n   - 用户昵称: {user.name}"
             msg += f"\n   - 用户积分：{user.score}"
     else:
-        msg += "\n   - 您的账号已被封禁，请联系管理员解封。"
+        if user.playMode():
+            msg += "\n   - 你他妈被封禁了还来玩？滚"
+        else:
+            msg += "\n   - 您的账号已被封禁，请联系管理员解封。"
     
     await getinfo_function.finish(msg)
     
@@ -320,7 +354,11 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     
     # 检查用户是否被封禁
     if current_user.isBanned():
-        msg += "    - 您的账号已被封禁，请联系管理员解封。"
+        if current_user.playMode():
+            msg += "    - 你他妈被封禁了还来签到？滚"
+        else:
+            msg += "    - 您的账号已被封禁，请联系管理员解封。"
+            
         await morningToday_function.finish(msg)
 
     # --- 1. 安全加载 Boost 数据 ---
@@ -383,7 +421,10 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
             try:
                 last_sign_date = datetime.datetime.strptime(last_sign_date_str, "%Y-%m-%d").date()
                 if last_sign_date == today:
-                    msg += "    - 您今天已经签到过了，请明天再来！"
+                    if current_user.playMode():
+                        msg += "    - 你他妈掉钱眼子里了？今天已经签到过了，明天再来！"
+                    else:
+                        msg += "    - 您今天已经签到过了，请明天再来！"
                     await morningToday_function.finish(msg)
                 else:
                     # 更新签到日期为今天
@@ -501,7 +542,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         if len(arg) == 2:
             arg.append("1")
         elif len(arg) == 1:
-            msg += "\n    - 购买失败，原因：请填写物品名称"
+            if user.playMode():
+                msg += "\n    - 购买失败，原因：你他妈填名字没有就来买？"
+            else:
+                msg += "\n    - 购买失败，原因：请填写物品名称"
             await buy_function.finish(msg)
             
         msg += f"\n    - 购买物品：{arg [1]}"
@@ -509,7 +553,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         msg += f"\n    - 交付中..."
         
         if int(arg[2]) >= 100:
-            msg += f"\n    - 交付失败，原因：购买数量过大。"
+            if user.playMode():
+                msg += f"\n    - 交付失败，原因：购买数量过大。你他妈买这么多干啥？"
+            else:
+                msg += f"\n    - 交付失败，原因：购买数量过大。"
             await buy_function.finish(msg)
             
         # fetch
@@ -517,10 +564,13 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         _cost = 0.0
         for item in items:
             if item.get("Name") == arg [1]:
-                _cost = item.get("Cost", .0)
+                _cost = item.get("Cost", 0.114)
         
-        if _cost == 0.0:
-            msg += f"\n    - 交付失败，原因：该商品不存在。"
+        if _cost == 0.114514:
+            if user.playMode():
+                msg += f"\n    - 交付失败，原因：该商品不存在。你他妈买个寂寞？"
+            else:
+                msg += f"\n    - 交付失败，原因：该商品不存在。"
             await buy_function.finish(msg)
             
         # calc
@@ -536,13 +586,19 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
                 
             user.save()
         else:
-            msg += f"\n    - 交付失败，原因：余额不足"    
+            if user.playMode():
+                msg += f"\n    - 交付失败，原因：余额不足。你他妈穷成这样还想买东西？"
+            else:
+                msg += f"\n    - 交付失败，原因：余额不足"    
         
         msg += f"\n    - 购买结束。请使用 ^buy use {arg [1]} {arg [2]} (若只买了单份或只想使用单份可不填) 来使用商品。"
         
     elif arg [0] == "use":
         if len(arg) == 1:
-            msg += "\n    - 请填写物品"
+            if user.playMode():
+                msg += "\n    - 使用失败，原因：你他妈填名字没有就来用？"
+            else:
+                msg += "\n    - 请填写物品"
             await buy_function.finish(msg)
         elif len(arg) == 2:
             arg.append("1")
@@ -638,6 +694,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
         - 提示：
             请勿询问此种内容。
         """
+            if user.playMode():
+                msg.replace("请勿询问此种内容。", "你他妈就这点出息？还问这种东西？")
 
         if user.getScore() < int(total_token):
             msg = f"""ToolsBot AI
@@ -646,6 +704,9 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
         - 提示：
             您的积分不够。目前已追加欠款。请早日还清。
             """
+            
+            if user.playMode():
+                msg.replace("您的积分不够。目前已追加欠款。请早日还清。", "\n    - 你他妈穷成这样还想用AI？欠债还钱，天经地义！")
             
         user.addScore(- (int(total_token) * 1))
         user.save()
@@ -710,13 +771,18 @@ pay_eventer = on_command("pay", aliases={"交易", "向对方转钱"}, priority=
 @pay_eventer.handle()
 async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} 交易\n"
-    _msg = args.extract_plain_text().strip()
+    _msg = args.extract_plain_text()
     
     sender_user = User(str(event.get_user_id()))
 
     # Check if the sender is banned
     if sender_user.isBanned():
-        await pay_eventer.finish(msg + "    - 交易失败: 您的账号已被封禁")
+        if sender_user.playMode():
+            msg += "    - 你他妈被封禁了还想交易？滚"
+        else:
+            msg += "    - 您的账号已被封禁，请联系管理员解封。"
+            
+        await pay_eventer.finish(msg)
 
     # If no arguments are provided, show usage help
     if not _msg:
@@ -726,32 +792,46 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     try:
         # Extract the mentioned user's ID
         # MessageSegment.at() is the correct way to get the at information
-        receiver_id = At(args.extract_plain_text()) [0]
+        receiver_id = At(event.json()) [0]
         
         # Split the message to get the amount
         parts = _msg.split()
-        if len(parts) < 2:
-            await pay_eventer.finish(msg + "    - 交易失败: 格式错误，请使用 ^pay [@对方] [金额]")
             
-        money = int(parts[1])
+        money = int(parts[0])
 
         # Get the receiver's user object
         receiver_user = User(receiver_id)
 
     except (ValueError, IndexError):
         # Catch errors if the amount is not an integer or is missing
-        await pay_eventer.finish(msg + "    - 交易失败: 金额必须为正整数")
+        if sender_user.playMode():
+            msg += "    - 你他妈语法都不会还想交易？滚"
+        else:
+            msg += "    - 语法错误或金额不是正整数"
+        await pay_eventer.finish(msg)
     except Exception:
         # Generic catch for any other unexpected errors
-        await pay_eventer.finish(msg + "    - 交易失败: 发生未知错误，请检查格式")
+        if sender_user.playMode():
+            msg += "    - 你他妈语法都不会还想交易？滚"
+        else:
+            msg += "    - 发生未知错误，请检查格式"
+        await pay_eventer.finish(msg)
 
     # Prevent self-transfer
     if sender_user.id == receiver_user.id:
-        await pay_eventer.finish(msg + "    - 交易失败: 你不能给自己转钱")
+        if sender_user.playMode():
+            msg += "    - 你他妈自己给自己转钱？脑子有病吧？"
+        else:
+            msg += "    - 你不能给自己转钱"
+        await pay_eventer.finish(msg)
 
     # Check if receiver is banned (this is a good practice)
     if receiver_user.isBanned():
-        await pay_eventer.finish(msg + "    - 交易失败: 对方账号已被封禁，无法收款")
+        if sender_user.playMode():
+            msg += "    - 你他妈想给个封禁用户转钱？滚"
+        else:
+            msg += "    - 交易失败: 对方账号已被封禁，无法收款"
+        await pay_eventer.finish(msg)
 
     # Check for valid amount and sufficient balance
     if money > 0 and sender_user.getScore() >= money:
@@ -765,7 +845,10 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
         msg += f"    - {receiver_user.name} 当前积分: {receiver_user.getScore():.2f}"
     else:
         msg += "     - 交易失败\n"
-        msg += "     - 失败原因: 积分不足或交易金额小于等于零"
+        if sender_user.playMode():
+            msg += "     - 失败原因: 你他妈穷成这样还想转钱？滚"
+        else:
+            msg += "     - 失败原因: 积分不足或交易金额小于等于零"
 
     await pay_eventer.finish(msg)
     
@@ -825,7 +908,11 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     user = User(str(event.get_user_id()))
     
     if user.isBanned():
-        await wasteTaker_event.finish(msg + "\n    - 你被城管抓住了，你别想捡垃圾了。")
+        if user.playMode():
+            msg += "\n    - 你他妈被封禁了还想捡垃圾？滚"
+        else:
+            msg += "\n    - 您的账号已被封禁，请联系管理员解封。"
+        await wasteTaker_event.finish(msg)
     
     # 用户未被封禁，执行捡垃圾逻辑
     user.addScore(float(waste_money))
@@ -900,22 +987,22 @@ ban_function = on_command("ban", priority=10, permission=SUPERUSER)
 @ban_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} 管理系统"
-    ats = At(args.extract_plain_text())
+    ats = At(event.json()) [0]
     
     if len(ats) == 1:
         user = User(ats [0])
         user.banned = True
         user.save()
-        msg += f"    - 已封禁用户 {user.id}。"
+        msg += f"\n    - 已封禁用户 {user.id}。"
     elif len(ats) > 1:
         for userId in ats:
             user = User(userId)
             user.banned = True
             user.save()
-            msg += f"    - 已封禁用户 {user.id}。"
-        msg += f"    - 本次封禁 {len(ats)} 个用户。"
+            msg += f"\n    - 已封禁用户 {user.id}。"
+        msg += f"\n    - 本次封禁 {len(ats)} 个用户。"
     else:
-        msg += "    - 使用 ^ban [@用户] (可封禁多个)"
+        msg += "\n    - 使用 ^ban [@用户] (可封禁多个)"
     
     await ban_function.finish(msg)
     
@@ -931,7 +1018,7 @@ pardon_function = on_command("pardon", priority=10, permission=SUPERUSER)
 @pardon_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} 管理系统"
-    ats = At(args.extract_plain_text())
+    ats = At(event.json()) [0]
     
     if len(ats) == 1:
         user = User(ats [0])
@@ -972,7 +1059,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         
         if user.isBanned():
             msg += f"    - {user.id} 已被封禁"
-    
+            
+    if msg == f"{TITLE} 管理系统":
+        msg += "    - 当前没有被封禁的用户"
+        
     await banlist_function.finish(msg)
     
 """
@@ -987,7 +1077,7 @@ accountstatus_function = on_command("accountstatus", aliases={"accountStatus"}, 
 @accountstatus_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} 当前账号情况"
-    at = At(args.extract_plain_text())
+    at = At(event.json())
     
     if len(at) == 0:
         
@@ -1009,3 +1099,169 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         
         msg += f"    - 当前该账号的情况："
         msg += f"        - 封禁状态：{ban}"
+        
+    await accountstatus_function.finish(msg)
+    
+"""
+红包函数
+给群友发红包
+
+@author: Latingtude
+"""
+
+redpacket_function = on_command("redpacket", aliases={"发红包"}, priority=5)
+
+@redpacket_function.handle()
+async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+    msg = f"{TITLE} - 发红包"
+    user = User(event.get_user_id())
+    
+    if user.isBanned():
+        if user.playMode():
+            msg += "\n    - 你他妈被封禁了还想发红包？滚"
+        else:
+            msg += "\n    - 您的账号已被封禁，请联系管理员解封。"
+        await redpacket_function.finish(msg)
+    
+    _msg = args.extract_plain_text().split(" ")
+    
+    if len(_msg) < 2:
+        msg += "\n    - 使用 ^redpacket [金额] [数量] 来发红包"
+        await redpacket_function.finish(msg)
+    
+    try:
+        money = float(_msg [0])
+        number = int(_msg [1])
+    except ValueError:
+        if user.playMode():
+            msg += "\n    - 你他妈语法都不会还想发红包？滚"
+        else:
+            msg += "\n    - 语法错误或金额不是正整数"
+        await redpacket_function.finish(msg)
+        
+    if money <= 0 or number <= 0:
+        if user.playMode():
+            msg += "\n    - 你他妈语法都不会还想发红包？滚"
+        else:
+            msg += "\n    - 语法错误或金额不是正整数"
+        await redpacket_function.finish(msg)
+        
+    if user.getScore() < money:
+        if user.playMode():
+            msg += "\n    - 你他妈穷成这样还想发红包？滚"
+        else:
+            msg += "\n    - 余额不足"
+        await redpacket_function.finish(msg)
+        
+    if number > 100:
+        if user.playMode():
+            msg += "\n    - 发红包数量过多。你他妈有钱不如做慈善。"
+        else:
+            msg += "\n    - 发红包数量过大。"
+        await redpacket_function.finish(msg)
+        
+    # ok, start
+    user.subtScore(money)
+    user.save()
+    
+    perMoney = money / number
+    
+    msg += f"\n    - 成功发出 {number} 个红包，每个 {perMoney:.2f} 积分。请让群友使用 ^openredpacket 来领取。"
+    
+    # save
+    redpacket = {
+        "UserID": user.id,
+        "Money": perMoney,
+        "Number": number,
+    }
+    
+    # open redpacket data
+    redpacket_data_path = "./data/redpackets.json"
+    
+    if os.path.exists(redpacket_data_path):
+        try:
+            with open(redpacket_data_path, "r", encoding="utf-8") as f:
+                redpackets = json.load(f)
+        except json.JSONDecodeError:
+            print(f"Warning: {redpacket_data_path} is corrupted. Starting with an empty redpacket list.")
+            redpackets = []
+    else:
+        redpackets = []
+        
+    redpackets.append(redpacket)
+    with open(redpacket_data_path, "w", encoding="utf-8") as f:
+        json.dump(redpackets, f, ensure_ascii=False, indent=4)
+        
+    await redpacket_function.finish(msg)
+    
+"""
+openredpacket 函数
+抢红包
+
+@author: Copilot and Latingtude
+"""
+
+openredpacket_function = on_command("openredpacket", aliases={"抢红包"}, priority=5)
+
+@openredpacket_function.handle()
+async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+    msg = f"{TITLE} - 抢红包"
+    user = User(event.get_user_id())
+    
+    if user.isBanned():
+        if user.playMode():
+            msg += "\n   - 你他妈被封禁了还想抢红包？滚"
+        else:
+            msg += "\n   - 您的账号已被封禁，请联系管理员解封。"
+        await openredpacket_function.finish(msg)
+    
+    # open redpacket data
+    redpacket_data_path = "./data/redpackets.json"
+    
+    if os.path.exists(redpacket_data_path):
+        try:
+            with open(redpacket_data_path, "r", encoding="utf-8") as f:
+                redpackets = json.load(f)
+        except json.JSONDecodeError:
+            print(f"Warning: {redpacket_data_path} is corrupted. Starting with an empty redpacket list.")
+            redpackets = []
+    else:
+        redpackets = []
+        
+    if len(redpackets) == 0:
+        msg += "\n   - 当前没有可抢的红包。"
+        await openredpacket_function.finish(msg)
+    
+    # 随机选择一个红包
+    selected_index = random.randint(0, len(redpackets) - 1)
+    selected_redpacket = redpackets[selected_index]
+    
+    if user.id in selected_redpacket["TakedUser"]:
+        if user.playMode():
+            msg += "\n   - 你他妈已经抢过这个红包了，再抢就变成██。"
+        else:
+            msg += "\n   - 您已经抢过这个红包了，不能重复抢。"
+        await openredpacket_function.finish(msg)
+    
+    # 给用户加钱
+    user.addScore(float(selected_redpacket["Money"]))
+    user.save()
+    
+    msg += f"\n   - 抢到一个 {selected_redpacket['Money']:.2f} 积分的红包！"
+    msg += f"\n   - 目前您的积分为 {user.getScore():.2f}。"
+    
+    # 更新红包数据
+    selected_redpacket["Number"] -= 1
+    selected_redpacket["TakedUser"].append(user.id)
+    if selected_redpacket["Number"] <= 0:
+        # 如果红包数量为0，移除该红包
+        del redpackets[selected_index]
+    else:
+        # 否则更新红包信息
+        redpackets[selected_index] = selected_redpacket    
+    
+        
+    # 写入
+    open("./data/redpackets.json", "w", encoding="utf-8").write(json.dumps(redpackets, ensure_ascii=False, indent=4))
+    
+    await openredpacket_function.finish(msg)
