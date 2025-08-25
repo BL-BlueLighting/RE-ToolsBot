@@ -24,6 +24,9 @@ nb create
 
 After all actions, edit `.env.prod` `.env.dev` `bot.py` 'SUPERUSER' configure section to your qq Number.
 
+Then, open `data/configuration_template.json`, edit `AI-ApiKEY`. Rename it to `data/configuration.json`
+If you do not need AI skill, just `data/configuration_template.json` to `data/configuration.json` is best choice.
+
 Run `nb run --reload` to boot this bot.
 
 ## How to connect bot to QQ?

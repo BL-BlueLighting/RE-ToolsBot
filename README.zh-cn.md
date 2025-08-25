@@ -24,6 +24,9 @@ nb create
 
 在所有的事情干完后，修改 `.env.dev` `.env.prod` `bot.py` 中的 SUPERUSER 为你自己的 QQ号码。
 
+接下来，打开 `data/configuration_template.json`，修改其中的 AI_ApiKEY 项目为你的硅基流动 API Key。随后重命名为 `configuration.json`。
+若不需要，请直接重命名为 `configuration.json`。
+
 随后，运行 `nb run --reload` 来启动 bot.
 
 ## 这个 bot 怎么链接到 QQ？
