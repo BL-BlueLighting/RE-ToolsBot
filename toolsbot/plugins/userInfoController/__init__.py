@@ -8,7 +8,7 @@ from time import sleep as wait
 from random import uniform as wrd
 import os
 import datetime
-import logging
+import logging, re
 
 logging.basicConfig(
     filename='botlog.log',
@@ -70,7 +70,8 @@ class Data:
             "Name": userClass.name,
             "Score": userClass.score,
             "boughtItems": userClass.boughtItems,
-            "Ban": userClass.banned
+            "Ban": userClass.banned,
+            "Warningd": userClass.warningd
         }
         
         # write in
@@ -108,6 +109,7 @@ class User:
         self.boughtItems = boughtItems
         self.banned = False
         self.data = Data(self.id)
+        self.warningd = 0
         
         try:
             # check
@@ -122,12 +124,20 @@ class User:
                 self.score = self.jsonData.get("Score", 0.0)
                 self.banned = self.jsonData.get("Ban", False)
                 self.boughtItems = self.jsonData.get("boughtItems", [])
+                self.warningd = self.jsonData.get("Warningd", 0)
             else:
                 _info("Data Not Found.")
                 self.data.writeData(self)
         except Exception as ex:
             _erro("Error: Failed to read or write data." + ex.__str__())
-    
+            
+        if self.warningd >= 10:
+            self.banned = True
+            _info(f"User '{self.id}' has been banned because of excessive warnings.")
+            
+        if self.score < 0:
+            self.banned = True
+
     def save(self):
         """
         Save user data.
@@ -177,19 +187,20 @@ class User:
         if "sign" in itemEffect [0]: #type: ignore
             _info(f"SIGN MODE")
             # get *x
-            _x = itemEffect.split(" ") [1] #type: ignore
+
+            _x = itemEffect [0].split(" ") [1] #type: ignore
             
             # out x
-            _x.replace("x", "")
+            _x = _x.replace("x", "")
             
             # read boost
-            boosts = json.load(open("./data/boostMorningd.json", "rw", encoding="utf-8"))
+            boosts = json.load(open("./data/boostMorningd.json", "r", encoding="utf-8"))
             
             # append boost
             boosts.append({self.id: int(_x)})
             
             # write boost
-            json.dump(boosts, open("./data/boostMorningd.json", "rw", encoding="utf-8"))
+            json.dump(boosts, open("./data/boostMorningd.json", "w", encoding="utf-8"))
             
             self.boughtItems.remove(item)
             return f"{_x}x 倍票已使用。下次签到将会获得更多积分。"
@@ -224,6 +235,11 @@ class User:
         else:
             return "很抱歉。内部出现错误。"
         
+    def aiWarningd(self):
+        self.warningd += 1
+    
+    def echoWarningd(self):
+        self.warningd += 2
         
         
     def addScore(self, score: float):
@@ -505,6 +521,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     else:
         msg += f"\n    - 语法错误。"
     
+    user.save()
+    
     await setinfo_function.finish(msg)
 
 """
@@ -576,6 +594,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         # calc
         _subtScore = int(arg [2]) * _cost
         
+        if _subtScore < 0:
+            _subtScore = float(str(_subtScore).replace("-", ""))
+            _cost = 0
+        
         if user.score >= _subtScore:
             msg += f"\n    - 扣除积分：{_subtScore}"
             msg += f"\n    - 交付成功。"
@@ -638,7 +660,20 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             "messages": [
                 {
                     "role": "system",
-                    "content": "你是一个名叫 ToolsBot 的 Bot。现在是 2025 年。接下来用户会给你发送消息，请直接发送结果并使用简洁的语言。若对方向你询问成人内容，请直接输出 18Disabled。若不是类似内容，请不要想这些内容。"
+                    "content": """你是一个名叫 ToolsBot 的 Bot。
+现在是 2025 年。
+接下来用户会给你发送消息，请直接发送结果并使用简洁的语言。
+
+你可以使用以下函数：
+    - Failed("18Disabled / AboutWorld"):
+        强行停止聊天，并返回原因。
+        
+函数调用方法：输出函数
+
+若对方向你询问成人内容，请直接调用函数 Failed("18Disabled")
+若对方向你询问关于大陆与台湾的任何事务，只要涉嫌建政，请直接调用函数 Failed("AboutWorld")
+若不是类似内容，请不要想这些内容。
+"""
                 },
                 {
                     "role": "user",
@@ -687,7 +722,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             {total_token}
     """
         
-        if ctnt == "18Disabled":
+        if ctnt == 'Failed("18Disabled")':
             msg = f"""ToolsBot AI
         - 模型：
             Qwen\\Qwen3-8B
@@ -696,6 +731,17 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
         """
             if user.playMode():
                 msg.replace("请勿询问此种内容。", "你他妈就这点出息？还问这种东西？")
+            
+        elif ctnt == 'Failed("AboutWorld")':
+            msg = f"""ToolsBot AI
+        - 模型：
+            Qwen\\Qwen3-8B
+        - 提示：
+            你因涉嫌讨论政治而被强制停止聊天。
+            请不要谈论政治。
+            此次为警告，下次为封禁。
+        """
+            user.aiWarningd()
 
         if user.getScore() < int(total_token):
             msg = f"""ToolsBot AI
@@ -876,7 +922,31 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     # 如果没有提供任何文本，也给出提示
     if not _msg:
         await echo_eventer.finish(f"{TITLE} ECHO\n    - 用法: ^echo [内容]")
-    
+        
+    #  检测词语
+    failedWords = open("./data/echoFailedWords.json", "r", encoding="utf-8").read()
+    failedWordsList = json.loads(failedWords)["chinese_keywords"]
+    failedRegexs = json.loads(failedWords)["regex_patterns"]
+    failedEngWordsList = json.loads(failedWords)["exact_matches"]
+
+    # 汉文检测
+    for word in failedWordsList:
+        if word in _msg:
+            user.echoWarningd()
+            await echo_eventer.finish(f"{TITLE} ECHO\n    - 键政大师！滚！")
+            
+    # 正则表达式检测
+    for pattern in failedRegexs:
+        if re.search(pattern, _msg):
+            user.echoWarningd()
+            await echo_eventer.finish(f"{TITLE} ECHO\n    - 键政大师！滚！")
+
+    # 英文检测
+    for word in failedEngWordsList:
+        if word in _msg:
+            user.echoWarningd()
+            await echo_eventer.finish(f"{TITLE} ECHO\n    - 键政大师！滚！")
+
     # 如果用户未被封禁且提供了文本，则原样返回
     await echo_eventer.finish(_msg)
     
@@ -987,7 +1057,7 @@ ban_function = on_command("ban", priority=10, permission=SUPERUSER)
 @ban_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} 管理系统"
-    ats = At(event.json()) [0]
+    ats = At(event.json())
     
     if len(ats) == 1:
         user = User(ats [0])
@@ -1018,22 +1088,22 @@ pardon_function = on_command("pardon", priority=10, permission=SUPERUSER)
 @pardon_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} 管理系统"
-    ats = At(event.json()) [0]
+    ats = At(event.json())
     
     if len(ats) == 1:
         user = User(ats [0])
         user.banned = False
         user.save()
-        msg += f"    - 已解封用户 {user.id}。"
+        msg += f"\n    - 已解封用户 {user.id}。"
     elif len(ats) > 1:
         for userId in ats:
             user = User(userId)
             user.banned = False
             user.save()
-            msg += f"    - 已解封用户 {user.id}。"
-        msg += f"    - 本次封禁 {len(ats)} 个用户。"
+            msg += f"\n    - 已解封用户 {user.id}。"
+        msg += f"\n    - 本次封禁 {len(ats)} 个用户。"
     else:
-        msg += "    - 使用 ^pardon [@用户] (可封禁多个)"
+        msg += "\n    - 使用 ^pardon [@用户] (可封禁多个)"
         
     await pardon_function.finish(msg)
     
@@ -1058,10 +1128,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         user = User(_user)
         
         if user.isBanned():
-            msg += f"    - {user.id} 已被封禁"
+            msg += f"\n    - {user.id} 已被封禁"
             
     if msg == f"{TITLE} 管理系统":
-        msg += "    - 当前没有被封禁的用户"
+        msg += "\n    - 当前没有被封禁的用户"
         
     await banlist_function.finish(msg)
     
@@ -1087,8 +1157,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         if user.isBanned():
             ban = "封禁"
         
-        msg += f"    - 当前您账号的情况："
-        msg += f"        - 封禁状态：{ban}"
+        msg += f"\n    - 当前您账号的情况："
+        msg += f"\n        - 封禁状态：{ban}"
     else:
         
         user = User(at [0])
@@ -1097,8 +1167,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         if user.isBanned():
             ban = "封禁"
         
-        msg += f"    - 当前该账号的情况："
-        msg += f"        - 封禁状态：{ban}"
+        msg += f"\n    - 当前该账号的情况："
+        msg += f"\n        - 封禁状态：{ban}"
         
     await accountstatus_function.finish(msg)
     
@@ -1173,6 +1243,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         "UserID": user.id,
         "Money": perMoney,
         "Number": number,
+        "TakedUser": []
     }
     
     # open redpacket data

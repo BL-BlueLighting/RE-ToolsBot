@@ -55,20 +55,6 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
 ^openredpacket 抢红包
 """
     await help_function.finish(msg)
-
-"""
-echo 函数
-输出内容
-
-@author: Latingtude
-"""
-echo_function = on_command("echo", aliases={"输出"}, priority=10)
-
-@echo_function.handle()
-async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Message = CommandArg()):
-    # get text
-    text = arg.extract_plain_text()
-    await echo_function.finish(text)
     
 """
 check 函数

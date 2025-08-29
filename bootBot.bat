@@ -1,2 +1,3 @@
 @echo off
-"./.venv/Scripts/python.exe" ./bot.py
+nb run --reload
+echo Robot was finished.
