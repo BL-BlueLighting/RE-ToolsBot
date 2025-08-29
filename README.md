@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="./README.Logo.jpg" style="width: 128px;">
+</div>
+
 <h1 align="center">RE: ToolsBot</h1>
 
 <p align="center">
