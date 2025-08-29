@@ -1,13 +1,21 @@
-<center><h1>RE: ToolsBot</h1></center>
+<h1 align="center">RE: ToolsBot</h1>
 
-![Version](https://img.shields.io/badge/Version-1.0.0-blue) ![Onebot Version](https://img.shields.io/badge/OneBot-v11-blue)
+<p align="center">
+    <a href="#">
+        <img src="https://img.shields.io/badge/Version-1.0.0-blue">
+    </a>
+    <a href="#">
+        <img src="https://img.shields.io/badge/OneBot-v11-blue">
+    </a>
+</p>
 
-<center><a href="./README.zh-cn.md">中文</a> | <a href="./README.md">English</a></center>
+<div align="center">
+    <a href="./README.zh-cn.md">中文</a> | <a href="./README.md">English</a>
+</div>
 
-## 这是什么玩意？
-一个 QQ 的机器人。娱乐用。
+<p align="center"><i>优秀的 QQ Bot 实例</i></p>
 
-## 咋用？
+## 如何使用
 先 git clone 下来整个项目。
 
 `

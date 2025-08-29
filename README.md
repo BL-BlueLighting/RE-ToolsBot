@@ -1,11 +1,19 @@
-<center><h1>RE: ToolsBot</h1></center>
+<h1 align="center">RE: ToolsBot</h1>
 
-![Version](https://img.shields.io/badge/Version-1.0.0-blue) ![Onebot Version](https://img.shields.io/badge/OneBot-v11-blue)
+<p align="center">
+    <a href="#">
+        <img src="https://img.shields.io/badge/Version-1.0.0-blue">
+    </a>
+    <a href="#">
+        <img src="https://img.shields.io/badge/OneBot-v11-blue">
+    </a>
+</p>
 
-<center><a href="./README.zh-cn.md">中文</a> | <a href="./README.md">English</a></center>
+<div align="center">
+    <a href="./README.zh-cn.md">中文</a> | <a href="./README.md">English</a>
+</div>
 
-## What is this?
-This is a bot project for QQ.
+<p align="center"><i>Perfect Bot for QQ.</i></p>
 
 ## How to use it?
 First, clone this project.
