@@ -45,3 +45,10 @@ nb create
 ## 这个 bot 怎么链接到 QQ？
 
 去看 https://github.com/NapNeko/NapCatQQ.
+
+## 感谢
+> [!Note]
+>
+> 感谢以下项目，我参考了以下项目的部分代码。
+
+<a href="https://github.com/yzyyz1387/nonebot_plugin_admin/">NoneBot Plugin Admin</a>

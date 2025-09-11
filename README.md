@@ -44,3 +44,10 @@ Run `nb run --reload` to boot this bot.
 ## How to connect bot to QQ?
 
 Go https://github.com/NapNeko/NapCatQQ.
+
+## Thanks
+> [!Note]
+>
+> Thanks for project under. I using some code from them.
+
+<a href="https://github.com/yzyyz1387/nonebot_plugin_admin/">NoneBot Plugin Admin</a>
