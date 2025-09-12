@@ -155,3 +155,32 @@ async def unmute_command(bot: Bot, event: GroupMessageEvent, args: Message = Com
         await bot.call_api("set_group_ban", group_id=event.group_id, user_id = qq, duration=0)
     
     await mutesb.finish(f"RE: ToolsBot GROUP MANAGING MODULE\n    - 已取消禁言 {sblist} {arg}。")
+    
+# call_api
+
+call_api_command = on_command("call_api", permission=SUPERUSER)
+
+@call_api_command.handle()
+async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+    # get api name and params
+    __argstr = args.extract_plain_text()
+    
+    # extract api name and params
+    api_name = __argstr.split(" ") [0]
+    api_params = __argstr.split(" ") [1:]
+    
+    # params text
+    params_text = ""
+    
+    for param in api_params:
+        if params_text == "":
+            params_text += param
+        else:
+            params_text += f",{param}"
+            
+    # run
+    exec(f"""bot.call_api('{api_name}', {params_text})""")
+    
+    # finish
+    await call_api_command.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 已执行该 OneBot V11 api。请检查控制台。")
+    

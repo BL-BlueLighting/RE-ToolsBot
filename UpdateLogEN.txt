@@ -10,3 +10,13 @@
 
                                                             -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!
+
+2025 / 9 / 12 - Update Log:
+
+    Added skills under:
+        ^call_api [API Name] [Param]=[Value]...: Call onebot v11 api.
+    
+    Edited help file.
+
+                                                            -- Bot Developer: BlueLighting
+                                                            SEE YOU NEXT UPDATE!

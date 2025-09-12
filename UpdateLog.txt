@@ -11,3 +11,13 @@
 
                                                             -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!
+
+2025 / 9 / 12 - 更新日志：
+
+    添加了如下功能：
+        ^call_api [API 名] [API 参数]
+
+    修改了帮助文件。
+
+                                                            -- Bot Developer: BlueLighting
+                                                            SEE YOU NEXT UPDATE!

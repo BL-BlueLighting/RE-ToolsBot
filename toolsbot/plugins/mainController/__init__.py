@@ -58,6 +58,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     ^ban pardon: 封禁 解除封禁 （仅超级用户）
     ^mute ^unmute [ats] minute=[分钟]: 禁言（请把 minute 放在最后面，unmute 不需要 minute）
     ^undo [回复一条消息]: 撤回消息
+    ^call_api [API 名] [params]=[value]: 使用 OneBot V11 API。
     
 METAEvent & Notice：
     Welcome: 新人入群欢迎，赠送 50 积分
