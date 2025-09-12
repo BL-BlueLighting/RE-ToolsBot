@@ -192,17 +192,23 @@ liangcai64 = [
 # 创建反向映射表（从词汇到索引）
 reverse_map = {word: index for index, word in enumerate(liangcai64)}
 
-def encode_to_liangcai(text: str) -> str:
+def encode_to_liangcai(text: list[str]) -> str:
     """
     编码函数：将文本编码为凉菜64词汇
+    
     :param text: 要编码的文本
+    
     :return: 凉菜64编码字符串
     """
     if not text:
         return ""
 
+    _text = ""
+    for _t in text:
+        _text += _t
+    
     # 将文本转换为UTF-8字节
-    bytes_data = text.encode('utf-8')
+    bytes_data = _text.encode('utf-8')
     
     binary = ''
     # 将每个字节转换为8位二进制字符串
@@ -225,7 +231,9 @@ def encode_to_liangcai(text: str) -> str:
 def decode_from_liangcai(encoded_text: list[str]) -> str:
     """
     解码函数：将凉菜64编码解码为文本
+    
     :param encoded_text: 凉菜64编码字符串
+    
     :return: 解码后的文本
     """
     if not encoded_text:
@@ -255,6 +263,47 @@ def decode_from_liangcai(encoded_text: list[str]) -> str:
     # 将字节数组转换为文本
     return bytes_data.decode('utf-8')
 
+def encode_to_liangcai2(text: list[str]) -> str:
+    liangcai64__ = encode_to_liangcai(text)
+    # add reverse
+    reverse = ""
+    for n in [word for word in liangcai64__]:
+        _reverse = reverse
+        reverse = n + _reverse
+        
+    l_lc64 = len(liangcai64__)
+    
+    for lcc in [word for word in liangcai64__]:
+        if lcc == " ":
+            l_lc64 -= 1
+            
+    liangcai64__ += " " + reverse
+    
+    return liangcai64__ + " " + str(l_lc64)
+
+def decode_from_liangcai2(text: list[str]) -> str:
+    # get max length from foot
+    try:
+        length = int(text [len(text) - 1])
+    except Exception as ex:
+        print(ex.__str__())
+        return "ERROR, Developer please see log."
+    
+    # calc real length
+    if length % 2 != 0:
+        length -= 1
+    
+    print(length)
+    length = int(length / 2)
+    
+    print(length)
+    # get source text
+    _text = text[0:length]
+    
+    print(_text)
+    
+    # decode
+    return decode_from_liangcai(_text)
     
 """
 LiangCai 64 编码
@@ -272,7 +321,8 @@ async def _ (event: MessageEvent,args: Message = CommandArg()):
             params_l = params.split(" ")
             if params_l[0] == "encode":
                 wait(wrd(0.5,0.9))
-                msg += f"\n{params_l[1]} \n编码为：\n{encode_to_liangcai(params_l [1])}"
+                params__ = "".join(params_l [1:])
+                msg += f"\n{params_l[1:]} \n编码为：\n{encode_to_liangcai(params_l [1:])}"
             elif params_l[0] == "decode":
                 wait(wrd(0.5,0.9))
                 msg += f"\n{params_l[1:]} \n解码为：\n{decode_from_liangcai(params_l [1:])}"
@@ -287,6 +337,42 @@ async def _ (event: MessageEvent,args: Message = CommandArg()):
             msg += "\n    - 使用方法："
             wait(wrd(0.5,0.9))
             msg += "\n    - ^lc64 encode*decode [内容]"
-        await base58_eventer.finish(msg)
+        await liangcai64_function.finish(msg)
     else:
-        await base58_eventer.finish("RE: ToolsBot LiangCai64 编解码\n  您的账号已被封禁，无法使用此功能")
+        await liangcai64_function.finish("RE: ToolsBot LiangCai64 编解码\n  您的账号已被封禁，无法使用此功能")
+        
+"""
+LiangCai 64/2 编码
+神经病一般的的般一病经神
+编码码编
+"""
+liangcai642_function = on_command("lc64_2", aliases={"liangCai64"}, priority=10)
+
+@liangcai642_function.handle()
+async def _ (event: MessageEvent,args: Message = CommandArg()):
+    user = dc.User(event.get_user_id())
+    if not user.isBanned():
+        msg = ""
+        if params := args.extract_plain_text():
+            msg += "\nRE: ToolsBot LiangCai64/2 编解码"
+            params_l = params.split(" ")
+            if params_l[0] == "encode":
+                wait(wrd(0.5,0.9))
+                msg += f"\n{params_l[1:]} \n编码为：\n{encode_to_liangcai2(params_l [1:])}"
+            elif params_l[0] == "decode":
+                wait(wrd(0.5,0.9))
+                msg += f"\n{params_l[1:]} \n解码为：\n{decode_from_liangcai2(params_l [1:])}"
+            else:
+                wait(wrd(0.5,0.9))
+                msg += "\n    - 使用方法："
+                wait(wrd(0.5,0.9))
+                msg += "\n    - ^lc64_2 encode*decode [内容]"
+        else:
+            msg += "\nRE: ToolsBot LiangCai64 编解码"
+            wait(wrd(0.5,0.9))
+            msg += "\n    - 使用方法："
+            wait(wrd(0.5,0.9))
+            msg += "\n    - ^lc64_2 encode*decode [内容]"
+        await liangcai642_function.finish(msg)
+    else:
+        await liangcai642_function.finish("RE: ToolsBot LiangCai64 / 2 编解码\n  您的账号已被封禁，无法使用此功能")

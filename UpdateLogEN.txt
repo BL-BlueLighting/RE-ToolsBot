@@ -15,6 +15,7 @@
 
     Added skills under:
         ^call_api [API Name] [Param]=[Value]...: Call onebot v11 api.
+        ^lc64_2 [encode/decode] [content]: De/encode LC64_2 encoding content.
     
     Edited help file.
 
