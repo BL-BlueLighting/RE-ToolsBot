@@ -56,7 +56,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
 
 超级用户可用：
     ^ban pardon: 封禁 解除封禁 （仅超级用户）
-    ^mute [ats] minute=[分钟]: 禁言（请把 minute 放在最后面）
+    ^mute ^unmute [ats] minute=[分钟]: 禁言（请把 minute 放在最后面，unmute 不需要 minute）
     ^undo [回复一条消息]: 撤回消息
     
 METAEvent & Notice：

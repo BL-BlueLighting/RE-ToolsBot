@@ -1,0 +1,13 @@
+2025 / 9 / 11 ~ 12 - 更新日志：
+
+    添加了如下功能：
+        ^undo: 撤回群成员的一条消息
+        ^mute [@人] minute=[分钟]: 禁言群成员 [@人] [分钟] 分钟。（minute 因语法限制|||必须|||放在最后）
+        ^unmute [@人]: 取消禁言 [@人]
+
+    修改了帮助文件。
+    
+    修复了 LiangCai 64 功能无法正确读取参数的 Bug。
+
+                                                            -- Bot Developer: BlueLighting
+                                                            SEE YOU NEXT UPDATE!

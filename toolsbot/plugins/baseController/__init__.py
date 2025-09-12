@@ -222,7 +222,7 @@ def encode_to_liangcai(text: str) -> str:
 
     return ' '.join(encoded_list)
 
-def decode_from_liangcai(encoded_text: str) -> str:
+def decode_from_liangcai(encoded_text: list[str]) -> str:
     """
     解码函数：将凉菜64编码解码为文本
     :param encoded_text: 凉菜64编码字符串
@@ -231,7 +231,7 @@ def decode_from_liangcai(encoded_text: str) -> str:
     if not encoded_text:
         return ""
 
-    words = encoded_text.split()
+    words = encoded_text
     binary = ''
 
     # 将每个词汇转换为对应的6位二进制字符串
@@ -275,7 +275,7 @@ async def _ (event: MessageEvent,args: Message = CommandArg()):
                 msg += f"\n{params_l[1]} \n编码为：\n{encode_to_liangcai(params_l [1])}"
             elif params_l[0] == "decode":
                 wait(wrd(0.5,0.9))
-                msg += f"\n{params_l[1]} \n解码为：\n{decode_from_liangcai(params_l [1])}"
+                msg += f"\n{params_l[1:]} \n解码为：\n{decode_from_liangcai(params_l [1:])}"
             else:
                 wait(wrd(0.5,0.9))
                 msg += "\n    - 使用方法："

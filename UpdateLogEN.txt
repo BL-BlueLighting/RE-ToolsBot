@@ -1,0 +1,12 @@
+2025 / 9 / 11 ~ 12 - Update Log：
+
+    Added skills under：
+        ^undo: Undo a message from group member.
+        ^mute [@member] minute=[minutes]: Mute member [@member], duration minute * 60.
+        ^unmute [@member]: Unmute member [@member].
+
+    Edited help file.
+    Fixed LiangCai 64 skill can't read params correct.
+
+                                                            -- Bot Developer: BlueLighting
+                                                            SEE YOU NEXT UPDATE!

@@ -10,6 +10,21 @@ from random import uniform as wrd
 import os
 from nonebot.typing import *
 import dauCtl as dc
+import logging, re
+
+logging.basicConfig(
+    filename='botlog.log',
+    filemode='a',       
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# logging pointers
+_info = logging.info
+_warn = logging.warning
+_erro = logging.error
+_crit = logging.critical
+
 
 config = json.load(open("./data/configuration.json", "r", encoding="utf-8"))
 """
@@ -31,6 +46,9 @@ def replacing(string: str, qqNumber: str) -> str:
     res.replace("[QQ]", qqNumber)
     res.replace("[@]", f"[CQ:at,qq={qqNumber}]")
     return res
+
+async def msg_reply(event: GroupMessageEvent) -> Union[int, None]:
+    return event.reply.message_id if event.reply else None
 
 welcomejoin_event = on_notice()
 
@@ -56,68 +74,25 @@ friend_add = on_metaevent()
 @friend_add.handle()
 async def addfriend(bot: Bot, event: FriendRequestEvent, state: T_State):
     await event.approve(bot) # auto approve, f**king nonebot type comments #type: ignore
+    
+undo_message = on_command("undo", permission=SUPERUSER, priority=5)
 
-async def mute_sb(bot: Bot, gid: int, lst: list, time: int = None, scope: list = None): #type: ignore
-    """
-    构造禁言
-    :param gid: 群号
-    :param time: 时间（s)
-    :param lst: at列表
-    :param scope: 用于被动检测禁言的时间范围
-    :return:禁言操作
-    """
-    # 感谢 https://github.com/yzyyz1387/nonebot_plugin_admin/ 该项目
-    su = SUPERUSER
-    if 'all' in lst:
-        yield bot.set_group_whole_ban(group_id=gid, enable=True)
-    else:
-        if time is None:
-            if scope is None:
-                time = random.randint(plugin_config.ban_rand_time_min, plugin_config.ban_rand_time_max)
-            else:
-                time = random.randint(scope[0], scope[1])
-        for qq in lst:
-            if qq in su:
-                logger.info(f"SUPERUSER无法被禁言, {qq}")
-            else:
-                yield bot.set_group_ban(group_id=gid, user_id=qq, duration=time)
-                
-                
-async def getReply(content: Message):
-    # extract plaintext
-    pt = content.extract_plain_text()
-    # search
-    if not "[reply:id" in pt:
-        return "not found"
-    
-    # split
-    reply_c = pt [pt.index("[reply:id"):pt.index("]")]
-    
-    # remove [reply:id]
-    reply_c = reply_c.replace("[reply:id", "")
-    reply_c = reply_c.replace("]", "")
-    
-    # return message id
-    return reply_c
-    
-# undo message
-
-undo_message = on_command("undo", permission=SUPERUSER)
 @undo_message.handle()
-async def undo_msg(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
-    # get message
-    reply = getReply(args)
+async def undo_msg(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+    # get reply id
+    reply_id = await msg_reply(event)
     
-    if reply == "not found":
-        await undo_message.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 请回复一条消息再进行撤回")
-    
+    if reply_id == None:
+        await undo_message.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 请回复一条消息再撤回")
+    # delete msg
     try:
-        await bot.delete_msg(message_id=reply)
-    except ActionFailed:
-        await undo_message.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 无法撤回该条消息。请确认 Bot 拥有管理员权限。")
+        await bot.call_api("delete_msg", message_id=reply_id)
+    except ActionFailed as afd:
+        _crit(f"Failed to undo message using msgid。This is why:\n{afd}")
+        await undo_message.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 未能成功撤回消息。请确认消息存在或发送人不是管理\\群主\\bot自己（虽然会撤回但是还是会报错）")
     else:
-        await undo_message.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 成功撤回该消息。")
-    return
+        await undo_message.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 成功撤回消息 msg_id=" + str(reply_id) + "。") #type: ignore
+    
 
 """
 检测at了谁，返回[qq, qq, qq,...]
@@ -155,6 +130,28 @@ async def mutesb_command(bot: Bot, event: GroupMessageEvent, args: Message = Com
     arg = args.extract_plain_text()
     minutes = arg [arg.index("minute=") + 7:len(arg)]
     
-    mute_sb(bot, event.group_id, lst=sblist, time=int(minutes) * SECOND)
+    _info(sblist)
+    _info(arg)
+    _info(minutes)
+    for qq in sblist:
+        try:
+            await bot.call_api("set_group_ban", group_id=event.group_id, user_id = qq, duration=float(minutes) * SECOND)
+        except ActionFailed:
+            await mutesb.finish(f"RE: ToolsBot GROUP MANAGING MODULE\n    - 无法禁言该用户。该用户已被禁言或是管理员\\群主")
     
-    await mutesb.finish(f"RE: ToolsBot GROUP MANAGING MODULE\n    - 已禁言 {arg}。")
+    await mutesb.finish(f"RE: ToolsBot GROUP MANAGING MODULE\n    - 已禁言 {sblist} {arg}。")
+
+# unmutesb
+
+unmute = on_command("unmute", permission=SUPERUSER)
+
+@unmute.handle()
+async def unmute_command(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+    sblist = At(event.json())
+    
+    arg = args.extract_plain_text()
+
+    for qq in sblist:
+        await bot.call_api("set_group_ban", group_id=event.group_id, user_id = qq, duration=0)
+    
+    await mutesb.finish(f"RE: ToolsBot GROUP MANAGING MODULE\n    - 已取消禁言 {sblist} {arg}。")

@@ -7,7 +7,7 @@
 
 <p align="center">
     <a href="#">
-        <img src="https://img.shields.io/badge/Version-1.0.0-blue">
+        <img src="https://img.shields.io/badge/Version-1.4.0-blue">
     </a>
     <a href="#">
         <img src="https://img.shields.io/badge/OneBot-v11-blue">
