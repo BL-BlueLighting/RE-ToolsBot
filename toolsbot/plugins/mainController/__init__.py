@@ -53,6 +53,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     ^banlist: 封禁列表
     ^redpacket: 发红包
     ^openredpacket: 抢红包
+    ^mcserver: 查询 MC 服务器状态，使用 ^mcserver 来获得使用方法。
 
 超级用户可用：
     ^ban pardon: 封禁 解除封禁 （仅超级用户）

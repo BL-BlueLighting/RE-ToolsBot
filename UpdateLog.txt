@@ -25,6 +25,12 @@
 
 2025 / 9 / 13 - 目前更新日志：
 
+    添加了如下功能：
+        ^mcserver [query/look/add]:
+            ^mcserver query [IP]:[Port]: 查询该 MC 服务器状态。
+            ^mcserver look [Name]: 查询名称为 [Name] 的服务器的状态。
+            ^mcserver add [Name] ipaddress=[IP]:[port]: 添加一个名字为 [Name]，IP 为 [IP]:[Port] 的 MC 服务器。
+
     修复了 AddFriend 无作用的 Bug。
 
                                                             -- Bot Developer: BlueLighting
