@@ -162,7 +162,7 @@ class User:
         """
         # load
         itemJson: list[dict] = json.load(open("./data/item.json", "r", encoding="utf-8"))
-        
+            
         itemEffect = ""
         # fetch
         for _item in itemJson:
@@ -170,10 +170,10 @@ class User:
                 itemEffect = _item.get("Effect")
                 break
         
-        if itemEffect == "":
-            return "Not found"
+        if item == "iai" or item == "棍母" or item == "滚木":
+            itemEffect = ["spe "+item]
         
-        _info(f"物品：{item} 的效果：" + itemEffect [0]) #type: ignore
+        #_info(f"物品：{item} 的效果：" + itemEffect [0]) #type: ignore
         
         # interpret
         """
@@ -183,6 +183,17 @@ class User:
         
         if item not in self.boughtItems:
             return "你没有该物品。"
+        
+        if itemEffect == "":
+            _rv = random.randint(1, 10)
+            if _rv > 5:
+                return "我们在瞎搞"
+            elif _rv > 7:
+                return "窝们在瞎搞"
+            elif _rv > 9:
+                return "窝们载瞎镐"
+            else:
+                return "求 iai 继续更新日期"
         
         if "sign" in itemEffect [0]: #type: ignore
             _info(f"SIGN MODE")
@@ -231,7 +242,13 @@ class User:
                     self.boughtItems.remove("play")
                     self.save()
                 return "已关闭娱乐模式。"
-        
+        elif "spe" in itemEffect [0]:#type: ignore
+            if "iai" in itemEffect [0]:#type: ignore
+                return "芝士 ARG 作者"
+            elif "棍母" or "滚木" in itemEffect [0]:#type: ignore
+                return "？请不要使用空白物品谢谢"
+            else:
+                return "???"
         else:
             return "很抱歉。内部出现错误。"
         
@@ -1338,3 +1355,16 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     open("./data/redpackets.json", "w", encoding="utf-8").write(json.dumps(redpackets, ensure_ascii=False, indent=4))
     
     await openredpacket_function.finish(msg)
+    
+# esu 功能
+fuck_eventer = on_command("fuck")
+
+@fuck_eventer.handle()
+async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+    # use api
+    try:
+        await bot.call_api("send_private_msg", user_id=event.user_id, message="You ****ed " + args.extract_plain_text())
+    except ActionFailed:
+        await fuck_eventer.finish("彩蛋无法触发。若该群禁止了私聊请先加 Bot 好友。")
+    else:
+        await fuck_eventer.finish("彩蛋触发。请查看私聊。")
