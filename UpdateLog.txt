@@ -22,3 +22,10 @@
 
                                                             -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!
+
+2025 / 9 / 13 - 目前更新日志：
+
+    修复了 AddFriend 无作用的 Bug。
+
+                                                            -- Bot Developer: BlueLighting
+                                                            SEE YOU NEXT UPDATE!

@@ -21,3 +21,10 @@
 
                                                             -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!
+
+2025 / 9 / 13 - Now Update Log:
+
+    Fixed bug of addfriend skill can't be call.
+
+                                                            -- Bot Developer: BlueLighting
+                                                            SEE YOU NEXT UPDATE!

@@ -69,7 +69,7 @@ async def goodbye(bot: Bot, event: GroupDecreaseNoticeEvent, state: T_State):
 
 # auto agree friend adding
 
-friend_add = on_metaevent()
+friend_add = on_request()
 
 @friend_add.handle()
 async def addfriend(bot: Bot, event: FriendRequestEvent, state: T_State):
