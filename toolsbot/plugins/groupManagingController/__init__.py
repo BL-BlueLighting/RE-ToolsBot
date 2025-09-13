@@ -10,7 +10,7 @@ from time import sleep as wait
 from random import uniform as wrd
 import os
 from nonebot.typing import *
-import dauCtl as dc
+import toolsbot.plugins.userInfoController as dc
 import logging, re
 
 logging.basicConfig(
@@ -67,7 +67,7 @@ goodbye_event = on_notice()
 @goodbye_event.handle()
 async def goodbye(bot: nonebot.adapters.onebot.v11.Bot, event: GroupDecreaseNoticeEvent, state: T_State):
     user = event.get_user_id()
-    await goodbye_event.finish(replacing(config ["GoodbyeMessage"], user))
+    await goodbye_event.finish(replacing(config ["EscapeMessage"], user))
 
 # auto agree friend adding
 
@@ -122,7 +122,7 @@ def At(data: str):
     
 # mutesb
 
-mutesb = on_command("mute", permission=SUPERUSER)
+mutesb = on_command("mute", permission=SUPERUSER, aliases={"shutup"})
 
 @mutesb.handle()
 async def mutesb_command(bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent, args: Message = CommandArg()):
