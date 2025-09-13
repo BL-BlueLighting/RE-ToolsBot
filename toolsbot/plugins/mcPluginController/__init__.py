@@ -52,13 +52,15 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         server = {}
         
         for _server in servers:
-            if _server.get("Name") == target.replace("look", ""):
+            print(_server.get("Name"))
+            print("\n"+target.replace("look ", ""))
+            if _server.get("Name") == target.replace("look ", ""):
                 server = _server
         
         if server == {}:
             msg = (
                 f"RE: ToolsBot Minecraft Plugin\n"
-                f"    - 🌍 服务器：{target.replace('look', '')} (Undefined)"
+                f"    - 🌍 服务器：{target.replace('look ', '')} (Undefined)\n"
                 f"    - 未找到该服务器的任何信息。"
             )
             await mc_status.finish(msg)
@@ -68,7 +70,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         if host == "" and port == 0:
             msg = (
                 f"RE: ToolsBot Minecraft Plugin\n"
-                f"    - 🌍 服务器：{target.replace('look', '')} ({host}, {port})"
+                f"    - 🌍 服务器：{target.replace('look ', '')} ({host}, {port})\n"
                 f"    - 很抱歉，配置错误导致该服务器无法被查询。"
             )
             await mc_status.finish(msg)
@@ -84,7 +86,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
 
             msg = (
                 f"RE: ToolsBot Minecraft Plugin\n"
-                f"    - 🌍 服务器：{target.replace('look', '')} ({host}:{port})\n"
+                f"    - 🌍 服务器：{target.replace('look ', '')} ({host}:{port})\n"
                 f"    - 📋 MOTD：\n    {motd}\n"
                 f"    - 👥 在线人数：{online}/{maxp}\n"
                 f"    - 📡 延迟：{latency} ms"
