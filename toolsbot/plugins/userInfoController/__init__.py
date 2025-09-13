@@ -947,6 +947,8 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
             user.echoWarningd()
             await echo_eventer.finish(f"{TITLE} ECHO\n    - 键政大师！滚！")
 
+    if _msg == "棍母" or _msg == "棍母" or _msg == "██":
+        await echo_eventer.finish("  ")
     # 如果用户未被封禁且提供了文本，则原样返回
     await echo_eventer.finish(_msg)
     
