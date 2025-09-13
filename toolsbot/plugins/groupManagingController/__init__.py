@@ -3,6 +3,7 @@ from nonebot.adapters import Message
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import *
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
+import nonebot.adapters.onebot.v11
 from nonebot.permission import SUPERUSER
 import nonebot,random,json,requests
 from time import sleep as wait
@@ -25,6 +26,7 @@ _warn = logging.warning
 _erro = logging.error
 _crit = logging.critical
 
+# nonebot.adapters.onebot.v11.Bot
 
 config = json.load(open("./data/configuration.json", "r", encoding="utf-8"))
 """
@@ -53,7 +55,7 @@ async def msg_reply(event: GroupMessageEvent) -> Union[int, None]:
 welcomejoin_event = on_notice()
 
 @welcomejoin_event.handle()
-async def welcome(bot: Bot, event: GroupIncreaseNoticeEvent, state: T_State):
+async def welcome(bot: nonebot.adapters.onebot.v11.Bot, event: GroupIncreaseNoticeEvent, state: T_State):
     user = event.get_user_id()
     # if new user join, auto make a new archive.
     dc.User(user, score=50) # present 50 scores.
@@ -63,7 +65,7 @@ async def welcome(bot: Bot, event: GroupIncreaseNoticeEvent, state: T_State):
 goodbye_event = on_notice()
 
 @goodbye_event.handle()
-async def goodbye(bot: Bot, event: GroupDecreaseNoticeEvent, state: T_State):
+async def goodbye(bot: nonebot.adapters.onebot.v11.Bot, event: GroupDecreaseNoticeEvent, state: T_State):
     user = event.get_user_id()
     await goodbye_event.finish(replacing(config ["GoodbyeMessage"], user))
 
@@ -72,13 +74,13 @@ async def goodbye(bot: Bot, event: GroupDecreaseNoticeEvent, state: T_State):
 friend_add = on_request()
 
 @friend_add.handle()
-async def addfriend(bot: Bot, event: FriendRequestEvent, state: T_State):
+async def addfriend(bot: nonebot.adapters.onebot.v11.Bot, event: FriendRequestEvent, state: T_State):
     await event.approve(bot) # auto approve, f**king nonebot type comments #type: ignore
     
 undo_message = on_command("undo", permission=SUPERUSER, priority=5)
 
 @undo_message.handle()
-async def undo_msg(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+async def undo_msg(bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     # get reply id
     reply_id = await msg_reply(event)
     
@@ -123,7 +125,7 @@ def At(data: str):
 mutesb = on_command("mute", permission=SUPERUSER)
 
 @mutesb.handle()
-async def mutesb_command(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+async def mutesb_command(bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     sblist = At(event.json())
     SECOND = 60
     
@@ -146,7 +148,7 @@ async def mutesb_command(bot: Bot, event: GroupMessageEvent, args: Message = Com
 unmute = on_command("unmute", permission=SUPERUSER)
 
 @unmute.handle()
-async def unmute_command(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+async def unmute_command(bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     sblist = At(event.json())
     
     arg = args.extract_plain_text()
@@ -161,7 +163,7 @@ async def unmute_command(bot: Bot, event: GroupMessageEvent, args: Message = Com
 call_api_command = on_command("call_api", permission=SUPERUSER)
 
 @call_api_command.handle()
-async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+async def _ (bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     # get api name and params
     __argstr = args.extract_plain_text()
     
