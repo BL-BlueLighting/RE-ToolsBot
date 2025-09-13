@@ -24,6 +24,10 @@
 
 2025 / 9 / 13 - Now Update Log:
 
+    Added skills under:
+        ^mcserver [???]: See ^help.
+        ^essence: Set a message to essence. (Need reply a message.)
+
     Fixed bug of addfriend skill can't be call.
 
                                                             -- Bot Developer: BlueLighting

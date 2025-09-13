@@ -30,6 +30,7 @@
             ^mcserver query [IP]:[Port]: 查询该 MC 服务器状态。
             ^mcserver look [Name]: 查询名称为 [Name] 的服务器的状态。
             ^mcserver add [Name] ipaddress=[IP]:[port]: 添加一个名字为 [Name]，IP 为 [IP]:[Port] 的 MC 服务器。
+        ^essence: 设置消息为精华。
 
     修复了 AddFriend 无作用的 Bug。
 

@@ -60,6 +60,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     ^mute ^unmute [ats] minute=[分钟]: 禁言（请把 minute 放在最后面，unmute 不需要 minute）
     ^undo [回复一条消息]: 撤回消息
     ^call_api [API 名] [params]=[value]: 使用 OneBot V11 API。
+    ^essence: 设置精华消息（需回复该条消息）
     
 METAEvent & Notice：
     Welcome: 新人入群欢迎，赠送 50 积分
@@ -97,3 +98,26 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
 @pong_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     await check_function.finish("ping")
+
+
+"""
+^essence 函数
+设置精华消息
+
+@author: Latingtude
+"""
+set_essence = on_command("essence", priority=5, permission=SUPERUSER)
+
+@set_essence.handle()
+async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+    if event.reply:
+        msg_id = event.reply.message_id
+    else:
+        await set_essence.finish("RE: ToolsBot Essence Set\n    - 请回复一条消息来设为精华")
+
+    try:
+        await bot.call_api("set_essence_msg", message_id=msg_id)
+    except Exception as e:
+        await set_essence.finish(f"RE: ToolsBot Essence Set\n    - 设置精华失败：{e}")
+    else:
+        await set_essence.finish("RE: ToolsBot Essence Set\n    - 已成功将该消息设为精华 ✨")
