@@ -644,7 +644,7 @@ ai_eventer = on_command("ai", aliases={"人工智能"}, priority=10)
 @ai_eventer.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Message = CommandArg()):
     # API Key, 硅基流动
-    api_key = json.loads(open("./data/configuration.json", "r").read()).get("AI-ApiKEY", "")
+    api_key = json.loads(open("./data/configuration.json", "r", encoding="utf-8").read()).get("AI-ApiKEY", "")
     
     user = User(event.get_user_id())
     
