@@ -51,7 +51,7 @@ scopes 函数
 @author: Latingtude
 """
 
-query_function = on_command("finaleScopeAll", aliases={""}, priority=10)
+query_function = on_command("finaleScope", aliases={""}, priority=10)
 
 @query_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
@@ -61,7 +61,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     
     # query data
     
-    scope: manager.finaleScope = runner.run("doors.finalescope_data")
+    scope = runner.run("doors.finalescope_data")
     
     if scope == None:
         msg += "    - FiNALE SCOPE 没有 Doors 的数据文件。\n    - 请询问 Bot 主，向 2733392694 索取文件。"
@@ -70,7 +70,15 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     msg += "    - 目前 FiNALE SCOPE 有 " + str(len(scope.doors)) + " 个门。\n"
     
     # get unlocked doors
-    open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
+    try:
+        open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
+    except FileNotFoundError:
+        # create new file from template
+        template = open("./userdata/finaleScope/template.finaleScope_data", "r", encoding="utf-8").read()
+        with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as f:
+            f.write(template)
+            _info("Create new finaleScope data file for user " + user.id)
+            
     config = configparser.ConfigParser()
     config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
                 encoding="utf-8")
@@ -105,13 +113,21 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     _msg = args.extract_plain_text()
     
     # query data
-    scope: manager.finaleScope = runner.run("doors.finalescope_data")
+    scope = runner.run("doors.finalescope_data")
     if scope == None:
         msg += "    - FiNALE SCOPE 没有 Doors 的数据文件。\n    - 请询问 Bot 主，向 2733392694 索取文件。"
         await unlock_next_function.finish(msg)
     
     # get unlocked doors
-    open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
+    try:
+        open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
+    except FileNotFoundError:
+        # create new file from template
+        template = open("./userdata/finaleScope/template.finaleScope_data", "r", encoding="utf-8").read()
+        with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as f:
+            f.write(template)
+            _info("Create new finaleScope data file for user " + user.id)
+            
     config = configparser.ConfigParser()
     config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
                 encoding="utf-8")

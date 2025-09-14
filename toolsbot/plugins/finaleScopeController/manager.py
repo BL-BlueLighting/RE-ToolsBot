@@ -47,7 +47,7 @@ class Door:
         return True
     
     
-class finaleScope:
+class FinaleScope:
     def __init__(self):
         self.doors = []
         

@@ -62,6 +62,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     ^call_api [API 名] [params]=[value]: 使用 OneBot V11 API。
     ^essence: 设置精华消息（需回复该条消息）
     
+FiNALE SCOPE - 终末之盒:
+    ^finaleScope: 查询目前所有的门数量和你已经解锁的门。
+    ^finaleScopeNext: 解锁下一个你可以解锁的门。
+
 METAEvent & Notice：
     Welcome: 新人入群欢迎，赠送 50 积分
     Escape: 人员离开消息
