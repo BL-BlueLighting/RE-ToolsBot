@@ -33,9 +33,9 @@ def is_unmatched_command(msg: Message) -> bool:
     # 消息以 COMMAND_START 开头，并且不为空（避免只有 `/`）
     return bool(text) and any(text.startswith(s) for s in command_starts)
 
-fallback = on_message(priority=99999999999, block=True)
+#fallback = on_message(priority=1000000, block=True)
 
-@fallback.handle()
+#@fallback.handle()
 async def _(msg: Message = EventMessage(), matcher: Matcher = Matcher()):
     if is_unmatched_command(msg):
         await matcher.finish("未知指令，请检查输入是否正确。")
