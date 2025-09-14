@@ -318,10 +318,10 @@ async def _ (event: MessageEvent,args: Message = CommandArg()):
     # for finaleScope
 
     config = configparser.ConfigParser()
-    config.read("./userdata/finaleScope" + user.id + ".finalescope_data",
+    config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
                 encoding="utf-8")
-    if config.get("Scope", "LiangCai64Used") != "True":
-        config.set("Scope", "LiangCai64Used", "True")
+    if config.get("Status", "LiangCai64Used") != "True":
+        config.set("Status", "LiangCai64Used", "True")
         with open("./userdata/finaleScope" + user.id + ".finalescope_data", "w", encoding="utf-8") as configfile:
             config.write(configfile)
 

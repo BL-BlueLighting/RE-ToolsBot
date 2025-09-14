@@ -52,11 +52,11 @@ class Door:
             
             elif "lc64use" in condition:
                 # check
-                open("./userdata/userInfo/" + user.id + ".userInfo", "r", encoding="utf-8").read() # this is a ini
+                open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
                 config = configparser.ConfigParser()
-                config.read("./userdata/userInfo/" + user.id + ".userInfo",
+                config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
                             encoding="utf-8")
-                if config.get("Info", "LiangCai64Used") != "True":
+                if config.get("Status", "LiangCai64Used") != "True":
                     _condition_pass = False
                     return _condition_pass
             
