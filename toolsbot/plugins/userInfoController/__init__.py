@@ -1422,8 +1422,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         count = {}
         for item in items:
             if item == lastitem:
+                count[item] = count.get(item, 0) + 1
                 items.remove(item)
-                count[item] += 1
             lastitem = item
             
         for item in items:

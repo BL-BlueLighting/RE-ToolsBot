@@ -4,6 +4,9 @@ from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import *
 from nonebot.permission import SUPERUSER
 import nonebot,random,json,requests
+from nonebot.matcher import Matcher
+from nonebot.params import EventMessage
+from nonebot.adapters import Message
 from time import sleep as wait
 from random import uniform as wrd
 import os
@@ -19,6 +22,24 @@ mainController
 
 TITLE = "RE: ToolsBot"
 
+"""
+兜底函数
+"""
+# 获取配置里的 COMMAND_START，默认是 {'/', '!', '／', '！'}
+command_starts = get_driver().config.command_start
+
+def is_unmatched_command(msg: Message) -> bool:
+    text = msg.extract_plain_text().strip()
+    # 消息以 COMMAND_START 开头，并且不为空（避免只有 `/`）
+    return bool(text) and any(text.startswith(s) for s in command_starts)
+
+fallback = on_message(priority=99999999999, block=True)
+
+@fallback.handle()
+async def _(msg: Message = EventMessage(), matcher: Matcher = Matcher()):
+    if is_unmatched_command(msg):
+        await matcher.finish("未知指令，请检查输入是否正确。")
+        
 """
 Help 函数
 用于基本的介绍
