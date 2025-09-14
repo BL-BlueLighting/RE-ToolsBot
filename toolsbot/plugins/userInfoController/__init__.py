@@ -9,6 +9,7 @@ from random import uniform as wrd
 import os
 import datetime
 import logging, re
+from collections import Counter
 
 logging.basicConfig(
     filename='botlog.log',
@@ -1402,34 +1403,22 @@ bag 函数
 @author: Latingtude
 """
 
-bag_function = on_command("bag", aliases={""}, priority=10)
+bag_function = on_command("bag", aliases=set(), priority=10)
 
 @bag_function.handle()
-async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
-    msg = TITLE = " "
+async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     user = User(event.get_user_id())
-    _msg = args.extract_plain_text()
     
-    # direct show items
-    msg += f"\nRE: Toolsbot 背包"
-    msg += f"\n    - 目前你包里有："
+    msg = "\nRE: Toolsbot 背包"
+    msg += "\n    - 目前你包里有："
+
     items = user.boughtItems
-    if len(items) == 0:
+    if not items:
         msg += "\n    - 你包里是空的。"
     else:
-        # precontrol
-        lastitem = ""
-        count = {}
-        for item in items:
-            if item == lastitem:
-                count[item] = count.get(item, 0) + 1
-                items.remove(item)
-            lastitem = item
-            
-        for item in items:
-            if item in count.keys():
-                msg += f"\n    - {item} x{count[item]+1}"
-            else:
-                msg += f"\n    - {item}"
-    
+        # 用 Counter 统计每个物品数量
+        count = Counter(items)
+        for item, num in count.items():
+            msg += f"\n    - {item}" + (f" x{num}" if num > 1 else "")
+
     await bag_function.finish(msg)
