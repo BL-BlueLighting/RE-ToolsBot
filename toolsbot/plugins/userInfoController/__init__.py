@@ -1417,7 +1417,19 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     if len(items) == 0:
         msg += "\n    - 你包里是空的。"
     else:
+        # precontrol
+        lastitem = ""
+        count = {}
         for item in items:
-            msg += f"\n    - {item}"
+            if item == lastitem:
+                items.remove(item)
+                count[item] += 1
+            lastitem = item
+            
+        for item in items:
+            if item in count.keys():
+                msg += f"\n    - {item} x{count[item]+1}"
+            else:
+                msg += f"\n    - {item}"
     
     await bag_function.finish(msg)
