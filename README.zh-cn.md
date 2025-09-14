@@ -52,3 +52,11 @@ nb create
 > 感谢以下项目，我参考了以下项目的部分代码。
 
 <a href="https://github.com/yzyyz1387/nonebot_plugin_admin/">NoneBot Plugin Admin</a>
+
+## 警告
+
+> [!Warning]
+>
+> 该项目目前并不稳定。请不要直接克隆该项目，我没办法做到自检查代码的每一处角落。
+>
+> 如果你发现了任何问题，请在 `Github Issues` 中发表一个 Issue。

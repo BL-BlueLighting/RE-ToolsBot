@@ -51,3 +51,14 @@ Go https://github.com/NapNeko/NapCatQQ.
 > Thanks for project under. I using some code from them.
 
 <a href="https://github.com/yzyyz1387/nonebot_plugin_admin/">NoneBot Plugin Admin</a>
+
+## Tips
+> [!Warning]
+>
+> This project is **not** stable.
+> 
+> Please don't direct clone this repo.
+>
+> I can't do check my code anytime.
+>
+> If you found a issue, please make a issue context in `Github Issues` !

@@ -23,7 +23,7 @@
                                                             -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!
 
-2025 / 9 / 13 - 目前更新日志：
+2025 / 9 / 13 - 更新日志：
 
     添加了如下功能：
         ^mcserver [query/look/add]:
@@ -33,6 +33,13 @@
         ^essence: 设置消息为精华。
 
     修复了 AddFriend 无作用的 Bug。
+
+                                                            -- Bot Developer: BlueLighting
+                                                            SEE YOU NEXT UPDATE!
+
+2025 / 9 / 14 - 目前更新日志:
+
+    修复了 ^mcserver 的 query 和 add 的 bug.
 
                                                             -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!

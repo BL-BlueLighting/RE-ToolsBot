@@ -22,7 +22,7 @@
                                                             -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!
 
-2025 / 9 / 13 - Now Update Log:
+2025 / 9 / 13 - Update Log:
 
     Added skills under:
         ^mcserver [???]: See ^help.
@@ -31,4 +31,11 @@
     Fixed bug of addfriend skill can't be call.
 
                                                             -- Bot Developer: BlueLighting
+                                                            SEE YOU NEXT UPDATE!
+
+2025 / 9 / 14 - Now update log:
+
+    Fixed bug of ^mcserver query and add.
+
+                                                           -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!

@@ -20,7 +20,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
 
     _args = args.extract_plain_text().split(" ")
     if _args [0] == "query":
-        target = target.replace("query", "") # 替换 query 参数为棍母
+        target = target.replace("query ", "") # 替换 query 参数为棍母
         # 分离地址和端口（默认 25565）
         if ":" in target:
             host, port = target.split(":", 1)
@@ -52,8 +52,8 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         server = {}
         
         for _server in servers:
-            print(_server.get("Name"))
-            print("\n"+target.replace("look ", ""))
+            print("Name:" + _server.get("Name"))
+            print("Looking Name:" + " " +target.replace("look ", ""))
             if _server.get("Name") == target.replace("look ", ""):
                 server = _server
         
@@ -97,6 +97,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     elif _args [0] == "add":
         # split name and address
         _name, _address = target.split("ipaddress=")
+        _name = _name.replace("add ", "")
         
         _l_address = _address.split(":")
         
@@ -129,7 +130,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
                 f"RE: ToolsBot Minecraft Plugin\n"
                 f"    - 无法添加，原因：服务器无法联通或端口不正确\\封禁 Bot IP"
             )
-        await mc_status.finish(msg)
+            await mc_status.finish(msg)
         
         # make configuration file
         _config = {
