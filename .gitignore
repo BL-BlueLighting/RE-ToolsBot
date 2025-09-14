@@ -156,3 +156,5 @@ finaleScopeInformation.txt
 *.finalescope_data
 *.finalescope_update
 *.finalescope_task
+finaleScope/
+finaleScope/*
