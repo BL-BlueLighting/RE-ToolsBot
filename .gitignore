@@ -149,3 +149,10 @@ configuration.json
 
 GitPusher.py
 GitPush.bat
+
+# FiNALE Scope Ignore
+finaleScopeInformation.txt
+*.fs_data
+*.finalescope_data
+*.finalescope_update
+*.finalescope_task
