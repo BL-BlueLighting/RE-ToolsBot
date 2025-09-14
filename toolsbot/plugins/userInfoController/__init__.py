@@ -1389,7 +1389,35 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     
     user.name = _msg
     
-    msg += "    - 名称修改完毕。你现在的新名称为：" + user.name + "。"
+    msg += "\n    - 名称修改完毕。你现在的新名称为：" + user.name + "。"
     
+    
+    user.save()
     await modifyname_function.finish(msg)
+
+"""
+bag 函数
+
+查看目前包里都有啥
+@author: Latingtude
+"""
+
+bag_function = on_command("bag", aliases={""}, priority=10)
+
+@bag_function.handle()
+async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+    msg = TITLE = " "
+    user = User(event.get_user_id())
+    _msg = args.extract_plain_text()
     
+    # direct show items
+    msg += f"\nRE: Toolsbot 背包"
+    msg += f"\n    - 目前你包里有："
+    items = user.boughtItems
+    if len(items) == 0:
+        msg += "\n    - 你包里是空的。"
+    else:
+        for item in items:
+            msg += f"\n    - {item}"
+    
+    await bag_function.finish(msg)
