@@ -44,6 +44,12 @@ class Door:
                 _condition_pass = True
                 break
             
+            elif "nameEqual" in condition:
+                condition = condition.replace("nameEqual ", "")
+                if user.name != condition:
+                    _condition_pass = False
+                    return _condition_pass
+            
         return True
     
     

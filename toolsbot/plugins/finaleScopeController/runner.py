@@ -5,7 +5,7 @@ def run(data: str):
     
     # add manage.py before file
     file = open("./data/finaleScope/" + data, "r", encoding="utf-8").read()
-    manageFile = "import toolsbot.plugins.finaleScopeController.manager as manager\n"
+    manageFile = open("./toolsbot/plugins/finaleScopeController/manager.py", "r", encoding="utf-8").read() + "\n\n"
     file = manageFile + file
     
     # exec

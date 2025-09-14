@@ -91,9 +91,15 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     if len(unlockedDoors) == 0:
         msg += "    - 你目前还没有解锁任何门。\n"
     else:
-        msg += "    - 你目前解锁了 " + str(len(unlockedDoors)) + " 个门，分别是：\n"
-        for doorName in unlockedDoors:
-            msg += "        - " + doorName + "\n"
+        if unlockedDoors [0] == '""' and len(unlockedDoors) == 1:
+            unlockedDoors = []
+            msg += "    - 你目前还没有解锁任何门。\n"
+        else:
+            if unlockedDoors [0].startswith('"') and unlockedDoors [0].endswith('"'):
+                del unlockedDoors[0]
+            msg += "    - 你目前解锁了 " + str(len(unlockedDoors)) + " 个门，分别是：\n"
+            for doorName in unlockedDoors:
+                msg += "        - " + doorName + "\n"
     
     await query_function.finish(msg) # 不给看其他的
     
@@ -158,7 +164,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as configfile:
             config.write(configfile)
         
-        msg += "    - 你解锁了" + nextDoor.name + " 门。\n"
+        msg += "    - 你解锁了 " + nextDoor.name + " 门。\n"
         msg += "    - 你获得了 " + str(nextDoor.reward) + " 点数。\n"
         
         user.addScore(nextDoor.reward)

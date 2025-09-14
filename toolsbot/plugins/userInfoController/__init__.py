@@ -1045,7 +1045,10 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
                 # 实例化用户对象并获取分数
                 user = User(user_id)
                 if not user.isBanned(): # 更好的做法是只展示未被封禁的用户
-                    user_scores[user.id] = user.getScore()
+                    if user.name != "":
+                        user_scores[user.name] = user.getScore()
+                    else:
+                        user_scores[user.id] = user.getScore()
             except Exception as e:
                 # 捕获可能的读取错误，比如文件损坏
                 print(f"Error reading user data for {user_id}: {e}")
@@ -1368,3 +1371,25 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         await fuck_eventer.finish("彩蛋无法触发。若该群禁止了私聊请先加 Bot 好友。")
     else:
         await fuck_eventer.finish("彩蛋触发。请查看私聊。")
+        
+"""
+modifyname 函数
+
+修改用户昵称
+@author: Latingtude
+"""
+
+modifyname_function = on_command("modifyname", aliases={""}, priority=10)
+
+@modifyname_function.handle()
+async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+    msg = TITLE + " Modify Name"
+    user = User(event.get_user_id())
+    _msg = args.extract_plain_text()
+    
+    user.name = _msg
+    
+    msg += "    - 名称修改完毕。你现在的新名称为：" + user.name + "。"
+    
+    await modifyname_function.finish(msg)
+    

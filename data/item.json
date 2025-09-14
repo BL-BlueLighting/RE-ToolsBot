@@ -47,5 +47,12 @@
             "playmode disable"
         ],
         "Cost": 0.0
+    },
+    {
+        "Name": "各种颜色 (Yellow, Red, Cyan, 直接 ^buy thing [颜色] 即可。)",
+        "Effect": [
+            "sign 1x"
+        ],
+        "Cost": 0.0
     }
 ]
