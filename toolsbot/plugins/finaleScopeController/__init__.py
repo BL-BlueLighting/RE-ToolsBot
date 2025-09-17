@@ -175,3 +175,21 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         msg += "    - 请自己探索或询问 Bot 主条件。\n"
         
         await unlock_next_function.finish(msg)
+        
+# message cracker
+asker = on_message(block = False)
+
+@asker.handle()
+async def _ (bot: Bot, event: PrivateMessageEvent, args: Message = CommandArg()):
+    text = args.extract_plain_text()
+    user = User(event.get_user_id())
+    
+    if text.lower() == "Hello, ToolsBot.".lower() or text.lower() == "Hello,ToolsBot.".lower():
+        
+        config = configparser.ConfigParser()
+        config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
+                    encoding="utf-8")
+        config.set("Scope", "asked", "HelloToolsBot")
+        with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as configfile:
+            config.write(configfile)
+        await asker.finish("Goodbye ToolsBot.\nPurpleDoor 现已解锁。")

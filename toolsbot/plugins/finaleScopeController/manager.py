@@ -59,6 +59,18 @@ class Door:
                 if config.get("Status", "LiangCai64Used") != "True":
                     _condition_pass = False
                     return _condition_pass
+                
+            elif "asked" in condition:
+                condition = condition.replace("asked ", "")
+                # check
+                open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
+                config = configparser.ConfigParser()
+                config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
+                            encoding="utf-8")
+                if not condition in config.get("Status", "asked"):
+                    _condition_pass = False
+                    return _condition_pass
+                
             
         return True
     
