@@ -42,11 +42,19 @@ async def welcome(bot: Bot, event: GroupIncreaseNoticeEvent, state: T_State):
         await welcom.finish(message=Message(f'{msg}'))
 """
 
-def replacing(string: str, qqNumber: str) -> str:
+def replacing(bot: nonebot.adapters.onebot.v11.Bot, string: str, qqNumber: str) -> str:
     # replacing string using qqNumber and CQ:at
     res = string
-    res.replace("[QQ]", qqNumber)
-    res.replace("[@]", f"[CQ:at,qq={qqNumber}]")
+    
+    res = res.replace("{at}", "[CQ:at,qq={}]".format(qqNumber))
+    # replacing "Name" using api
+    try:
+        user_info = bot.call_api("get_user_info", user_id=int(qqNumber))
+        res = res.replace("{Name}", user_info["name"])
+    except Exception as e:
+        _warn(f"Failed to get user info using qq number {qqNumber}. This is why:\n{e}")
+        res = res.replace("{Name}", "未知名称")
+    
     return res
 
 async def msg_reply(event: GroupMessageEvent) -> Union[int, None]:
@@ -57,17 +65,18 @@ welcomejoin_event = on_notice()
 @welcomejoin_event.handle()
 async def welcome(bot: nonebot.adapters.onebot.v11.Bot, event: GroupIncreaseNoticeEvent, state: T_State):
     user = event.get_user_id()
+    
     # if new user join, auto make a new archive.
     dc.User(user, score=50) # present 50 scores.
     
-    await welcomejoin_event.finish(replacing(config ["WelcomeMessage"], user))
+    await welcomejoin_event.finish(replacing(bot, config ["WelcomeMessage"], user))
 
 goodbye_event = on_notice()
 
 @goodbye_event.handle()
 async def goodbye(bot: nonebot.adapters.onebot.v11.Bot, event: GroupDecreaseNoticeEvent, state: T_State):
     user = event.get_user_id()
-    await goodbye_event.finish(replacing(config ["EscapeMessage"], user))
+    await goodbye_event.finish(replacing(bot, config ["EscapeMessage"], user))
 
 # auto agree friend adding
 

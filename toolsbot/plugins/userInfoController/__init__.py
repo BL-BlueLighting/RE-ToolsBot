@@ -1504,3 +1504,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             json.dump(bottles, f, ensure_ascii=False, indent=4)
             
         await browsingbottle_function.finish(msg)
+    else:
+        msg += "\n    - 使用 ^browsingbottle throw [内容] 来扔漂流瓶"
+        msg += "\n    - 使用 ^browsingbottle pick 来捡漂流瓶"
+        await browsingbottle_function.finish(msg)
