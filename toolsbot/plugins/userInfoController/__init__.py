@@ -1508,3 +1508,200 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         msg += "\n    - 使用 ^browsingbottle throw [内容] 来扔漂流瓶"
         msg += "\n    - 使用 ^browsingbottle pick 来捡漂流瓶"
         await browsingbottle_function.finish(msg)
+
+"""
+Voting 函数
+
+创建投票
+@author: Latingtude
+"""
+
+voting_function = on_command("voting")
+
+@voting_function.handle()
+async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+    msg = "RE: ToolsBot VOTING MODULE."
+    user = User(event.get_user_id())
+    _msg = args.extract_plain_text()
+    
+    # get args
+    _arg = _msg.split(" ")
+    
+    # get vote data
+    if os.path.exists("./data/voting.json"):
+        vote_data = json.load(open("./data/voting.json", "r", encoding="utf-8"))
+    else:
+        vote_data = []
+        
+    # cases
+    act = _arg[0]
+    other = _arg[1:]
+    
+    if act == "create":
+        # create vote, ^voting create [title] [type: kick, normal] [duration: minutes]
+        if len(other) < 3:
+            msg += "\n    - 使用 ^voting create [title] [type: kick, normal] [duration: minutes] 来创建投票。"
+            await voting_function.finish(msg)
+        
+        title = other[0]
+        vtype = other[1]
+        duration = other[2]
+        
+        if vtype not in ["kick", "normal"]:
+            msg += "\n    - 投票类型只能是 kick 或 normal。"
+            await voting_function.finish(msg)
+        
+        # check superuser, only superuser can create kick vote
+        if vtype == "kick" and event.get_user_id() not in nonebot.get_driver().config.superusers:
+            msg += "\n    - 只有超级用户可以创建踢人投票。"
+            await voting_function.finish(msg)
+        
+        if not duration.isdigit():
+            msg += "\n    - 投票时间必须是数字，单位为分钟。"
+            await voting_function.finish(msg)
+        
+        duration = int(duration)
+        
+        if duration >= 24 * 60 * 365:
+            msg += "\n    - 投票时间不能超过/等于 1 年。"
+            await voting_function.finish(msg)
+            
+        # make cfg
+        _cfg = {
+            "name": title,
+            "agree": 0,
+            "objection": 0,
+            "abstain": 0,
+            "status": "进行中",
+            "type": vtype,
+            "duration": duration,
+            "creator": user.id,
+            "begintime": str(datetime.datetime.now()),
+            "voters": []
+        }
+        
+        vote_data.append(_cfg)
+        
+        json.dump(vote_data, open("./data/voting.json", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+        # write in
+        msg += f"\n    - 已创建投票 {title}，类型 {vtype}，时长 {duration} 分钟。"
+        await voting_function.finish(msg)
+    
+    elif act == "list":
+        # list votes
+        if len(vote_data) == 0:
+            msg += "\n    - 目前没有任何投票。"
+            await voting_function.finish(msg)
+        
+        msg += "\n    - 目前的投票有："
+        for vote in vote_data:
+            msg += f"\n        - {vote['name']} (状态: {vote['status']}, 类型: {vote['type']}, 发起人: {vote['creator']})"
+        
+        await voting_function.finish(msg)
+    
+    elif act == "status":
+        # status of vote, ^voting status [title]
+        if len(other) < 1:
+            msg += "\n    - 使用 ^voting status [title] 来查看投票状态。"
+            await voting_function.finish(msg)
+        
+        title = other[0]
+        
+        # find vote
+        vote = None
+        for v in vote_data:
+            if v["name"] == title:
+                vote = v
+                break
+        
+        if vote == None:
+            msg += f"\n    - 未找到投票 {title}"
+            await voting_function.finish(msg)
+        
+        # show status
+        msg += f"\n    - 投票 {title} 的状态："
+        msg += f"\n        - 状态: {vote['status']}。"
+        msg += f"\n        - 类型: {vote['type']}。"
+        msg += f"\n        - 发起人: {vote['creator']}。"
+        msg += f"\n        - 赞成: {vote['agree']} 票。"
+        msg += f"\n        - 反对: {vote['objection']} 票。"
+        msg += f"\n        - 弃权: {vote['abstain']} 票。"
+        msg += f"\n        - 时长: {vote['duration']} 分钟。"
+        msg += f"\n        - 已投票人数: {len(vote['voters'])} 人。"
+        
+        await voting_function.finish(msg)
+    
+    elif act == "help":
+        msg += """
+使用 ^voting [参数] 来使用投票功能。
+参数：
+    create: 创建投票，使用 ^voting create [title] [type: kick, normal] [duration: minutes]
+    list: 列出所有投票
+    status: 查看投票状态，使用 ^voting status [title]
+    vote: 投票，使用 ^voting vote [title] [agree, objection, abstain]
+    help: 查看帮助
+投票类型：
+    kick: 踢人投票
+    normal: 普通投票
+注意事项：
+    1. 投票时间单位为分钟，不能超过/等于 1 年
+    2. 每人每个投票只能投一次
+    3. 投票结束后，kick 类型的投票如果赞成票多于反对票，则会自动踢出发起人指定的用户
+"""
+        await voting_function.finish(msg)
+    
+    elif act == "vote":
+        # vote, ^voting vote [title] [agree, objection, abstain]
+        if len(other) < 2:
+            msg += "\n    - 使用 ^voting vote [title] [agree, objection, abstain] 来投票。"
+            await voting_function.finish(msg)
+        
+        title = other[0]
+        choice = other[1]
+        
+        if choice not in ["agree", "objection", "abstain"]:
+            msg += "\n    - 投票选项只能是 agree, objection, abstain。"
+            await voting_function.finish(msg)
+        
+        # find vote
+        vote = None
+        for v in vote_data:
+            if v["name"] == title:
+                vote = v
+                break
+        
+        if vote == None:
+            msg += f"\n    - 未找到投票 {title}。"
+            await voting_function.finish(msg)
+        
+        if vote["status"] != "进行中":
+            msg += f"\n    - 投票 {title} 已结束，无法投票。"
+            await voting_function.finish(msg)
+        else:
+            # check duration:
+            if (datetime.datetime.now() - datetime.datetime.fromisoformat(vote["begintime"])).total_seconds() > vote["duration"] * 60:
+                vote["status"] = "已结束"
+                json.dump(vote_data, open("./data/voting.json", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+                msg += f"\n    - 投票 {title} 已结束，无法投票。"
+                await voting_function.finish(msg)
+        
+        if user.id in vote["voters"]:
+            msg += f"\n    - 你已在投票 {title} 中投过票，无法重复投票。"
+            await voting_function.finish(msg)
+        
+        # cast vote
+        if choice == "agree":
+            vote["agree"] += 1
+        elif choice == "objection":
+            vote["objection"] += 1
+        elif choice == "abstain":
+            vote["abstain"] += 1
+        
+        vote["voters"].append({user.id: choice})
+        
+        json.dump(vote_data, open("./data/voting.json", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+        
+        msg += f"\n    - 你已在投票 {title} 中投下 {choice} 一票。"
+        await voting_function.finish(msg)
+    else:
+        msg += "    - 使用 ^voting help 来查看帮助。"

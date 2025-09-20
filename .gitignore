@@ -158,3 +158,5 @@ finaleScopeInformation.txt
 *.finalescope_task
 finaleScope/
 finaleScope/*
+
+voting.json

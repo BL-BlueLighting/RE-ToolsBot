@@ -11,7 +11,7 @@ from random import uniform as wrd
 import os
 from nonebot.typing import *
 import toolsbot.plugins.userInfoController as dc
-import logging, re
+import logging, re, datetime
 
 logging.basicConfig(
     filename='botlog.log',
@@ -195,3 +195,11 @@ async def _ (bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent | Pr
     # finish
     await call_api_command.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 已执行该 OneBot V11 api。请检查控制台。")
     
+# test admin permission
+test_admin = on_command("testadmin", permission=SUPERUSER)
+
+@test_admin.handle()
+async def _ (bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+    # direct run onebot api
+    admin_list = await bot.call_api("get_group_member_info", group_id=event.group_id, user_id=bot.self_id)
+    await test_admin.finish(f"RE: ToolsBot GROUP MANAGING MODULE\n    - 该 Bot 在本群的权限是 {admin_list['role']}。")

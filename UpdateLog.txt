@@ -37,9 +37,17 @@
                                                             -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!
 
-2025 / 9 / 14 - 目前更新日志:
+2025 / 9 / 14 - 更新日志:
 
     修复了 ^mcserver 的 query 和 add 的 bug.
 
                                                             -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!
+
+2025 / 9 / 20 - 更新日志：
+
+    添加了 ^browsingbottle 功能。
+    添加了 ^voting 功能。
+
+                                                            -- Bot Developer: BlueLighting
+                                                            SEE YOU NEXT UPDATE!   

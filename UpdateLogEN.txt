@@ -33,9 +33,18 @@
                                                             -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!
 
-2025 / 9 / 14 - Now update log:
+2025 / 9 / 14 - Update log:
 
     Fixed bug of ^mcserver query and add.
 
                                                            -- Bot Developer: BlueLighting
+                                                            SEE YOU NEXT UPDATE!
+
+2025 / 9 / 20 - Update log:
+
+    Added skills under:
+        ^voting: Voting System.
+        ^browsingbottle: Let's throw a browsingbottle on the sea.
+
+                                                            -- Bot Developer: BlueLighting
                                                             SEE YOU NEXT UPDATE!

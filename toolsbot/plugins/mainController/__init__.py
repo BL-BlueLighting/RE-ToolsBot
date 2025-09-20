@@ -78,6 +78,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     ^modifyname: 修改用户昵称（好像这玩意之前一直都没写）
     ^bag: 查看背包
     ^browsingbottle: 漂流瓶
+    ^voting: 投票 (create 功能 kick 投票仅超级用户可用。)
 
 超级用户可用：
     ^ban pardon: 封禁 解除封禁 （仅超级用户）
