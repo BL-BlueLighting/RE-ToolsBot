@@ -1422,3 +1422,85 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
             msg += f"\n    - {item}" + (f" x{num}" if num > 1 else "")
 
     await bag_function.finish(msg)
+    
+"""
+browsingbottle 函数
+漂流瓶
+
+@author: Latingtude
+"""
+
+browsingbottle_function = on_command("browsingbottle", aliases={""}, priority=10)
+
+@browsingbottle_function.handle()
+async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+    msg = TITLE + " 漂流瓶 BROWSING BOTTLE"
+    user = User(event.get_user_id())
+    _msg = args.extract_plain_text()
+    
+    _arg = _msg.split(" ")[0]
+    if len(msg.split(" ")) != 1:
+        _content = _msg.split(" ")[1:]
+    
+    if _arg == "throw":
+        if len(_content) == 0:
+            msg += "\n    - 使用 ^browsingbottle throw [内容] 来扔漂流瓶"
+            await browsingbottle_function.finish(msg)
+        
+        content = " ".join(_content)
+        
+        # open data
+        bottle_data_path = "./data/bottles.json"
+        
+        if os.path.exists(bottle_data_path):
+            try:
+                with open(bottle_data_path, "r", encoding="utf-8") as f:
+                    bottles = json.load(f)
+            except json.JSONDecodeError:
+                print(f"Warning: {bottle_data_path} is corrupted. Starting with an empty bottle list.")
+                bottles = []
+        else:
+            bottles = []
+            
+        bottle = {
+            "UserID": user.id,
+            "Content": content
+        }
+        
+        bottles.append(bottle)
+        
+        with open(bottle_data_path, "w", encoding="utf-8") as f:
+            json.dump(bottles, f, ensure_ascii=False, indent=4)
+            
+        msg += "\n    - 你扔下了一个漂流瓶。"
+        await browsingbottle_function.finish(msg)
+    elif _arg == "pick":
+        # open data
+        bottle_data_path = "./data/bottles.json"
+        
+        if os.path.exists(bottle_data_path):
+            try:
+                with open(bottle_data_path, "r", encoding="utf-8") as f:
+                    bottles = json.load(f)
+            except json.JSONDecodeError:
+                print(f"Warning: {bottle_data_path} is corrupted. Starting with an empty bottle list.")
+                bottles = []
+        else:
+            bottles = []
+            
+        if len(bottles) == 0:
+            msg += "\n    - 目前没有漂流瓶。"
+            await browsingbottle_function.finish(msg)
+        
+        selected_index = random.randint(0, len(bottles) - 1)
+        selected_bottle = bottles[selected_index]
+        
+        msg += f"\n    - 你捡到了一个漂流瓶，内容是：\n    {selected_bottle['Content']}"
+        
+        # remove
+        del bottles[selected_index]
+        
+        with open(bottle_data_path, "w", encoding="utf-8") as f:
+            json.dump(bottles, f, ensure_ascii=False, indent=4)
+            
+        await browsingbottle_function.finish(msg)
