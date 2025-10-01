@@ -85,6 +85,7 @@ friend_add = on_request()
 @friend_add.handle()
 async def addfriend(bot: nonebot.adapters.onebot.v11.Bot, event: FriendRequestEvent, state: T_State):
     await event.approve(bot) # auto approve, f**king nonebot type comments #type: ignore
+    await friend_add.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 已通过您的请求。")
     
 undo_message = on_command("undo", permission=SUPERUSER, priority=5)
 

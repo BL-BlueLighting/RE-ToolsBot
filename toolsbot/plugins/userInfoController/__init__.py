@@ -1516,7 +1516,7 @@ Voting 函数
 @author: Latingtude
 """
 
-voting_function = on_command("voting")
+voting_function = on_command("voting", aliases={""}, priority=10)
 
 @voting_function.handle()
 async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
@@ -1682,6 +1682,21 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageE
             if (datetime.datetime.now() - datetime.datetime.fromisoformat(vote["begintime"])).total_seconds() > vote["duration"] * 60:
                 vote["status"] = "已结束"
                 json.dump(vote_data, open("./data/voting.json", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+                if vote["type"] == "kick":
+                    if vote["agree"] > vote["objection"]:
+                        # kick the creator
+                        target_user = User(vote["creator"])
+                        target_user.banned = True
+                        target_user.save()
+                        # check admin
+                        admin_list = await bot.call_api("get_group_member_info", group_id=event.group_id, user_id=bot.self_id)
+                        if admin_list ["role"] == "member":
+                            msg += f"\n    - 投票 {title} 已结束，结果为赞成票多于反对票，已自动封禁发起人 {vote['creator']}。"
+                        else:
+                            # direct call kick
+                            await bot.call_api("set_group_kick", group_id=event.group_id, user_id=vote["creator"])
+                    else:
+                        msg += f"\n    - 投票 {title} 已结束，结果为反对票多于或等于赞成票，未封禁发起人 {vote['creator']}。"
                 msg += f"\n    - 投票 {title} 已结束，无法投票。"
                 await voting_function.finish(msg)
         
@@ -1705,3 +1720,4 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageE
         await voting_function.finish(msg)
     else:
         msg += "    - 使用 ^voting help 来查看帮助。"
+        await voting_function.finish(msg)
