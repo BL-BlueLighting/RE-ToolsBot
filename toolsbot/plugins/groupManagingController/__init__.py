@@ -204,3 +204,37 @@ async def _ (bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent, arg
     # direct run onebot api
     admin_list = await bot.call_api("get_group_member_info", group_id=event.group_id, user_id=bot.self_id)
     await test_admin.finish(f"RE: ToolsBot GROUP MANAGING MODULE\n    - 该 Bot 在本群的权限是 {admin_list['role']}。")
+    
+"""
+棍母检测 函数
+
+Checking for otto mother.
+
+在 configuration.json 中设置 "openOttoMother": true 来开启
+@author: Latingtude
+"""
+
+# 棍母拼音对应的汉字集合
+GUNMU_CHARS = "棍滚丨木母牧姆慕墓暮募幕目沐穆拇"
+
+def replace_gunmu(text: str) -> str:
+    # 匹配所有拼音为 gun 或 mu 的常见汉字
+    pattern = f"[{GUNMU_CHARS}]"
+    return re.sub(pattern, "█", text)
+
+gunmu_checking_option = json.loads(open("./data/configuration.json", "r", encoding="utf-8").read()).get("openOttoMother", False)
+_info(json.loads(open("./data/configuration.json", "r", encoding="utf-8").read()))
+_info(gunmu_checking_option)
+otto_mother = on_message(priority=1)
+
+@otto_mother.handle()
+async def _ (bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent):
+    if not gunmu_checking_option:
+        plain = event.message.extract_plain_text()
+        _info(plain)
+        if re.search(f"[{GUNMU_CHARS}]", plain):
+            replaced = replace_gunmu(plain)
+            _info("otto trigged.")
+            await otto_mother.send(f"？你怎么只发了 {replaced} 啊，把话说完啊？")
+        else:
+            _info("otto not trigged.")
