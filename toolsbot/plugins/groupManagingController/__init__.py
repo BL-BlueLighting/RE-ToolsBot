@@ -225,13 +225,15 @@ def replace_gunmu(text: str) -> str:
 gunmu_checking_option = json.loads(open("./data/configuration.json", "r", encoding="utf-8").read()).get("openOttoMother")
 _info(json.loads(open("./data/configuration.json", "r", encoding="utf-8").read()))
 _info(gunmu_checking_option)
-otto_mother = on_message(priority=1)
+"""
+otto_mother = on_message(priority=1, block=False)
 
 @otto_mother.handle()
 async def _ (bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent):
     #if not gunmu_checking_option:
     plain = event.message.extract_plain_text()
     _info(plain)
+    
     if re.search(f"[{GUNMU_CHARS}]", plain):
         replaced = replace_gunmu(plain)
         _info("otto trigged.")
@@ -241,5 +243,8 @@ async def _ (bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent):
             await otto_mother.send(f"？你怎么只发了 {replaced} 啊，把话说完啊？")
     else:
         _info("otto not trigged.")
+    
     #else:
     #    _info("otto not trigged because option is false.")
+
+"""
