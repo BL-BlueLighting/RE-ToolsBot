@@ -340,7 +340,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         rmsg += "\n    - G L O B A L . P . K . - 开场"
         
         if len(cargs) == 1:
-            cargs [1] = "" #给代码擦屁股
+            cargs.append("") #给代码擦屁股
         
         if cargs [1] == "with":
             qq = At(event.json()) [0]
@@ -500,7 +500,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     - 使用 ^lcgodmaker pk with @[XXX] 来和一个人发起 PK.
     - 使用 ^lcgodmaker pk status 来查看和另一个人发起的 PK 的相关信息。
     - 使用 ^lcgodmaker pk season 来查看赛季信息。"""
-        
+
+        await fns(rmsg)
             
         
     elif act == "best":
