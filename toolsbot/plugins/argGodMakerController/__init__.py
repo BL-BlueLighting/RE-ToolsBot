@@ -37,6 +37,7 @@ argGodMakerController
 """
 
 TITLE = "RE: ToolsBot"
+TIMEDATESTR = "%Y-%d-%m-%H-%M-%S"
 
 class GMUser:
     def __init__(self, userEntity: uic.User, status: str = "凉菜起"):
@@ -45,7 +46,7 @@ class GMUser:
         self.rating = 0
         self.level = 1
         self.pausing = False
-        self.beginPause = datetime.datetime(2025,1,11,11,11,11,11)
+        self.beginPause: datetime.datetime = None
         self.load()
     
     def load(self):
@@ -59,7 +60,7 @@ class GMUser:
         self.rating = int(data ["Rating"])
         self.level = int(data ["Level"])
         self.pausing = bool(data ["Pausing"])
-        self.beginPause = datetime.datetime.strptime(data ["BeginPause"], "%d%m%Y%H%M%S")
+        self.beginPause = datetime.datetime.strptime(data.get("BeginPause", "2025-01-01-01-01-01"), TIMEDATESTR)
         return
     
     def initData(self):
@@ -69,7 +70,7 @@ class GMUser:
             "Rating": self.rating,
             "Level": self.level,
             "Pausing": False,
-            "BeginPause": datetime.datetime(2025,1,11,11,11,11,11).strftime("%d%m%Y%H%M%S")
+            "BeginPause": "2025-01-11-01-01-01"
         }
         
         open("./data/godmaker/"+self.user.id+".gmdata", "w", encoding="utf-8").write(json.dumps(data))
@@ -81,7 +82,8 @@ class GMUser:
             "Status": self.status,
             "Rating": self.rating,
             "Level": self.level,
-            "Pausing": False
+            "Pausing": self.pausing,
+            "BeginPause": datetime.datetime.now().strftime(TIMEDATESTR)
         }
         
         open("./data/godmaker/"+self.user.id+".gmdata", "w", encoding="utf-8").write(json.dumps(data))
@@ -269,7 +271,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     fns = _fc.finish
     
     if act == "list" or act == "":
-        await fns("""RE: ToolsBot - ARG 修仙系统
+        await fns(f"""RE: ToolsBot - ARG 修仙系统
     欢迎来到 ARG 修仙系统！
     本命令支持的操作如下：
         - list: 显示操作列表
@@ -277,14 +279,20 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         - info: 显示修仙信息，如段位。
         - pk: 和他人 pk。
         - best: 排行榜。
-        - break: 结束修仙。""")
+        - break: 结束修仙。
+    目前 ARG 修仙系统共有 {len(STATUSES)} 个段位。""")
         
     elif act == "begin":
-        gmUser.pause()
-        await fns(f"""RE: ToolsBot - ARG 修仙系统
-    - 您当前段位：{gmUser.getStatus()};
-    - 正在尝试晋升：{gmUser.status} {gmUser.level + 1} 层
-    - 请等待一分钟后再来 break，或者 break 掉来继续操作。""")
+        if gmUser.pausing == False:
+            gmUser.pause()
+            await fns(f"""RE: ToolsBot - ARG 修仙系统
+        - 您当前段位：{gmUser.getStatus()};
+        - 正在尝试晋升：{gmUser.status} {gmUser.level + 1} 层
+        - 请等待一分钟后再来 break，或者 break 掉来继续操作。""")
+        else:
+            await fns(f"""RE: ToolsBot - ARG 修仙系统
+        - 您正在试图晋升，请不要再次使用。
+        - 距离 break 时间：{str((datetime.datetime.now() - gmUser.beginPause).seconds - 60).replace("-", "")}""")
         
     elif act == "info":
         await fns(f"""RE: ToolsBot - ARG 修仙系统
@@ -293,7 +301,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     - RATING：{gmUser.rating}""")
     
     elif act == "break":
-        if cargs [1] == "sure":
+        
+        if len(cargs) == 2:
             gmUser.pausing = False
             gmUser.save()
             await fns(f"""RE: ToolsBot - ARG 修仙系统
@@ -305,7 +314,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
                 # checking level, 5 to up status.
                 if gmUser.level < 5:
                     gmUser.level += 1
-                    gmUser.rating += random.randint(1000, 999)
+                    gmUser.rating += random.randint(1000, 9999)
                     gmUser.save()
                     rmsg += "    - 您的等级已晋升。\n    - 目前等级：" + gmUser.getStatus()
                 else:
@@ -313,7 +322,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
                     if STATUSES.index(gmUser.status) == len(STATUSES) - 1:
                         rmsg += "    == PERFECT CHALLENGE ==\n    - 目前没有更新的段位。请等待 PERFECT CHALLENGE 第一赛季登场。"
                     else:
-                        gmUser.rating += random.randint(1000, 999)
+                        gmUser.rating += random.randint(1000, 9999)
                         gmUser.setStatus(STATUSES [STATUSES.index(gmUser.status) + 1])
                         rmsg += "    - 您的等级已晋升。\n    - 目前等级：" + gmUser.getStatus()
                     gmUser.save()
@@ -329,6 +338,9 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         rmsg += "\n    - 当前赛季：" + gmConfig.get("Status", "???") + ""
         rmsg += "\n    - 您的 Rating：" + str(gmUser.rating) + ""
         rmsg += "\n    - G L O B A L . P . K . - 开场"
+        
+        if len(cargs) == 1:
+            cargs [1] = "" #给代码擦屁股
         
         if cargs [1] == "with":
             qq = At(event.json()) [0]
@@ -356,7 +368,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             
             pkinfo = {
                 "Users": [gmUser.user.id, qq],
-                "StartTime": datetime.datetime.now().strftime("%d%m%Y%H%M%S"),
+                "StartTime": datetime.datetime.now().strftime(TIMEDATESTR),
                 "Redeem": random.randint(1000, 9999)
             }
             
@@ -375,7 +387,121 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             await fns(rmsg)
         
         elif cargs [1] == "status":
-            pass # 暂未开发完成
+            rmsg = "RE: ToolsBot - ARG 修仙 - P.K. 过程"
+            _pking = json.load(open("./data/gmPKing.json", "r", encoding="utf-8"))
+            pking = {}
+            pkusers = []
+            otherUserQQ = ""
+            pkStr = ""
+            
+            for pk in _pking:
+                pking.update({pk.split(":") [0]:pk.split(":") [1]})
+                pkusers.append(pk.split(":") [0])
+                pkusers.append(pk.split(":") [1])
+                if gmUser.user.id in pk:
+                    pkStr = pk
+                    otherUserQQ = pk.replace(f"{gmUser.user.id}", "")
+                    otherUserQQ = otherUserQQ.replace(":", "")
+
+            if not user.id in pkusers:
+                rmsg += "    - 没有参加 P.K，请参加一次 P.K 再来查看。"
+                await fns(rmsg)
+            
+            # get statuses
+            otherUser = GMUser(uic.User(otherUserQQ))
+            
+            rmsg += "\n您的段位：" + gmUser.getStatus()
+            rmsg += "\n对方段位：" + otherUser.getStatus()
+            
+            # pk
+            pkLevelBig = max(STATUSES.index(otherUser.status), STATUSES.index(gmUser.status))
+            pkLevelMin = min(STATUSES.index(otherUser.status), STATUSES.index(gmUser.status))
+            global bestBig, whoBest
+            bestBig = 0
+            whoBest = 0
+            
+            if pkLevelBig == pkLevelMin:
+                rmsg += "\n您和对方的段位持平。"
+                # 查询几级
+                if otherUser.level == gmUser.level:
+                    rmsg += "\n您和对方的层持平。"
+                    await fns(rmsg)
+                    
+                pkNLevelBig = max(otherUser.level, gmUser.level)
+                if pkNLevelBig == otherUser.level:
+                    rmsg += "\n对方比您高 " + str(otherUser.level - gmUser.level) + " 个层。"
+                    whoBest = 0
+                else:
+                    rmsg += "\n您比对方高 " + str(otherUser.level - gmUser.level) + " 个层。"
+                    whoBest = 1
+                
+            else:
+                if pkLevelBig == STATUSES.index(otherUser.status):
+                    bestBig = 1
+                
+                if bestBig:
+                    rmsg += "\n对方比您高 " + str(pkLevelBig - pkLevelMin) + " 个段位。"
+                    whoBest = bestBig
+                else:
+                    rmsg += "\n您比对方高 " + str(pkLevelBig - pkLevelMin) + " 个段位。"
+                    whoBest = bestBig
+            
+            # 检查是否超时
+            
+            _pki = json.load(open("./data/gmPKinfo.json", "r"))
+            users = pkStr.split(":")
+            pki = {}
+            
+            for __pki in _pki:
+                if __pki.get("Users") == users:
+                    pki = __pki
+                    
+            beginTime = datetime.datetime.strptime(pki.get("StartTime", ""), TIMEDATESTR)
+            if (datetime.datetime.now() - beginTime).seconds == 60 * 60:
+                rmsg += "\n    - 比赛时间到！"
+                if whoBest:
+                    rmsg += "\n    - " + gmUser.user.id + " 获胜！"
+                    redeem = random.randint(1000,9999)
+                    rmsg += "\n    - 获得 " + str(redeem) + " Rating & 积分!"
+                    gmUser.upRating(redeem)
+                    gmUser.save()
+                    gmUser.user.score += redeem
+                    gmUser.user.save()
+                else:
+                    rmsg += "\n    - " + otherUser.user.id + " 获胜！"
+                    redeem = random.randint(1000,9999)
+                    rmsg += "\n    - 获得 " + str(redeem) + " Rating & 积分!"
+                    otherUser.upRating(redeem)
+                    otherUser.save()
+                    otherUser.user.score += redeem
+                    otherUser.user.save()
+                
+                # 删除
+                del _pki [_pki.index(pki)]
+                json.dump(_pki, open("./data/gmPKinfo.json", "w"))
+
+            await fns(rmsg)
+        elif cargs [1] == "season":
+            rmsg = "RE: ToolsBot - ARG 修仙 GLOBAL.P.K - 赛季信息"
+            rmsg += "\n    - 当前赛季：" + gmConfig.get("Status", "???") + ""
+            rmsg += "\n    - 您的 Rating：" + str(gmUser.rating) + ""
+            rmsg += "\n    - G L O B A L . P . K . - 开场"
+            rmsg += "\n    - 目前正在进行的 PK："
+            _pking = json.load(open("./data/gmPKing.json", "r", encoding="utf-8"))
+            
+            for pk in _pking:
+                rmsg += f"\n        - {pk.split(":") [0]} 对战 {pk.split(":") [1]}"
+            
+            if _pking == []:
+                rmsg += f"\n        - 赛季未揭幕或没有一个人开始对战。"
+            
+        else:
+            rmsg = """RE: ToolsBot - ARG 修仙 GLOBAL.P.K.
+    - 使用 ^lcgodmaker pk with @[XXX] 来和一个人发起 PK.
+    - 使用 ^lcgodmaker pk status 来查看和另一个人发起的 PK 的相关信息。
+    - 使用 ^lcgodmaker pk season 来查看赛季信息。"""
+        
+            
         
     elif act == "best":
         rmsg = "RE: ToolsBot - ARG 修仙排行榜\n"
@@ -411,7 +537,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         
         # 格式化输出排行榜
         for rank, (user_name, score) in enumerate(sorted_scores, 1):
-            rmsg += f"    - 第 {rank} 名：{user_name}，积分：{score:.2f}\n"
+            rmsg += f"    - 第 {rank} 名：{user_name}，Rating：{score:.2f}\n"
 
         await fns(rmsg)
     
