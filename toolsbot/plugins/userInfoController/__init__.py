@@ -171,7 +171,7 @@ class User:
                 itemEffect = _item.get("Effect")
                 break
         
-        if item == "iai" or item == "棍母" or item == "滚木":
+        if item == "iai" or item == "棍母" or item == "滚木" or item == "BL.BlueLighting":
             itemEffect = ["spe "+item]
         
         #_info(f"物品：{item} 的效果：" + itemEffect [0]) #type: ignore
@@ -248,6 +248,8 @@ class User:
                 return "芝士 ARG 作者"
             elif "棍母" or "滚木" in itemEffect [0]:#type: ignore
                 return "？请不要使用空白物品谢谢"
+            elif "BL.BlueLighting" in itemEffect [0]:#type: ignore
+                return "芝士 Bot 主"
             else:
                 return "???"
         else:
@@ -503,7 +505,7 @@ setinfo 函数 (管理员专用)
 @author: Latingtude
 """
 
-setinfo_function = on_command("setinfo", aliases={""}, priority=10, permission=SUPERUSER)
+setinfo_function = on_command("setinfo", priority=10, permission=SUPERUSER)
 
 @setinfo_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
@@ -550,7 +552,7 @@ buy 函数
 @author: Latingtude
 """
 
-buy_function = on_command("buy", aliases={""}, priority=10)
+buy_function = on_command("buy", priority=10)
 
 @buy_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
@@ -799,7 +801,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             msg += f"\n    - 输入 *usecode [兑换码] 以兑换"
         else:
             msg += f"\nRE: Toolsbot 兑换码兑换"
-            present_code_dict = eval(open("./codes.json","r").read())
+            present_code_dict = eval(open("./data/codes.json","r").read())
             present_codes = list(present_code_dict.keys())
             code = msgr.extract_plain_text().split(" ")[0]
             if code in present_codes:
@@ -1092,6 +1094,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             user = User(userId)
             user.banned = True
             user.save()
+            await bot.call_api("set_group_ban", group_id=event.group_id, user_id = user.id, duration=2591940)
             msg += f"\n    - 已封禁用户 {user.id}。"
         msg += f"\n    - 本次封禁 {len(ats)} 个用户。"
     else:
@@ -1380,7 +1383,7 @@ modifyname 函数
 @author: Latingtude
 """
 
-modifyname_function = on_command("modifyname", aliases={""}, priority=10)
+modifyname_function = on_command("modifyname", priority=10)
 
 @modifyname_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
@@ -1430,7 +1433,7 @@ browsingbottle 函数
 @author: Latingtude
 """
 
-browsingbottle_function = on_command("browsingbottle", aliases={""}, priority=10)
+browsingbottle_function = on_command("browsingbottle", priority=10)
 
 @browsingbottle_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
@@ -1516,7 +1519,7 @@ Voting 函数
 @author: Latingtude
 """
 
-voting_function = on_command("voting", aliases={""}, priority=10)
+voting_function = on_command("voting", priority=10)
 
 @voting_function.handle()
 async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):

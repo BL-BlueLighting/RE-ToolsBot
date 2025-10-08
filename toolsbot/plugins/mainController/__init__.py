@@ -54,7 +54,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     msg = TITLE
     # 添加图片
     # 获得绝对路径
-    await help_function.finish(v11message(f"[CQ:image,file=https://airoj.latingtude-studios.icu/helpdocument.png,id=400000]"))
+    await help_function.finish(v11message(f"[CQ:image,file=https://airoj.latingtude-studios.icu/helpdocument_new.png,id=400000]"))
     
 """
 check 函数
@@ -63,7 +63,7 @@ check 函数
 @author: Latingtude
 """
 
-check_function = on_command("check", aliases={""}, priority=10)
+check_function = on_command("check", priority=10)
 
 @check_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
@@ -115,3 +115,38 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
         await set_essence.finish(f"RE: ToolsBot Essence Set\n    - 设置精华失败：{e}")
     else:
         await set_essence.finish("RE: ToolsBot Essence Set\n    - 已成功将该消息设为精华 ✨")
+
+
+"""
+goodsaying 函数
+
+名言金句函數
+@author: Latingtude
+"""
+
+goodsaying_function = on_command("goodsaying", priority=10)
+
+@goodsaying_function.handle()
+async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+    msg = TITLE + " 名言金句"
+    _msg = args.extract_plain_text()
+    url = "https://hitokoto.152710.xyz"
+
+    # request
+    message = requests.get(url)
+
+    # get json
+    _jsonmessage = json.loads(message.content)
+
+    # apppend
+    hitokoto = _jsonmessage.get("hitokoto", "世上本沒有路，但是人走多了，便成了路。")
+    _from = _jsonmessage.get("from", "《棍母》")
+    creator = _jsonmessage.get("creator", "魯迅: 周樹人")
+
+    # format
+    msg += f"""
+    {hitokoto}
+                —— {_from} --- {creator}"""
+    
+    # finish
+    await goodsaying_function.finish(msg)

@@ -5,7 +5,7 @@
 @author: Latingtude
 """
 
-_function = on_command("", aliases={""}, priority=10)
+_function = on_command("", priority=10)
 
 @_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):

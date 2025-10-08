@@ -163,3 +163,5 @@ voting.json
 
 # Linux enviorment auto activate
 activate.sh
+
+*.gmdata

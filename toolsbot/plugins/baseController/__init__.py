@@ -317,13 +317,6 @@ async def _ (event: MessageEvent,args: Message = CommandArg()):
     user = dc.User(event.get_user_id())
     # for finaleScope
 
-    config = configparser.ConfigParser()
-    config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
-                encoding="utf-8")
-    config.set("Status", "LiangCai64Used", "True")
-    with open("./userdata/finaleScope" + user.id + ".finalescope_data", "w", encoding="utf-8") as configfile:
-        config.write(configfile)
-
     if not user.isBanned():
         msg = ""
         if params := args.extract_plain_text():

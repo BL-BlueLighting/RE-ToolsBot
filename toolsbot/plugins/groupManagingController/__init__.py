@@ -12,6 +12,7 @@ import os
 from nonebot.typing import *
 import toolsbot.plugins.userInfoController as dc
 import logging, re, datetime
+from nonebot.adapters.onebot.v11 import Message as OneBotMessage
 
 logging.basicConfig(
     filename='botlog.log',
@@ -46,14 +47,14 @@ def replacing(bot: nonebot.adapters.onebot.v11.Bot, string: str, qqNumber: str) 
     # replacing string using qqNumber and CQ:at
     res = string
     
-    res = res.replace("{at}", "[CQ:at,qq={}]".format(qqNumber))
+    res = res.replace("[@]", "[CQ:at,qq={}]".format(qqNumber))
     # replacing "Name" using api
     try:
         user_info = bot.call_api("get_user_info", user_id=int(qqNumber))
-        res = res.replace("{Name}", user_info["name"])
+        res = res.replace("[Name]", user_info["name"])
     except Exception as e:
         _warn(f"Failed to get user info using qq number {qqNumber}. This is why:\n{e}")
-        res = res.replace("{Name}", "未知名称")
+        res = res.replace("[Name]", "未知名称")
     
     return res
 
@@ -69,14 +70,21 @@ async def welcome(bot: nonebot.adapters.onebot.v11.Bot, event: GroupIncreaseNoti
     # if new user join, auto make a new archive.
     dc.User(user, score=50) # present 50 scores.
     
-    await welcomejoin_event.finish(replacing(bot, config ["WelcomeMessage"], user))
+    # check if it in banned, auto ban
+    if dc.User(user).banned:
+        try:
+            await bot.call_api("set_group_ban", group_id=event.group_id, user_id = user, duration=2591940)
+        except ActionFailed:
+            _crit("Failed to auto ban a sb.")
+        
+    await welcomejoin_event.finish(OneBotMessage(replacing(bot, config ["WelcomeMessage"], user)))
 
 goodbye_event = on_notice()
 
 @goodbye_event.handle()
 async def goodbye(bot: nonebot.adapters.onebot.v11.Bot, event: GroupDecreaseNoticeEvent, state: T_State):
     user = event.get_user_id()
-    await goodbye_event.finish(replacing(bot, config ["EscapeMessage"], user))
+    await goodbye_event.finish(OneBotMessage(replacing(bot, config ["EscapeMessage"], user)))
 
 # auto agree friend adding
 

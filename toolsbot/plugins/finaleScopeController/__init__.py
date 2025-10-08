@@ -51,7 +51,7 @@ scopes 函数
 @author: Latingtude
 """
 
-query_function = on_command("finaleScope", aliases={""}, priority=10)
+query_function = on_command("finaleScope", priority=10)
 
 @query_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
@@ -110,7 +110,7 @@ unlockNext 函数
 @author: Latingtude
 """
 
-unlock_next_function = on_command("finaleScopeNext", aliases={""}, priority=10)
+unlock_next_function = on_command("finaleScopeNext", priority=10)
 
 @unlock_next_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
