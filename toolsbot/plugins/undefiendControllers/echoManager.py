@@ -63,13 +63,32 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     else:
         keywords[keyword] = " ".join(content)
         json.dump(keywords, open("./data/echoThings.json", "w", encoding="utf-8"))
-        await echot_add_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 内容：\n    " + " ".join(content))
+        await echot_add_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 内容：\n        " + " ".join(content))
     
 """
 echotdel 函数
 
 删除关键词和文本，仅限 SUPERUSER.
+@author: Latingtude
 """
+echot_del_function = on_command("echotdel", aliases={"echoThingAdd"}, priority=10, permission=SUPERUSER)
+
+@echot_del_function.handle()
+async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+    msg = TITLE + " - echoThing Managing"
+    user = User(event.get_user_id())
+    _msg = args.extract_plain_text()
+    
+    keyword = _msg.split(" ")[0]
+    
+    keywords = json.load(open("./data/echoThings.json", "r", encoding="utf-8"))
+
+    if not keyword in keywords.keys():
+        await echot_del_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 该项目不存在。")
+    else:
+        del keywords [keyword]
+        json.dump(keywords, open("./data/echoThings.json", "w", encoding="utf-8"))
+        await echot_del_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 内容：\n        棍母")
     
 """
 echot 函数
