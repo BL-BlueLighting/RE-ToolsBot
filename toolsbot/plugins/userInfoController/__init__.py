@@ -709,7 +709,20 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
         
         await ai_eventer.send("RE: ToolsBot AI 提示：\n    - 请稍等，AI 正在生成")
         
-        response = requests.post("https://api.siliconflow.cn/v1/chat/completions", json=payload, headers=headers).content
+        _response = requests.post("https://api.siliconflow.cn/v1/chat/completions", json=payload, headers=headers)
+        
+        if _response.status_code != 200:
+            msg = """RE: ToolsBot AI
+            - 模型：
+                Qwen\\Qwen3-8B
+            - 提示：
+                AI 内容处理过程中请求错误，请联系管理员。"""
+                
+            _erro(_response.text)
+            await ai_eventer.finish(msg)
+        
+        response = _response.text
+        
         # 获取返回的内容
         js_resp = json.loads(response)
         
