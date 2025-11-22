@@ -74,3 +74,4 @@ websockets==15.0.1
 win32_setctime==1.2.0
 yarl==1.20.1
 zstandard==0.24.0
+lxml>=6.0.2

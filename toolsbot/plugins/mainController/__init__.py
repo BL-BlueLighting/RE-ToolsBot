@@ -54,7 +54,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     msg = TITLE
     # 添加图片
     # 获得绝对路径
-    await help_function.finish(v11message(f"[CQ:image,file=https://airoj.latingtude-studios.icu/helpdocument_new.png,id=400000]"))
+    await help_function.finish(v11message(f"[CQ:image,file=https://airoj.latingtude-studios.icu/helpdocument.png,id=400000]"))
     
 """
 check 函数
@@ -118,13 +118,13 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
 
 
 """
-goodsaying 函数
+hitokoto 函数
 
 名言金句函數
 @author: Latingtude
 """
 
-goodsaying_function = on_command("goodsaying", priority=10)
+goodsaying_function = on_command("hitokoto", priority=10)
 
 @goodsaying_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):

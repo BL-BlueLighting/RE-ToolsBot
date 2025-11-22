@@ -1,0 +1,119 @@
+"""
+{
+    "MapName": "ToolsBot 区域",
+    "MapID": 1,
+    "Redeems": [
+        {
+            "ID": 1001,
+            "Need": 100,
+            "Name": "100 积分",
+            "Actions": [
+                {
+                    "Action": "points add 100"
+                }
+            ]
+        },
+        {
+            "ID": 1002,
+            "Need": 500,
+            "Name": "== PERFECT CHALLENGE ==",
+            "PerfectChallenge": true,
+            "Challenge": [
+                {
+                    "Action": "lcgodmaker levelup 5"
+                }
+            ],
+            "FinishMessage": "PERFECT CHALLENGE - CLEAR!\n    - PerfectChallenge 锁已解除，可以继续前进了。"
+        },
+        {
+            "ID": 1003,
+            "Need": 1000,
+            "Name": "== REVIEW CHALLENGE ==",
+            "ReviewChallenge": true,
+            "Challenge": [
+                {
+                    "Action": "send content 喝一口水然后录下喝水视频发送Bot。"
+                }
+            ],
+            "FinishMessage": "REVIEW CHALLENGE - CLEAR!\n    - ReviewChallenge 锁已解除，可以继续前进了。"
+        },
+        {
+            "ID": 1004,
+            "Need": 1500,
+            "End": true
+        }
+    ],
+    "Start": 1001,
+    "Finish": 1004,
+    "AllKMS": 1500
+}
+"""
+
+# BEGIN
+
+redeem = MapContent.Redeem(
+    ID = 1001,
+    Name = "100 积分",
+    Need = 100,
+    Actions = [
+        MapContent.Action(
+            Action = "points add 100"
+        )
+    ]
+)
+
+
+redeem1 = MapContent.Redeem(
+    ID = 1002,
+    Name = "== PERFECT CHALLENGE ==",
+    Need = 500,
+    PerfectChallenge = True,
+    Challenge = [
+        MapContent.Action(
+            Action = "lcgodmaker levelup 5"
+        )
+    ],
+    FinishMessage = "PERFECT CHALLENGE - CLEAR!\n    - PerfectChallenge 锁已解除，可以继续前进了。"
+)
+
+
+redeem2 = MapContent.Redeem(
+    ID = 1003,
+    Name = "== REVIEW CHALLENGE ==",
+    Need = 1000,
+    ReviewChallenge = True,
+    Challenge = [
+        MapContent.Action(
+            Action = "send content 喝一口水然后录下喝水视频发送Bot。"
+        )
+    ],
+    FinishMessage = "REVIEW CHALLENGE - CLEAR!\n    - ReviewChallenge 锁已解除，可以继续前进了。"
+)
+
+
+redeem3 = MapContent.Redeem(
+    ID = 1004,
+    Name = "结束",
+    Need = 1500,
+    End = True
+)
+
+area = MapContent.Area(
+    MapName = "ToolsBot 区域",
+    MapID = 1,
+    Redeems = [
+        redeem,
+        redeem1,
+        redeem2,
+        redeem3
+    ],
+    Start = 1001,
+    Finish = 1004,
+    AllKMS = 1500
+)
+
+# EOF
+
+编写指南：
+    # BEGIN 到 # EOF 之间的内容会被加载，而在其之外的解释器都会忽略。
+    其他的请参照 toolsbot\plugins\gamingController\mapInterpreter.py 中的相关解释。
