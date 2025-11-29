@@ -216,7 +216,9 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
                 msg += "\n    - 前进失败。"
     
     await map_command.finish(msg)
-    
+
+"""
+disabled skill, remove comment characters to enable
 # 全局 catcher, 犯神经因此我禁用了
 global_catcher = on_message(priority=999)
 
@@ -228,11 +230,10 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     if random.randint(100, 999) > 150:
         return
     
-    global_catcher.skip() # 移除这一行来启用
-    
     mapUser.kmNext += random.randint(100, 999)
     mapUser.save()
     
     
     await global_catcher.send("RE: ToolsBot - 随机幸运事件\n    - 您的地图跑图进度已增加，可以使用 ^map next 来前进了。")
     global_catcher.skip()
+"""
