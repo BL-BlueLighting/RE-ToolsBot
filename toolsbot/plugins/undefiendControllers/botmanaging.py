@@ -75,3 +75,29 @@ async def start_bot(event: MessageEvent):
             
         # use native api
     
+update_command = on_command("botupdate", priority=5, permission=SUPERUSER)
+
+@update_command.handle()
+async def update_bot(event: MessageEvent, arg: Message = CommandArg()):
+    msg = "RE: ToolsBot - Updated - Version "
+    # get version from userinput
+    content = arg.extract_plain_text()
+
+    version = content.split(" ") [0]
+    update_contents = content.split(" ") [1:]
+
+    msg += version
+
+    # get all group ids
+    bot = nonebot.get_bot()
+    group_list = await bot.get_group_list()
+
+    # generate msg
+    for _update_content in update_contents:
+        msg += f"\n    - {_update_content}"
+
+    for group in group_list:
+        try:
+            await bot.send_group_msg(group_id=group["group_id"], message=msg)
+        except ActionFailed as e:
+            _warn(f"Failed to send stop message to group {group['group_id']}. This is why:\n{e}")
