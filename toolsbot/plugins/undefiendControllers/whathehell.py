@@ -40,25 +40,11 @@ What the hell 什么魔鬼
 
 TITLE = "RE: ToolsBot"
 
-hell_funny = on_command("hellfunny", aliases={}, rule=to_me(), priority=5, block=True)
+hell_funny = on_command("hellfunny", priority=5, block=True)
 
 
 @hell_funny.handle()
 async def handle_hell_funny(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
-    # 检查是否 at 了机器人
-    at_segments = event.message["at"]
-    _info(f"收到AT段: {at_segments}")  # 添加AT段日志
-    _info(f"机器人ID: {bot.self_id}")  # 添加机器人ID日志
-
-    is_at_bot = any(at.data["qq"] == str(bot.self_id) for at in at_segments)
-    _info(f"是否被AT: {is_at_bot}")  # 添加判断结果日志
-
-    if not is_at_bot:
-        _info(f"Not trigger because not at bot.\nSelf_id: {bot.self_id}\n消息内容: {event.get_message()}")  # 添加消息内容日志
-        return
-
-    _info("Triggered hell funny")
-
     # get today date
     today = datetime.datetime.now()
     _info(f"当前日期: {today.month}-{today.day}")  # 添加日期日志
