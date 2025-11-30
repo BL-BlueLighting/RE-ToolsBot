@@ -559,6 +559,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     msg = TITLE + " 商店"
     user = User(event.get_user_id())
     _msg = args.extract_plain_text()
+
+    if user.banned:
+        msg += "\n    - 滚"
+        await buy_function.finish(msg)
     
     if _msg == "":
         msg += "\n    - 使用 ^buy list 来查看列表"
@@ -722,27 +726,33 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             await ai_eventer.finish(msg)
         
         response = _response.text
-        
-        # 获取返回的内容
-        js_resp = json.loads(response)
-        
-        # choices
-        choices = js_resp.get("choices")
-        
-        # message
-        messag_ = choices [0].get("message")
-        
-        # content
-        ctnt = messag_.get("content").replace("\n", "")
-        
-        # reasoning_content
-        rea_ctnt = messag_.get("reasoning_content").replace("\n", "")
 
-        # usage
-        usage = js_resp.get("usage")
-        
-        # total token
-        total_token = usage.get("total_tokens")
+        global js_resp, choices, message_, ctnt, rea_ctnt, usage, total_token
+
+        try:
+            # 获取返回的内容
+            js_resp = json.loads(response)
+
+            # choices
+            choices = js_resp.get("choices")
+
+            # message
+            messag_ = choices [0].get("message")
+
+            # content
+            ctnt = messag_.get("content").replace("\n", "")
+
+            # reasoning_content
+            rea_ctnt = messag_.get("reasoning_content").replace("\n", "")
+
+            # usage
+            usage = js_resp.get("usage")
+
+            # total token
+            total_token = usage.get("total_tokens")
+        except AttributeError:
+            rea_ctnt = "通义千问没思考就回答你"
+            total_token = js_resp.get("usage").get("total_tokens")
 
         msg = f"""RE: ToolsBot AI
         - 模型:
