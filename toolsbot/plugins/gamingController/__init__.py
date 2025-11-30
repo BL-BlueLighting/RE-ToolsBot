@@ -146,7 +146,8 @@ class MapUser :
     
     def isEnd(self) -> bool:
         return mapi.runAndInterpret(self.getMapPath(), self, "isEnd", [])
-    
+
+"""
 map_command = on_command("map", priority=5)
 
 @map_command.handle()
@@ -217,7 +218,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     
     await map_command.finish(msg)
 
-"""
+
 disabled skill, remove comment characters to enable
 # 全局 catcher, 犯神经因此我禁用了
 global_catcher = on_message(priority=999)
@@ -236,4 +237,6 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     
     await global_catcher.send("RE: ToolsBot - 随机幸运事件\n    - 您的地图跑图进度已增加，可以使用 ^map next 来前进了。")
     global_catcher.skip()
+
+DISABLED GAMING CONTROLLER
 """

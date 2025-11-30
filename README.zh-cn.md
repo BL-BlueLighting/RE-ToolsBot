@@ -20,6 +20,10 @@
 
 <p align="center"><i>优秀的 QQ Bot 实例</i></p>
 
+> [!Warning]
+>
+> ToolsBot 已更新，请在 git pull 下来后，执行 python ./quickmove.py 来迁移用户数据
+
 ## 如何使用
 先 git clone 下来整个项目。
 
