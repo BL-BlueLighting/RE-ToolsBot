@@ -26,7 +26,11 @@ First, clone this project.
 git clone https://github.com/Latingtude/RE-ToolsBot.git
 `
 
-Then, install requirements using this python script:
+Choose one of the following two actions
+
+<details>
+<summary>Install dependencies(Main Environment)</summary>
+Install requirements using this python script:
 
 `
 python ./installTB.py
@@ -37,6 +41,20 @@ Or, install requirements directly
 `
 pip install -r ./install/requirements.txt
 `
+
+</details>
+
+<details>
+<summary>Install dependencies(Virtual Environment)</summary>
+1.Install Python version 3.10 or higher
+
+2.Run `pip install poetry`
+
+3.Run `poetry install`
+
+(Note: Are there really people who would want to deploy this project in the main environment?)
+
+</details>
 
 (Only create a blank project, use global install)
 
