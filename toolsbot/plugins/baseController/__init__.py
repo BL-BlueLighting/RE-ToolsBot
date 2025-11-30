@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent
 import nonebot
 from time import sleep as wait
 from random import uniform as wrd
-import userInfoClasses as dc
+import toolsbot.plugins.userInfoController as dc
 import configparser
 
 """

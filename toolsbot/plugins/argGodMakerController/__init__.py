@@ -10,7 +10,7 @@ import os
 import datetime
 import logging, re
 from collections import Counter
-import userInfoClasses as uic
+import toolsbot.plugins.userInfoController as uic
 
 logging.basicConfig(
     filename='botlog.log',

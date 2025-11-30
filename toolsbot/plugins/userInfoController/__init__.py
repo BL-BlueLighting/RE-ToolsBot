@@ -10,6 +10,8 @@ import os
 import datetime
 import logging, re
 from collections import Counter
+import sqlite3
+from typing import Dict, List, Any
 
 logging.basicConfig(
     filename='botlog.log',
@@ -37,10 +39,6 @@ userInfoController
 
 TITLE = "RE: ToolsBot"
 
-"""
-Data 类
-User 类的文件管理系统
-"""
 class Data:
     def __init__(self, id: str):
         """
@@ -49,43 +47,83 @@ class Data:
         Args:
             id (str): Platform ID.
         """
-        # default is ./userdata
-        self.dataPath = "./userdata"
         self.id = id
-        self.mainPath = self.dataPath + "/" + self.id + ".toolsbot_data"
-    
-    def check(self):
+        self.db_path = "./userdata.db"
+        self._init_db()
+
+    def _init_db(self):
+        """初始化数据库和表结构"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    ID TEXT PRIMARY KEY,
+                    Name TEXT NOT NULL,
+                    Score INTEGER DEFAULT 0,
+                    boughtItems TEXT DEFAULT '[]',
+                    Ban TEXT DEFAULT '[]',
+                    Warningd TEXT DEFAULT '[]',
+                    DynamicExts TEXT DEFAULT '{}'
+                )
+            """)
+            conn.commit()
+
+    def check(self) -> bool:
         """
         Check userdata exists.
         """
-        return os.path.exists(self.mainPath)
-    
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT 1 FROM users WHERE ID = ?", (self.id,))
+            return cursor.fetchone() is not None
+
     def writeData(self, userClass):
         """
         Write user data.
-        Note: Because userClass is a user class, but user is defined after Data class. 
+        Note: Because userClass is a user class, but user is defined after Data class.
         So I will not add type tip to it.
         """
-        userData = {
-            "ID": userClass.id,
-            "Name": userClass.name,
-            "Score": userClass.score,
-            "boughtItems": userClass.boughtItems,
-            "Ban": userClass.banned,
-            "Warningd": userClass.warningd
-        }
-        
-        # write in
-        open(self.mainPath, "w", encoding="utf-8").write(json.dumps(userData))
-        
-        # return
-        return
-    
-    def readData(self) -> dict:
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT OR REPLACE INTO users 
+                (ID, Name, Score, boughtItems, Ban, Warningd, DynamicExts)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (
+                userClass.id,
+                userClass.name,
+                userClass.score,
+                json.dumps(userClass.boughtItems),
+                json.dumps(userClass.banned),
+                json.dumps(userClass.warningd),
+                json.dumps(getattr(userClass, 'dynamicExts', {}))
+            ))
+            conn.commit()
+
+    def readData(self) -> Dict[str, Any]:
         try:
-            return json.loads(open(self.mainPath, "r", encoding="utf-8").read())
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT ID, Name, Score, boughtItems, Ban, Warningd, DynamicExts
+                    FROM users WHERE ID = ?
+                """, (self.id,))
+                row = cursor.fetchone()
+
+                if row is None:
+                    return {}
+
+                return {
+                    "ID": row[0],
+                    "Name": row[1],
+                    "Score": row[2],
+                    "boughtItems": json.loads(row[3]),
+                    "Ban": row[4] == "true",
+                    "Warningd": int(row[5]),
+                    "DynamicExts": json.loads(row[6])
+                }
         except Exception as ex:
-            _erro("Error: Failed to read data.\nInformation: \n" + ex.__str__())
+            _erro("Error: Failed to read data.\nInformation: \n" + str(ex))
             return {}
     
 """

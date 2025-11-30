@@ -9,7 +9,7 @@ import os
 import datetime
 
 # 假设 User 和 TITLE 已经从 userInfoController 中导入
-from userInfoClasses import User, TITLE
+from toolsbot.plugins.userInfoController import User, TITLE
 
 """
 AES 加密解密功能

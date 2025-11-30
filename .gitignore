@@ -165,3 +165,5 @@ voting.json
 activate.sh
 
 *.gmdata
+
+*.db
