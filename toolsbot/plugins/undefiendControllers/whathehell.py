@@ -69,6 +69,10 @@ async def handle_hell_funny(bot: Bot, event: GroupMessageEvent | PrivateMessageE
     if (today.month == 11 and today.day == 29) or (today.month == 11 and today.day == 30):
         await hell_funny.finish("今天是地狱笑话模块被加入 ToolsBot 的日子，蝼蚁们，颤抖吧！！\n嘎啊哈哈哈哈")
 
+    # if date = 12.24
+    if today.month == 12 and today.day == 24:
+        await hell_funny.finish("Bot 主生日快乐。")
+
     # if date = 12.31
     if today.month == 12 and today.day == 31:
         await hell_funny.finish("新年快乐！\n🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉")

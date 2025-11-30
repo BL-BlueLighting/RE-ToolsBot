@@ -11,6 +11,8 @@ import datetime
 import logging, re
 from collections import Counter
 import toolsbot.plugins.userInfoController as uic
+import sqlite3
+from typing import Optional
 
 logging.basicConfig(
     filename='botlog.log',
@@ -39,96 +41,132 @@ argGodMakerController
 TITLE = "RE: ToolsBot"
 TIMEDATESTR = "%Y-%d-%m-%H-%M-%S"
 
+import sqlite3
+import datetime
+import random
+from typing import Optional
+
+
 class GMUser:
-    def __init__(self, userEntity: uic.User, status: str = "凉菜起"):
+    def __init__(self, userEntity, status: str = "凉菜起"):
         self.user = userEntity
         self.status = status
         self.rating = 0
         self.level = 1
         self.pausing = False
-        self.beginPause: datetime.datetime = None
+        self.beginPause: Optional[datetime.datetime] = None
+        self.db_path = "./userdata.db"
+        self._init_db()
         self.load()
-    
+
+    def _init_db(self):
+        """初始化数据库表结构"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS gods (
+                    ID TEXT PRIMARY KEY,
+                    Status TEXT NOT NULL,
+                    Rating INTEGER DEFAULT 0,
+                    Level INTEGER DEFAULT 1,
+                    Pausing BOOLEAN DEFAULT FALSE,
+                    BeginPause TEXT
+                )
+            """)
+            conn.commit()
+
     def load(self):
-        if not os.path.exists("./data/godmaker/" + self.user.id + ".gmdata"):
-            self.initData() # 没有存档，初始化
-            return
-        
-        data = json.load(open(f"./data/godmaker/{self.user.id}.gmdata", "r", encoding="utf-8"))
-        
-        self.status = data ["Status"]
-        self.rating = int(data ["Rating"])
-        self.level = int(data ["Level"])
-        self.pausing = bool(data ["Pausing"])
-        self.beginPause = datetime.datetime.strptime(data.get("BeginPause", "2025-01-01-01-01-01"), TIMEDATESTR)
-        return
-    
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT Status, Rating, Level, Pausing, BeginPause FROM gods WHERE ID = ?", (self.user.id,))
+            row = cursor.fetchone()
+
+            if row is None:
+                self.initData()
+                return
+
+            self.status = row[0]
+            self.rating = row[1]
+            self.level = row[2]
+            self.pausing = bool(row[3])
+            if row[4]:
+                self.beginPause = datetime.datetime.strptime(row[4], "%Y-%m-%d %H:%M:%S")
+            else:
+                self.beginPause = datetime.datetime(2025, 1, 1, 1, 1, 1)
+
     def initData(self):
-        data = {
-            "ID": self.user.id,
-            "Status": self.status,
-            "Rating": self.rating,
-            "Level": self.level,
-            "Pausing": False,
-            "BeginPause": "2025-01-11-01-01-01"
-        }
-        
-        open("./data/godmaker/"+self.user.id+".gmdata", "w", encoding="utf-8").write(json.dumps(data))
-        return
-    
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO gods (ID, Status, Rating, Level, Pausing, BeginPause)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                self.user.id,
+                self.status,
+                self.rating,
+                self.level,
+                False,
+                "2025-01-01 01:01:01"
+            ))
+            conn.commit()
+
     def save(self):
-        data = {
-            "ID": self.user.id,
-            "Status": self.status,
-            "Rating": self.rating,
-            "Level": self.level,
-            "Pausing": self.pausing,
-            "BeginPause": datetime.datetime.now().strftime(TIMEDATESTR)
-        }
-        
-        open("./data/godmaker/"+self.user.id+".gmdata", "w", encoding="utf-8").write(json.dumps(data))
-        return
-    
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE gods 
+                SET Status = ?, Rating = ?, Level = ?, Pausing = ?, BeginPause = ?
+                WHERE ID = ?
+            """, (
+                self.status,
+                self.rating,
+                self.level,
+                self.pausing,
+                self.beginPause.strftime("%Y-%m-%d %H:%M:%S") if self.beginPause else None,
+                self.user.id
+            ))
+            conn.commit()
+
     def uplevel(self):
         if random.randint(1, 10) < 5:
             self.level += 1
             self.save()
             return True
         return False
-    
+
     def setStatus(self, status: str):
         self.status = status
         self.save()
-        
+
     def getStatus(self) -> str:
         self.save()
         return self.status + f" {self.level} 层"
-    
+
     def getRating(self) -> int:
         self.save()
         return self.rating
-    
+
     def upRating(self, rating: int):
         self.rating += rating
         self.save()
-        return
-    
+
     def downRating(self, rating: int):
         self.rating -= rating
         self.save()
-        return
-    
+
     def pause(self):
         self.pausing = True
+        self.beginPause = datetime.datetime.now()
         self.save()
-        return
-    
+
     def checkPause(self):
-        if (datetime.datetime.now() - self.beginPause).seconds > 60:
+        if self.beginPause and (datetime.datetime.now() - self.beginPause).seconds > 60:
             self.pausing = False
+            self.save()
             return True
         return False
-        
+
+
 STATUSES = [
     "凉菜起",
     "杨倒带",

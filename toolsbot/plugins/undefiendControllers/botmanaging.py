@@ -139,3 +139,4 @@ async def send_to_bot(event: MessageEvent, arg: Message = CommandArg()):
         await bot.send_group_msg(group_id=group_id, message=msg)
     except ActionFailed as e:
         _warn(f"Failed to send stop message to group {group_id}. This is why:\n{e}")
+
