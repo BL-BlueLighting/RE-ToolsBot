@@ -9,6 +9,9 @@ from random import uniform as wrd
 import os
 import datetime
 import logging, re
+
+from nonebot.rule import to_me
+
 import toolsbot.plugins.userInfoController as uic
 from lxml import html as hi
 
@@ -37,44 +40,49 @@ What the hell 什么魔鬼
 
 TITLE = "RE: ToolsBot"
 
-"""
-地狱笑话模块 
+hell_funny = on_command("hellfunny", aliases={}, rule=to_me(), priority=5, block=True)
 
-@author: Latingtude
-"""
-# catch all message after all commands
-hell_funny = on_message(priority=10)
 
 @hell_funny.handle()
-async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
-    # if not at bot, then return
-    if bot.self_id not in uic.At(event.json()):
+async def handle_hell_funny(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
+    # 检查是否 at 了机器人
+    at_segments = event.message["at"]
+    _info(f"收到AT段: {at_segments}")  # 添加AT段日志
+    _info(f"机器人ID: {bot.self_id}")  # 添加机器人ID日志
+
+    is_at_bot = any(at.data["qq"] == str(bot.self_id) for at in at_segments)
+    _info(f"是否被AT: {is_at_bot}")  # 添加判断结果日志
+
+    if not is_at_bot:
+        _info(f"Not trigger because not at bot.\nSelf_id: {bot.self_id}\n消息内容: {event.get_message()}")  # 添加消息内容日志
         return
 
+    _info("Triggered hell funny")
+
     # get today date
-    today = datetime.date.today()
+    today = datetime.datetime.now()
+    _info(f"当前日期: {today.month}-{today.day}")  # 添加日期日志
 
     # if date = 9.11
-    if today == datetime.date(datetime.date.today().year, 9, 11):
-        # send message
+    if today.month == 9 and today.day == 11:
         await hell_funny.finish("✈️    ⏸")
 
     # if date = 5.20
-    if today == datetime.date(datetime.date.today().year, 5, 20):
-        await hell_funny.finish("祝有情人终成眷侣，祝眷侣早日丧侣")
+    if today.month == 5 and today.day == 20:
+        await hell_funny.finish("祝有情人终成眷属，祝眷侣早日丧侣")
 
     # if date = 6.1
-    if today == datetime.date(datetime.date.today().year, 6, 1):
+    if today.month == 6 and today.day == 1:
         await hell_funny.finish("祝小孩子们考0蛋")
 
     # if date = 9.1
-    if today == datetime.date(datetime.date.today().year, 9, 1):
+    if today.month == 9 and today.day == 1:
         await hell_funny.finish("开学快乐")
 
     # if date = 11.29 / 11.30
-    if today == datetime.date(datetime.date.today().year, 11, 29) or today == datetime.date(datetime.date.today().year, 11, 30):
+    if (today.month == 11 and today.day == 29) or (today.month == 11 and today.day == 30):
         await hell_funny.finish("今天是地狱笑话模块被加入 ToolsBot 的日子，蝼蚁们，颤抖吧！！\n嘎啊哈哈哈哈")
 
     # if date = 12.31
-    if today == datetime.date(datetime.date.today().year, 12, 31):
+    if today.month == 12 and today.day == 31:
         await hell_funny.finish("新年快乐！\n🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉")

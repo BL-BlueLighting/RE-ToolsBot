@@ -101,3 +101,41 @@ async def update_bot(event: MessageEvent, arg: Message = CommandArg()):
             await bot.send_group_msg(group_id=group["group_id"], message=msg)
         except ActionFailed as e:
             _warn(f"Failed to send stop message to group {group['group_id']}. This is why:\n{e}")
+
+broadcast_command = on_command("broadcast", priority=5, permission=SUPERUSER)
+
+@broadcast_command.handle()
+async def broadcast_bot(event: MessageEvent, arg: Message = CommandArg()):
+    # get all group ids
+    bot = nonebot.get_bot()
+    group_list = await bot.get_group_list()
+
+    # get msg
+    content = arg.extract_plain_text()
+    msg = f"RE: ToolsBot - Broadcast\n    - {content}"
+
+    for group in group_list:
+        try:
+            await bot.send_group_msg(group_id=group["group_id"], message=msg)
+        except ActionFailed as e:
+            _warn(f"Failed to send stop message to group {group['group_id']}. This is why:\n{e}")
+
+send_to_command = on_command("sendto", priority=5, permission=SUPERUSER)
+
+@send_to_command.handle()
+async def send_to_bot(event: MessageEvent, arg: Message = CommandArg()):
+    bot = nonebot.get_bot()
+    # get group id from plain text
+    _plt = arg.extract_plain_text()
+    group_id = _plt.split(" ")[0]
+    __msg = _plt.split(" ")[1:]
+
+    # generate msg
+    msg = f"RE: ToolsBot - Send To {group_id} - From SUPERUSER\n"
+    for _msg in __msg:
+        msg += f"    - {_msg}\n"
+
+    try:
+        await bot.send_group_msg(group_id=group_id, message=msg)
+    except ActionFailed as e:
+        _warn(f"Failed to send stop message to group {group_id}. This is why:\n{e}")
