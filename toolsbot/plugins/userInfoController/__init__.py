@@ -761,7 +761,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             {rea_ctnt}
         - 回复内容：
             {ctnt}
-        - 此次扣除金额：
+        - 此次使用 Token：
             {total_token}
     """
         
@@ -797,7 +797,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             if user.playMode():
                 msg.replace("您的积分不够。目前已追加欠款。请早日还清。", "\n    - 你他妈穷成这样还想用AI？欠债还钱，天经地义！")
             
-        user.addScore(- (int(total_token) * 1))
+        #user.addScore(- (int(total_token) * 1))
         #user.save()
         # disabled divide score
         await ai_eventer.finish(msg)
