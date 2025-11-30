@@ -30,7 +30,13 @@ git clone https://github.com/Latingtude/RE-ToolsBot.git
 然后，使用下面这行命令安装所有依赖。
 
 `
-nb create
+python ./install/installTB.py
+`
+
+或者，直接通过 pip 安装：
+
+`
+pip install -r ./install/requirements.txt
 `
 
 (只创建一个空项目，选择全局安装)

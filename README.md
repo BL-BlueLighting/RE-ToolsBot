@@ -26,10 +26,16 @@ First, clone this project.
 git clone https://github.com/Latingtude/RE-ToolsBot.git
 `
 
-Then, install requirements using nonebot-cli (nb). (Don't use requirements.txt)
+Then, install requirements using this python script:
 
 `
-nb create
+python ./installTB.py
+`
+
+Or, install requirements directly
+
+`
+pip install -r ./install/requirements.txt
 `
 
 (Only create a blank project, use global install)
@@ -48,7 +54,7 @@ Go https://github.com/NapNeko/NapCatQQ.
 ## Thanks
 > [!Note]
 >
-> Thanks for project under. I using some code from them.
+> Thanks for project under. I used some code from them.
 
 <a href="https://github.com/yzyyz1387/nonebot_plugin_admin/">NoneBot Plugin Admin</a>
 
