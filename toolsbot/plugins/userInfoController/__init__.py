@@ -1,21 +1,26 @@
-from nonebot import *
-from nonebot.adapters import Message
-from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import *
-from nonebot.permission import SUPERUSER
-import nonebot,random,json,requests
-from time import sleep as wait
-from random import uniform as wrd
-import os
 import datetime
-import logging, re
-from collections import Counter
+import json
+import logging
+import os
+import random
+import re
 import sqlite3
-from typing import Dict, List, Any
+from collections import Counter
+from typing import Any, Dict
+
+import nonebot
+import requests
+from nonebot import on_command
+from nonebot.adapters import Message
+from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
+                                         PrivateMessageEvent)
+from nonebot.exception import ActionFailed
+from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
 
 logging.basicConfig(
     filename='botlog.log',
-    filemode='a',       
+    filemode='a',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
@@ -32,7 +37,7 @@ _crit = logging.critical
 RE: ToolsBot
 Tools Bot 的第二版。
 
-@author: Latingtude 
+@author: Latingtude
 
 userInfoController
 """
@@ -86,7 +91,7 @@ class Data:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT OR REPLACE INTO users 
+                INSERT OR REPLACE INTO users
                 (ID, Name, Score, boughtItems, Ban, Warningd, DynamicExts)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
@@ -125,7 +130,7 @@ class Data:
         except Exception as ex:
             _erro("Error: Failed to read data.\nInformation: \n" + str(ex))
             return {}
-    
+
 """
 User 类
 整个 userInfoController 的核心大类
@@ -134,14 +139,14 @@ class User:
     def __init__(self, id: str, name: str = "", score: float = 0, boughtItems: list[str] = []):
         """
         User Class
-        
+
         Args:
             id (str): Platform ID.
             name (str, optional): Name of this user. Can be blank. Defaults to "".
             score (int, optional): Score of this user. Default 0. Defaults to 0.
             boughtItems (list[str], optional): BoughtItems. Use 'user.addItem' to add a item for this user. Defaults to [].
         """
-        
+
         self.id = id
         self.name = name
         self.score = score
@@ -149,14 +154,14 @@ class User:
         self.banned = False
         self.data = Data(self.id)
         self.warningd = 0
-        
+
         try:
             # check
             _info("Data Checking.")
             if self.data.check():
                 _info("Data Exists.")
                 self.jsonData = self.data.readData()
-                
+
                 # load data from jsonData
                 self.id = self.jsonData.get("ID", "10000")
                 self.name = self.jsonData.get("Name", "暂未设置")
@@ -169,11 +174,11 @@ class User:
                 self.data.writeData(self)
         except Exception as ex:
             _erro("Error: Failed to read or write data." + ex.__str__())
-            
+
         if self.warningd >= 10:
             self.banned = True
             _info(f"User '{self.id}' has been banned because of excessive warnings.")
-            
+
         if self.score < 0:
             self.banned = True
 
@@ -183,16 +188,16 @@ class User:
         """
         self.data.writeData(self)
         return
-    
+
     def addItem(self, item: str):
         """
         Add item to user.
         Args:
-            item (str): Item name. 
+            item (str): Item name.
         """
         self.boughtItems.append(item)
         self.save()
-        
+
     def useItem(self, item: str) -> str:
         """
         Use a item from user.
@@ -200,29 +205,30 @@ class User:
             item (str): Item name.
         """
         # load
-        itemJson: list[dict] = json.load(open("./data/item.json", "r", encoding="utf-8"))
-            
+        with open("./data/item.json", "r", encoding="utf-8") as f:
+            itemJson: list[dict] = json.load(f)
+
         itemEffect = ""
         # fetch
         for _item in itemJson:
             if _item.get("Name", "") == item:
                 itemEffect = _item.get("Effect")
                 break
-        
+
         if item == "iai" or item == "棍母" or item == "滚木" or item == "BL.BlueLighting":
             itemEffect = ["spe "+item]
-        
+
         #_info(f"物品：{item} 的效果：" + itemEffect [0]) #type: ignore
-        
+
         # interpret
         """
         sign = 签到
         ticket = 彩票
         """
-        
+
         if item not in self.boughtItems:
             return "你没有该物品。"
-        
+
         if itemEffect == "":
             _rv = random.randint(1, 10)
             if _rv > 5:
@@ -233,28 +239,30 @@ class User:
                 return "窝们载瞎镐"
             else:
                 return "求 iai 继续更新日期"
-        
+
         if "sign" in itemEffect [0]: #type: ignore
             _info(f"SIGN MODE")
             # get *x
 
             _x = itemEffect [0].split(" ") [1] #type: ignore
-            
+
             # out x
             _x = _x.replace("x", "")
-            
+
             # read boost
-            boosts = json.load(open("./data/boostMorningd.json", "r", encoding="utf-8"))
-            
+            with open("./data/boostMorningd.json", "r", encoding="utf-8") as f:
+                boosts = json.load(f)
+
             # append boost
             boosts.append({self.id: int(_x)})
-            
+
             # write boost
-            json.dump(boosts, open("./data/boostMorningd.json", "w", encoding="utf-8"))
-            
+            with open("./data/boostMorningd.json", "w", encoding="utf-8") as f:
+                json.dump(boosts, f)
+
             self.boughtItems.remove(item)
             return f"{_x}x 倍票已使用。下次签到将会获得更多积分。"
-    
+
         elif "ticket" in itemEffect [0]: #type: ignore
             _info(f"TICKET MODE")
             _randomNum = random.randint(1, 1000000000000) # 人：傻逼
@@ -268,14 +276,14 @@ class User:
                 self.addScore(float(_randomMoney))
                 self.boughtItems.remove(item)
                 self.save()
-                return f"未中奖。但获得安慰奖 {_randomMoney}"        
-            
+                return f"未中奖。但获得安慰奖 {_randomMoney}"
+
         elif "playmode" in itemEffect [0]: #type: ignore
             if "enable" in itemEffect [0]: #type: ignore
                 self.boughtItems.remove(item)
                 self.boughtItems.append("play")
                 self.save()
-                return "已启用娱乐模式。" 
+                return "已启用娱乐模式。"
             else:
                 if "play" in self.boughtItems:
                     self.boughtItems.remove("play")
@@ -292,14 +300,14 @@ class User:
                 return "???"
         else:
             return "很抱歉。内部出现错误。"
-        
+
     def aiWarningd(self):
         self.warningd += 1
-    
+
     def echoWarningd(self):
         self.warningd += 2
-        
-        
+
+
     def addScore(self, score: float):
         """
         Add score to user.
@@ -307,10 +315,10 @@ class User:
         Args:
             score (float): Score.
         """
-        
+
         self.score += score
         return
-    
+
     def subtScore(self, score: float):
         """
         Subtract score.
@@ -320,31 +328,31 @@ class User:
         """
         self.score -= score
         return
-    
+
     def getScore(self) -> float:
         """
         Get score from user
         """
         return self.score
-    
+
     def isBanned(self) -> bool:
         """
         Is this user banned?
         """
         return self.banned #type: ignore
-    
+
     def playMode(self) -> bool:
         """
         Is this user enabled play mode (娱乐模式 \\ 骂人模式？) ?
         """
         return "play" in self.boughtItems
-    
+
     def existsItem(self, item: str) -> bool:
         """
         Is this user has got this item?
         """
         return item in self.boughtItems
-    
+
 """
 检测at了谁，返回[qq, qq, qq,...]
 包含全体成员直接返回['all']
@@ -368,7 +376,7 @@ def At(data: str):
         return qq_list
     except KeyError:
         return []
-    
+
 """
 GetInfo 函数。
 获取该账号 / 其他账号的数据
@@ -380,14 +388,14 @@ getinfo_function = on_command("info", aliases={"获取账户信息"}, priority=1
 @getinfo_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = TITLE + " 用户面板"
-    
+
     try:
         at = At(event.json()) [0]
     except IndexError:
         at = ""
-        
+
     user = User(event.get_user_id())
-    
+
     if not user.isBanned():
         if at == "":
             # see self
@@ -405,9 +413,9 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             msg += "\n   - 你他妈被封禁了还来玩？滚"
         else:
             msg += "\n   - 您的账号已被封禁，请联系管理员解封。"
-    
+
     await getinfo_function.finish(msg)
-    
+
 """
 每日签到功能
 
@@ -425,14 +433,14 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     msg = f"{TITLE} 签到\n"
     user_id_str = str(event.get_user_id()) # 确保用户ID是字符串
     current_user = User(user_id_str)
-    
+
     # 检查用户是否被封禁
     if current_user.isBanned():
         if current_user.playMode():
             msg += "    - 你他妈被封禁了还来签到？滚"
         else:
             msg += "    - 您的账号已被封禁，请联系管理员解封。"
-            
+
         await morningToday_function.finish(msg)
 
     # --- 1. 安全加载 Boost 数据 ---
@@ -444,9 +452,9 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
         except json.JSONDecodeError:
             print(f"Warning: {BOOST_DATA_PATH} is corrupted. Starting with an empty boost list.")
             boosts = []
-    
+
     applied_boost_value = 1.0 # 默认没有Boost
-    
+
     # 查找并应用用户专属Boost，同时从列表中移除已应用的Boost
     boost_found_and_removed = False
     for i, boost_entry in enumerate(boosts):
@@ -460,13 +468,13 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
             except (ValueError, TypeError):
                 print(f"Warning: Invalid boost value found for user {user_id_str} in {BOOST_DATA_PATH}.")
                 # 可以选择移除此无效条目，或跳过
-                continue 
+                continue
 
     # 如果有Boost被移除，立即保存Boost文件
     if boost_found_and_removed:
         with open(BOOST_DATA_PATH, "w", encoding="utf-8") as f:
             json.dump(boosts, f, ensure_ascii=False, indent=4)
-            
+
     # --- 2. 安全加载签到记录数据 ---
     morningd_records = []
     if os.path.exists(MORNING_DATA_PATH):
@@ -524,18 +532,18 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
     # --- 4. 执行签到并计算积分 ---
     earned_money = float(random.randint(70, 100)) * applied_boost_value
-    
+
     current_user.addScore(earned_money)
     current_user.save()
-    
+
     msg += "    - 签到成功！"
     msg += f"\n    - 您今天签到获得了 {earned_money:.2f} 积分。" # 格式化为两位小数
     msg += f"\n    - 目前您的积分为 {current_user.getScore():.2f}。" # 格式化为两位小数
-    
+
     await morningToday_function.finish(msg)
-    
+
     # fuck logic, how long
-    
+
 """
 setinfo 函数 (管理员专用)
 用于设置用户的各项信息
@@ -553,17 +561,17 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         at = At(event.json()) [0]
     except IndexError:
         at = ""
-    
+
     user = User(at)
-    
+
     if at == "":
         msg += "\n    - 使用方法： ^setinfo [@用户] [项目 (id, name, score, banned)] [值]"
         await setinfo_function.finish(msg)
-        
+
     arg = args.extract_plain_text().split(" ")
     item = arg [1]
     value = arg [2]
-    
+
     if item == "id":
         user.id = value
         msg += f"\n    - 用户的 {item} 已设为 {value}"
@@ -578,9 +586,9 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         msg += f"\n    - 用户的 {item} 已设为 {value}"
     else:
         msg += f"\n    - 语法错误。"
-    
+
     user.save()
-    
+
     await setinfo_function.finish(msg)
 
 """
@@ -601,21 +609,22 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     if user.banned:
         msg += "\n    - 滚"
         await buy_function.finish(msg)
-    
+
     if _msg == "":
         msg += "\n    - 使用 ^buy list 来查看列表"
         await buy_function.finish(msg)
-    
-    items = json.load(open("./data/item.json", "r", encoding="utf-8"))
+
+    with open("./data/item.json", "r", encoding="utf-8") as f:
+        items = json.load(f)
     arg = args.extract_plain_text().split(" ")
-    
+
     if arg [0] == "list":
         msg += """\n    - 商店状态：售卖中
     - 物品："""
-        
+
         for item in items:
             msg += f"\n    - {item.get("Name", "未知")} 价格 {item.get("Cost", 0)}"
-        
+
         msg += "\n    - 使用 ^buy thing [物品名称] 来购买"
     elif arg [0] == "thing":
         msg += "\n   - 购买商品"
@@ -627,56 +636,56 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             else:
                 msg += "\n    - 购买失败，原因：请填写物品名称"
             await buy_function.finish(msg)
-            
+
         msg += f"\n    - 购买物品：{arg [1]}"
         msg += f"\n    - 数量: {arg [2]}"
         msg += f"\n    - 交付中..."
-        
+
         if int(arg[2]) >= 100:
             if user.playMode():
                 msg += f"\n    - 交付失败，原因：购买数量过大。你他妈买这么多干啥？"
             else:
                 msg += f"\n    - 交付失败，原因：购买数量过大。"
             await buy_function.finish(msg)
-            
+
         # fetch
         global _cost
         _cost = 0.0
         for item in items:
             if item.get("Name") == arg [1]:
                 _cost = item.get("Cost", 0.114)
-        
+
         if _cost == 0.114514:
             if user.playMode():
                 msg += f"\n    - 交付失败，原因：该商品不存在。你他妈买个寂寞？"
             else:
                 msg += f"\n    - 交付失败，原因：该商品不存在。"
             await buy_function.finish(msg)
-            
+
         # calc
         _subtScore = int(arg [2]) * _cost
-        
+
         if _subtScore < 0:
             _subtScore = float(str(_subtScore).replace("-", ""))
             _cost = 0
-        
+
         if user.score >= _subtScore:
             msg += f"\n    - 扣除积分：{_subtScore}"
             msg += f"\n    - 交付成功。"
             user.addScore(-_subtScore)
-            
+
             for i in range(int(arg [2])):
                 user.addItem(arg [1])
-                
+
             user.save()
         else:
             if user.playMode():
                 msg += f"\n    - 交付失败，原因：余额不足。你他妈穷成这样还想买东西？"
             else:
-                msg += f"\n    - 交付失败，原因：余额不足"    
-        
+                msg += f"\n    - 交付失败，原因：余额不足"
+
         msg += f"\n    - 购买结束。请使用 ^buy use {arg [1]} {arg [2]} (若只买了单份或只想使用单份可不填) 来使用商品。"
-        
+
     elif arg [0] == "use":
         if len(arg) == 1:
             if user.playMode():
@@ -686,15 +695,15 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             await buy_function.finish(msg)
         elif len(arg) == 2:
             arg.append("1")
-            
+
         msg += f"\n    - 使用物品 {arg [1]}"
         msg += f"\n    - 使用数量 {arg [2]}"
-        
+
         for i in range(int(arg [2])):
             msg += f"\n    - {user.useItem(arg [1])}"
-        
+
     await buy_function.finish(msg)
-    
+
 """
 AI 函数
 用于 AI 相关功能
@@ -706,17 +715,18 @@ ai_eventer = on_command("ai", aliases={"人工智能"}, priority=10)
 @ai_eventer.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Message = CommandArg()):
     # API Key, 硅基流动
-    api_key = json.loads(open("./data/configuration.json", "r", encoding="utf-8").read()).get("AI-ApiKEY", "")
-    
+    with open("./data/configuration.json", "r", encoding="utf-8") as f:
+        api_key = json.load(f).get("AI-ApiKEY", "")
+
     user = User(event.get_user_id())
-    
+
     if not user.isBanned():
         text = arg.extract_plain_text()
         msg = ""
         msg += "RE: ToolsBot AI"
         if text == "":
             await ai_eventer.finish("RE: ToolsBot AI\n    - 使用 ^ai [内容] 来进行聊天。(注：不会保留上下文)")
-            
+
         payload = {
             "model": "Qwen/Qwen3-8B",
             "messages": [
@@ -729,7 +739,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
 你可以使用以下函数：
     - Failed("18Disabled / AboutWorld"):
         强行停止聊天，并返回原因。
-        
+
 函数调用方法：输出函数
 
 若对方向你询问成人内容，请直接调用函数 Failed("18Disabled")
@@ -743,26 +753,26 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
                 }
             ]
         }
-        
+
         headers = {
             "Authorization": "Bearer " + api_key,
             "Content-Type": "application/json"
         }
-        
+
         await ai_eventer.send("RE: ToolsBot AI 提示：\n    - 请稍等，AI 正在生成")
-        
+
         _response = requests.post("https://api.siliconflow.cn/v1/chat/completions", json=payload, headers=headers)
-        
+
         if _response.status_code != 200:
             msg = """RE: ToolsBot AI
             - 模型：
                 Qwen\\Qwen3-8B
             - 提示：
                 AI 内容处理过程中请求错误，请联系管理员。"""
-                
+
             _erro(_response.text)
             await ai_eventer.finish(msg)
-        
+
         response = _response.text
 
         global js_resp, choices, message_, ctnt, rea_ctnt, usage, total_token
@@ -802,7 +812,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
         - 此次使用 Token：
             {total_token}
     """
-        
+
         if ctnt == 'Failed("18Disabled")':
             msg = f"""ToolsBot AI
         - 模型：
@@ -812,7 +822,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
         """
             if user.playMode():
                 msg.replace("请勿询问此种内容。", "你他妈就这点出息？还问这种东西？")
-            
+
         elif ctnt == 'Failed("AboutWorld")':
             msg = f"""ToolsBot AI
         - 模型：
@@ -830,7 +840,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             Qwen\\Qwen3-8B
         - 提示：
             您的积分不够。目前已追加欠款。请早日还清。
-            
+
             if user.playMode():
                 msg.replace("您的积分不够。目前已追加欠款。请早日还清。", "\n    - 你他妈穷成这样还想用AI？欠债还钱，天经地义！")
         """
@@ -838,10 +848,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
         #user.save()
         # disabled divide score
         await ai_eventer.finish(msg)
-        
+
     else:
-        await ai_eventer.finish("RE: ToolsBot AI\n    - 您的账号已被封禁。无法使用该功能。")   
-        
+        await ai_eventer.finish("RE: ToolsBot AI\n    - 您的账号已被封禁。无法使用该功能。")
+
 """
 UseCode 函数
 兑换码，没几个人能拿得到的那种
@@ -862,7 +872,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             msg += f"\n    - 输入 *usecode [兑换码] 以兑换"
         else:
             msg += f"\nRE: Toolsbot 兑换码兑换"
-            present_code_dict = eval(open("./data/codes.json","r").read())
+            with open("./data/codes.json","r") as f:
+                present_code_dict = json.load(f)
             present_codes = list(present_code_dict.keys())
             code = msgr.extract_plain_text().split(" ")[0]
             if code in present_codes:
@@ -875,7 +886,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
                 msg += "\n    - 兑换码: " + code
                 msg += "\n    - 兑换积分: " + present_code_dict[code]
                 del present_code_dict [code]
-                open("./codes.json","w+").write(str(present_code_dict))
+                with open("./codes.json","w+") as f:
+                    f.write(str(present_code_dict))
                 await code_function.finish(msg)
             else:
                 msg += "\n    - 兑换失败: 兑换码无效"
@@ -886,7 +898,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         msg += "\nRE: Toolsbot 兑换码兑换"
         msg += "\n    - 您的账户已被封禁。\n"
         await code_function.finish(msg)
-        
+
 """
 交易函数
 
@@ -899,7 +911,7 @@ pay_eventer = on_command("pay", aliases={"交易", "向对方转钱"}, priority=
 async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} 交易\n"
     _msg = args.extract_plain_text()
-    
+
     sender_user = User(str(event.get_user_id()))
 
     # Check if the sender is banned
@@ -908,7 +920,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
             msg += "    - 你他妈被封禁了还想交易？滚"
         else:
             msg += "    - 您的账号已被封禁，请联系管理员解封。"
-            
+
         await pay_eventer.finish(msg)
 
     # If no arguments are provided, show usage help
@@ -920,10 +932,10 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
         # Extract the mentioned user's ID
         # MessageSegment.at() is the correct way to get the at information
         receiver_id = At(event.json()) [0]
-        
+
         # Split the message to get the amount
         parts = _msg.split()
-            
+
         money = int(parts[0])
 
         # Get the receiver's user object
@@ -966,7 +978,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
         sender_user.save()
         receiver_user.addScore(float(money))
         receiver_user.save()
-        
+
         msg += "     - 交易成功\n"
         msg += f"    - {sender_user.name} 当前积分: {sender_user.getScore():.2f}\n"
         msg += f"    - {receiver_user.name} 当前积分: {receiver_user.getScore():.2f}"
@@ -978,7 +990,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
             msg += "     - 失败原因: 积分不足或交易金额小于等于零"
 
     await pay_eventer.finish(msg)
-    
+
 """
 回声功能
 
@@ -991,21 +1003,22 @@ echo_eventer = on_command("echo", aliases={"说"}, priority=5)
 async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     # 提取纯文本参数，并去除首尾空格
     _msg = args.extract_plain_text().strip()
-    
+
     # 实例化用户，并使用 str() 确保 ID 类型正确
     user = User(str(event.get_user_id()))
-    
+
     # 检查用户是否被封禁
     if user.isBanned():
         # 如果被封禁，直接返回封禁提示
         await echo_eventer.finish(f"{TITLE} ECHO\n    - 乐，没想到吧，你被封禁了连 echo 都用不了")
-    
+
     # 如果没有提供任何文本，也给出提示
     if not _msg:
         await echo_eventer.finish(f"{TITLE} ECHO\n    - 用法: ^echo [内容]")
-        
+
     #  检测词语
-    failedWords = open("./data/echoFailedWords.json", "r", encoding="utf-8").read()
+    with open("./data/echoFailedWords.json", "r", encoding="utf-8") as f:
+        failedWords = f.read()
     failedWordsList = json.loads(failedWords)["chinese_keywords"]
     failedRegexs = json.loads(failedWords)["regex_patterns"]
     failedEngWordsList = json.loads(failedWords)["exact_matches"]
@@ -1015,7 +1028,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
         if word in _msg:
             user.echoWarningd()
             await echo_eventer.finish(f"{TITLE} ECHO\n    - 键政大师！滚！")
-            
+
     # 正则表达式检测
     for pattern in failedRegexs:
         if re.search(pattern, _msg):
@@ -1032,7 +1045,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
         await echo_eventer.finish("  ")
     # 如果用户未被封禁且提供了文本，则原样返回
     await echo_eventer.finish(_msg)
-    
+
 """
 捡垃圾功能
 
@@ -1052,33 +1065,33 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
         ("垃圾", 0), ("垃圾", 0), ("垃圾", 0), ("垃圾", 0),
         ("中级", 5), ("高级", 10), ("黄金", 100), ("钻石", 10000)
     ]
-    
+
     # 从列表中随机选择一个
     waste_name, waste_money = random.choice(waste_options)
-    
+
     msg = f"{TITLE} - 捡垃圾"
-    
+
     user = User(str(event.get_user_id()))
-    
+
     if user.isBanned():
         if user.playMode():
             msg += "\n    - 你他妈被封禁了还想捡垃圾？滚"
         else:
             msg += "\n    - 您的账号已被封禁，请联系管理员解封。"
         await wasteTaker_event.finish(msg)
-    
+
     # 用户未被封禁，执行捡垃圾逻辑
     user.addScore(float(waste_money))
     user.save()
-    
+
     msg += f"\n    - 你没钱了，你来捡垃圾。"
     msg += f"\n    - 垃圾属性："
     msg += f"\n          类型：{waste_name}"
     msg += f"\n          赚了：{waste_money}"
     msg += f"\n    - 你现在的积分是: {user.getScore():.2f}"
-    
+
     await wasteTaker_event.finish(msg)
-    
+
 """
 排行榜功能
 
@@ -1090,7 +1103,7 @@ list_eventer = on_command("moneybest", aliases={"排行榜"}, priority=5)
 @list_eventer.handle()
 async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} - 排行榜\n"
-    
+
     # 确保文件夹存在，避免 os.listdir 报错
     data_path = "./userdata" # 注意: 这里应该使用 userInfoController.Data 中定义的路径
     if not os.path.exists(data_path):
@@ -1099,7 +1112,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     # 获取所有用户数据文件
     # 原始代码使用了 './database'，但 User 类中是 './userdata'，这里已更正
     user_files = os.listdir(data_path)
-    
+
     user_scores = {}
     for filename in user_files:
         # 确保只处理有效的用户数据文件，这里假设文件名格式是 "QQ号.toolsbot_data"
@@ -1117,20 +1130,20 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
                 # 捕获可能的读取错误，比如文件损坏
                 print(f"Error reading user data for {user_id}: {e}")
                 continue
-    
+
     # 按分数降序排序，并保留前10名
     sorted_scores = sorted(user_scores.items(), key=lambda item: item[1], reverse=True)[:10]
 
     # 检查是否有数据
     if not sorted_scores:
         await list_eventer.finish(msg + "    - 暂无数据可供排名。")
-    
+
     # 格式化输出排行榜
     for rank, (user_name, score) in enumerate(sorted_scores, 1):
         msg += f"    - 第 {rank} 名：{user_name}，积分：{score:.2f}\n"
 
     await list_eventer.finish(msg)
-    
+
 """
 ban 函数
 封禁用户
@@ -1141,10 +1154,10 @@ ban 函数
 ban_function = on_command("ban", priority=10, permission=SUPERUSER)
 
 @ban_function.handle()
-async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+async def _ (bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()): # 备注:我问你,私聊哪来的at
     msg = f"{TITLE} 管理系统"
     ats = At(event.json())
-    
+
     if len(ats) == 1:
         user = User(ats [0])
         user.banned = True
@@ -1160,9 +1173,9 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         msg += f"\n    - 本次封禁 {len(ats)} 个用户。"
     else:
         msg += "\n    - 使用 ^ban [@用户] (可封禁多个)"
-    
+
     await ban_function.finish(msg)
-    
+
 """
 Pardon 函数
 解除用户封禁
@@ -1176,7 +1189,7 @@ pardon_function = on_command("pardon", priority=10, permission=SUPERUSER)
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} 管理系统"
     ats = At(event.json())
-    
+
     if len(ats) == 1:
         user = User(ats [0])
         user.banned = False
@@ -1191,9 +1204,9 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         msg += f"\n    - 本次封禁 {len(ats)} 个用户。"
     else:
         msg += "\n    - 使用 ^pardon [@用户] (可封禁多个)"
-        
+
     await pardon_function.finish(msg)
-    
+
 """
 BanList 函数
 查看封禁用户列表
@@ -1206,22 +1219,22 @@ banlist_function = on_command("banlist", priority=10) # 普通用户也可以看
 @banlist_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} 管理系统"
-    
+
     # users
     users = os.listdir("./userdata")
-    
+
     for _user in users:
         _user = _user.replace(".toolsbot_data", "")
         user = User(_user)
-        
+
         if user.isBanned():
             msg += f"\n    - {user.id} 已被封禁"
-            
+
     if msg == f"{TITLE} 管理系统":
         msg += "\n    - 当前没有被封禁的用户"
-        
+
     await banlist_function.finish(msg)
-    
+
 """
 AccountStatus 函数
 查看当前账号 / 其他账号是否被封禁
@@ -1235,30 +1248,30 @@ accountstatus_function = on_command("accountstatus", aliases={"accountStatus"}, 
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} 当前账号情况"
     at = At(event.json())
-    
+
     if len(at) == 0:
-        
+
         user = User(event.get_user_id())
-        
+
         ban = "解禁"
         if user.isBanned():
             ban = "封禁"
-        
+
         msg += f"\n    - 当前您账号的情况："
         msg += f"\n        - 封禁状态：{ban}"
     else:
-        
+
         user = User(at [0])
-        
+
         ban = "解禁"
         if user.isBanned():
             ban = "封禁"
-        
+
         msg += f"\n    - 当前该账号的情况："
         msg += f"\n        - 封禁状态：{ban}"
-        
+
     await accountstatus_function.finish(msg)
-    
+
 """
 红包函数
 给群友发红包
@@ -1272,20 +1285,20 @@ redpacket_function = on_command("redpacket", aliases={"发红包"}, priority=5)
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} - 发红包"
     user = User(event.get_user_id())
-    
+
     if user.isBanned():
         if user.playMode():
             msg += "\n    - 你他妈被封禁了还想发红包？滚"
         else:
             msg += "\n    - 您的账号已被封禁，请联系管理员解封。"
         await redpacket_function.finish(msg)
-    
+
     _msg = args.extract_plain_text().split(" ")
-    
+
     if len(_msg) < 2:
         msg += "\n    - 使用 ^redpacket [金额] [数量] 来发红包"
         await redpacket_function.finish(msg)
-    
+
     try:
         money = float(_msg [0])
         number = int(_msg [1])
@@ -1295,36 +1308,36 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         else:
             msg += "\n    - 语法错误或金额不是正整数"
         await redpacket_function.finish(msg)
-        
+
     if money <= 0 or number <= 0:
         if user.playMode():
             msg += "\n    - 你他妈语法都不会还想发红包？滚"
         else:
             msg += "\n    - 语法错误或金额不是正整数"
         await redpacket_function.finish(msg)
-        
+
     if user.getScore() < money:
         if user.playMode():
             msg += "\n    - 你他妈穷成这样还想发红包？滚"
         else:
             msg += "\n    - 余额不足"
         await redpacket_function.finish(msg)
-        
+
     if number > 100:
         if user.playMode():
             msg += "\n    - 发红包数量过多。你他妈有钱不如做慈善。"
         else:
             msg += "\n    - 发红包数量过大。"
         await redpacket_function.finish(msg)
-        
+
     # ok, start
     user.subtScore(money)
     user.save()
-    
+
     perMoney = money / number
-    
+
     msg += f"\n    - 成功发出 {number} 个红包，每个 {perMoney:.2f} 积分。请让群友使用 ^openredpacket 来领取。"
-    
+
     # save
     redpacket = {
         "UserID": user.id,
@@ -1332,10 +1345,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         "Number": number,
         "TakedUser": []
     }
-    
+
     # open redpacket data
     redpacket_data_path = "./data/redpackets.json"
-    
+
     if os.path.exists(redpacket_data_path):
         try:
             with open(redpacket_data_path, "r", encoding="utf-8") as f:
@@ -1345,13 +1358,13 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             redpackets = []
     else:
         redpackets = []
-        
+
     redpackets.append(redpacket)
     with open(redpacket_data_path, "w", encoding="utf-8") as f:
         json.dump(redpackets, f, ensure_ascii=False, indent=4)
-        
+
     await redpacket_function.finish(msg)
-    
+
 """
 openredpacket 函数
 抢红包
@@ -1365,17 +1378,17 @@ openredpacket_function = on_command("openredpacket", aliases={"抢红包"}, prio
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     msg = f"{TITLE} - 抢红包"
     user = User(event.get_user_id())
-    
+
     if user.isBanned():
         if user.playMode():
             msg += "\n   - 你他妈被封禁了还想抢红包？滚"
         else:
             msg += "\n   - 您的账号已被封禁，请联系管理员解封。"
         await openredpacket_function.finish(msg)
-    
+
     # open redpacket data
     redpacket_data_path = "./data/redpackets.json"
-    
+
     if os.path.exists(redpacket_data_path):
         try:
             with open(redpacket_data_path, "r", encoding="utf-8") as f:
@@ -1385,29 +1398,29 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             redpackets = []
     else:
         redpackets = []
-        
+
     if len(redpackets) == 0:
         msg += "\n   - 当前没有可抢的红包。"
         await openredpacket_function.finish(msg)
-    
+
     # 随机选择一个红包
     selected_index = random.randint(0, len(redpackets) - 1)
     selected_redpacket = redpackets[selected_index]
-    
+
     if user.id in selected_redpacket["TakedUser"]:
         if user.playMode():
             msg += "\n   - 你他妈已经抢过这个红包了，再抢就变成██。"
         else:
             msg += "\n   - 您已经抢过这个红包了，不能重复抢。"
         await openredpacket_function.finish(msg)
-    
+
     # 给用户加钱
     user.addScore(float(selected_redpacket["Money"]))
     user.save()
-    
+
     msg += f"\n   - 抢到一个 {selected_redpacket['Money']:.2f} 积分的红包！"
     msg += f"\n   - 目前您的积分为 {user.getScore():.2f}。"
-    
+
     # 更新红包数据
     selected_redpacket["Number"] -= 1
     selected_redpacket["TakedUser"].append(user.id)
@@ -1416,14 +1429,15 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         del redpackets[selected_index]
     else:
         # 否则更新红包信息
-        redpackets[selected_index] = selected_redpacket    
-    
-        
+        redpackets[selected_index] = selected_redpacket
+
+
     # 写入
-    open("./data/redpackets.json", "w", encoding="utf-8").write(json.dumps(redpackets, ensure_ascii=False, indent=4))
-    
+    with open("./data/redpackets.json", "w", encoding="utf-8") as f:
+        f.write(json.dumps(redpackets, ensure_ascii=False, indent=4))
+
     await openredpacket_function.finish(msg)
-    
+
 # esu 功能
 fuck_eventer = on_command("fuck")
 
@@ -1436,7 +1450,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         await fuck_eventer.finish("彩蛋无法触发。若该群禁止了私聊请先加 Bot 好友。")
     else:
         await fuck_eventer.finish("彩蛋触发。请查看私聊。")
-        
+
 """
 modifyname 函数
 
@@ -1451,12 +1465,12 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     msg = TITLE + " Modify Name"
     user = User(event.get_user_id())
     _msg = args.extract_plain_text()
-    
+
     user.name = _msg
-    
+
     msg += "\n    - 名称修改完毕。你现在的新名称为：" + user.name + "。"
-    
-    
+
+
     user.save()
     await modifyname_function.finish(msg)
 
@@ -1472,7 +1486,7 @@ bag_function = on_command("bag", aliases=set(), priority=10)
 @bag_function.handle()
 async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     user = User(event.get_user_id())
-    
+
     msg = "\nRE: Toolsbot 背包"
     msg += "\n    - 目前你包里有："
 
@@ -1486,7 +1500,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
             msg += f"\n    - {item}" + (f" x{num}" if num > 1 else "")
 
     await bag_function.finish(msg)
-    
+
 """
 browsingbottle 函数
 漂流瓶
@@ -1501,21 +1515,21 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     msg = TITLE + " 漂流瓶 BROWSING BOTTLE"
     user = User(event.get_user_id())
     _msg = args.extract_plain_text()
-    
+
     _arg = _msg.split(" ")[0]
     if len(msg.split(" ")) != 1:
         _content = _msg.split(" ")[1:]
-    
+
     if _arg == "throw":
         if len(_content) == 0:
             msg += "\n    - 使用 ^browsingbottle throw [内容] 来扔漂流瓶"
             await browsingbottle_function.finish(msg)
-        
+
         content = " ".join(_content)
-        
+
         # open data
         bottle_data_path = "./data/bottles.json"
-        
+
         if os.path.exists(bottle_data_path):
             try:
                 with open(bottle_data_path, "r", encoding="utf-8") as f:
@@ -1525,23 +1539,23 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
                 bottles = []
         else:
             bottles = []
-            
+
         bottle = {
             "UserID": user.id,
             "Content": content
         }
-        
+
         bottles.append(bottle)
-        
+
         with open(bottle_data_path, "w", encoding="utf-8") as f:
             json.dump(bottles, f, ensure_ascii=False, indent=4)
-            
+
         msg += "\n    - 你扔下了一个漂流瓶。"
         await browsingbottle_function.finish(msg)
     elif _arg == "pick":
         # open data
         bottle_data_path = "./data/bottles.json"
-        
+
         if os.path.exists(bottle_data_path):
             try:
                 with open(bottle_data_path, "r", encoding="utf-8") as f:
@@ -1551,22 +1565,22 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
                 bottles = []
         else:
             bottles = []
-            
+
         if len(bottles) == 0:
             msg += "\n    - 目前没有漂流瓶。"
             await browsingbottle_function.finish(msg)
-        
+
         selected_index = random.randint(0, len(bottles) - 1)
         selected_bottle = bottles[selected_index]
-        
+
         msg += f"\n    - 你捡到了一个漂流瓶，内容是：\n    {selected_bottle['Content']}"
-        
+
         # remove
         del bottles[selected_index]
-        
+
         with open(bottle_data_path, "w", encoding="utf-8") as f:
             json.dump(bottles, f, ensure_ascii=False, indent=4)
-            
+
         await browsingbottle_function.finish(msg)
     else:
         msg += "\n    - 使用 ^browsingbottle throw [内容] 来扔漂流瓶"
@@ -1583,53 +1597,54 @@ Voting 函数
 voting_function = on_command("voting", priority=10)
 
 @voting_function.handle()
-async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+async def _voting_function (bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()): # 备注: 你都投票了还用什么私聊啊
     msg = "RE: ToolsBot VOTING MODULE."
     user = User(event.get_user_id())
     _msg = args.extract_plain_text()
-    
+
     # get args
     _arg = _msg.split(" ")
-    
+
     # get vote data
     if os.path.exists("./data/voting.json"):
-        vote_data = json.load(open("./data/voting.json", "r", encoding="utf-8"))
+        with open("./data/voting.json", "r", encoding="utf-8") as f:
+            vote_data = json.load(f)
     else:
         vote_data = []
-        
+
     # cases
     act = _arg[0]
     other = _arg[1:]
-    
+
     if act == "create":
         # create vote, ^voting create [title] [type: kick, normal] [duration: minutes]
         if len(other) < 3:
             msg += "\n    - 使用 ^voting create [title] [type: kick, normal] [duration: minutes] 来创建投票。"
             await voting_function.finish(msg)
-        
+
         title = other[0]
         vtype = other[1]
         duration = other[2]
-        
+
         if vtype not in ["kick", "normal"]:
             msg += "\n    - 投票类型只能是 kick 或 normal。"
             await voting_function.finish(msg)
-        
+
         # check superuser, only superuser can create kick vote
         if vtype == "kick" and event.get_user_id() not in nonebot.get_driver().config.superusers:
             msg += "\n    - 只有超级用户可以创建踢人投票。"
             await voting_function.finish(msg)
-        
+
         if not duration.isdigit():
             msg += "\n    - 投票时间必须是数字，单位为分钟。"
             await voting_function.finish(msg)
-        
+
         duration = int(duration)
-        
+
         if duration >= 24 * 60 * 365:
             msg += "\n    - 投票时间不能超过/等于 1 年。"
             await voting_function.finish(msg)
-            
+
         # make cfg
         _cfg = {
             "name": title,
@@ -1643,45 +1658,46 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageE
             "begintime": str(datetime.datetime.now()),
             "voters": []
         }
-        
+
         vote_data.append(_cfg)
-        
-        json.dump(vote_data, open("./data/voting.json", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+
+        with open("./data/voting.json", "w", encoding="utf-8") as f:
+            json.dump(vote_data, f, ensure_ascii=False, indent=4)
         # write in
         msg += f"\n    - 已创建投票 {title}，类型 {vtype}，时长 {duration} 分钟。"
         await voting_function.finish(msg)
-    
+
     elif act == "list":
         # list votes
         if len(vote_data) == 0:
             msg += "\n    - 目前没有任何投票。"
             await voting_function.finish(msg)
-        
+
         msg += "\n    - 目前的投票有："
         for vote in vote_data:
             msg += f"\n        - {vote['name']} (状态: {vote['status']}, 类型: {vote['type']}, 发起人: {vote['creator']})"
-        
+
         await voting_function.finish(msg)
-    
+
     elif act == "status":
         # status of vote, ^voting status [title]
         if len(other) < 1:
             msg += "\n    - 使用 ^voting status [title] 来查看投票状态。"
             await voting_function.finish(msg)
-        
+
         title = other[0]
-        
+
         # find vote
         vote = None
         for v in vote_data:
             if v["name"] == title:
                 vote = v
                 break
-        
+
         if vote == None:
             msg += f"\n    - 未找到投票 {title}"
             await voting_function.finish(msg)
-        
+
         # show status
         msg += f"\n    - 投票 {title} 的状态："
         msg += f"\n        - 状态: {vote['status']}。"
@@ -1692,9 +1708,9 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageE
         msg += f"\n        - 弃权: {vote['abstain']} 票。"
         msg += f"\n        - 时长: {vote['duration']} 分钟。"
         msg += f"\n        - 已投票人数: {len(vote['voters'])} 人。"
-        
+
         await voting_function.finish(msg)
-    
+
     elif act == "help":
         msg += """
 使用 ^voting [参数] 来使用投票功能。
@@ -1713,31 +1729,31 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageE
     3. 投票结束后，kick 类型的投票如果赞成票多于反对票，则会自动踢出发起人指定的用户
 """
         await voting_function.finish(msg)
-    
+
     elif act == "vote":
         # vote, ^voting vote [title] [agree, objection, abstain]
         if len(other) < 2:
             msg += "\n    - 使用 ^voting vote [title] [agree, objection, abstain] 来投票。"
             await voting_function.finish(msg)
-        
+
         title = other[0]
         choice = other[1]
-        
+
         if choice not in ["agree", "objection", "abstain"]:
             msg += "\n    - 投票选项只能是 agree, objection, abstain。"
             await voting_function.finish(msg)
-        
+
         # find vote
         vote = None
         for v in vote_data:
             if v["name"] == title:
                 vote = v
                 break
-        
+
         if vote == None:
             msg += f"\n    - 未找到投票 {title}。"
             await voting_function.finish(msg)
-        
+
         if vote["status"] != "进行中":
             msg += f"\n    - 投票 {title} 已结束，无法投票。"
             await voting_function.finish(msg)
@@ -1745,7 +1761,8 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageE
             # check duration:
             if (datetime.datetime.now() - datetime.datetime.fromisoformat(vote["begintime"])).total_seconds() > vote["duration"] * 60:
                 vote["status"] = "已结束"
-                json.dump(vote_data, open("./data/voting.json", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+                with open("./data/voting.json", "w", encoding="utf-8") as f:
+                    json.dump(vote_data, f, ensure_ascii=False, indent=4)
                 if vote["type"] == "kick":
                     if vote["agree"] > vote["objection"]:
                         # kick the creator
@@ -1763,11 +1780,11 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageE
                         msg += f"\n    - 投票 {title} 已结束，结果为反对票多于或等于赞成票，未封禁发起人 {vote['creator']}。"
                 msg += f"\n    - 投票 {title} 已结束，无法投票。"
                 await voting_function.finish(msg)
-        
+
         if user.id in vote["voters"]:
             msg += f"\n    - 你已在投票 {title} 中投过票，无法重复投票。"
             await voting_function.finish(msg)
-        
+
         # cast vote
         if choice == "agree":
             vote["agree"] += 1
@@ -1775,11 +1792,12 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageE
             vote["objection"] += 1
         elif choice == "abstain":
             vote["abstain"] += 1
-        
+
         vote["voters"].append({user.id: choice})
-        
-        json.dump(vote_data, open("./data/voting.json", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
-        
+
+        with open("./data/voting.json", "w", encoding="utf-8") as f:
+            json.dump(vote_data, f, ensure_ascii=False, indent=4)
+
         msg += f"\n    - 你已在投票 {title} 中投下 {choice} 一票。"
         await voting_function.finish(msg)
     else:

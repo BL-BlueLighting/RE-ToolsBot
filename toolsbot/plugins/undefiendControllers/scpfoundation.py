@@ -1,20 +1,18 @@
-from nonebot import *
-from nonebot.adapters import Message
-from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import *
-from nonebot.permission import SUPERUSER
-import nonebot,random,json,requests
-from time import sleep as wait
-from random import uniform as wrd
-import os
-import datetime
-import logging, re
-import toolsbot.plugins.userInfoController as uic
+import logging
+
+import requests
 from lxml import html as hi
+from nonebot import on_command
+from nonebot.adapters import Message
+from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
+                                         PrivateMessageEvent)
+from nonebot.params import CommandArg
+
+import toolsbot.plugins.userInfoController as uic
 
 logging.basicConfig(
     filename='botlog.log',
-    filemode='a',       
+    filemode='a',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
@@ -51,9 +49,9 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, _args: Me
     user = uic.User(event.get_user_id())
     _msg = _args.extract_plain_text()
     args = _msg.strip().split(" ")
-    
+
     # SCP FOUNDATION IS FOR EVERYONE.
-    
+
     if len(args) == 0:
         msg += "\n    Welcome to S.C.P. Foundation."
         msg += "\n    You can use commands under:"
@@ -64,15 +62,15 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, _args: Me
         msg += "\n        - Minecraft (mc)"
         msg += "\n        - Cloud (cloud)"
         await scp_function.finish(msg)
-    
+
     elif args [0] == "doc" or args [0] == "document":
         # fetch scp website
         branch = "en"
-        
+
         if len(args) == 1:
             msg += "    - 请输入文档编号。"
             await scp_function.finish(msg)
-        
+
         if len(args) == 2:
             branch = "en"
         else:
@@ -83,12 +81,12 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, _args: Me
             else:
                 branch = "en"
                 msg += "    - 您所要检索的分支目前 RE: ToolsBot 不支持。\n    - 将默认使用 EN 编号查找。"
-        
+
         msg += f"\n    - 检索 SCP-{branch}-{args [1]}"
-        
+
         global scpurl
         scpurl = ""
-        
+
         if branch == "cn":
             scpurl = f"https://scp-wiki-cn.wikidot.com/scp-cn-{args [1]}"
         elif branch == "en":
@@ -97,21 +95,21 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, _args: Me
             scpurl = f"https://scp-wiki-mc.wikidot.com/scp-mc-{args [1]}"
         elif branch == "cloud":
             scpurl = f"https://scp-wiki-cloud.wikidot.com/scp-cloud-{args [1]}"
-            
+
         # get page content
         try:
             page = requests.get(scpurl).content.decode("gbk")
             level = "safe"
-            
+
             if "euclid" in page or "Euclid" in page:
                 level = "euclid"
             elif "keter" in page or "Keter" in page:
                 level = "keter"
-                
+
             _info(page)
-                
+
             page = hi.fromstring(page)
-            
+
             msg += f"\n    - 检索成功。"
             msg += f"\n    - SCP 文档信息："
             msg += f"\n        - 编号：SCP-{branch}-{args [1]}"
@@ -123,5 +121,5 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, _args: Me
             msg += "\n    - 处理过程出现问题。"
             _erro(e.__str__())
             await scp_function.finish(msg)
-        
+
         await scp_function.finish(msg)

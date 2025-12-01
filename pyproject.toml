@@ -25,7 +25,6 @@ click = "8.2.1"
 colorama = "0.4.6"
 construct = "2.10.70"
 cryptography = "44.0.3"
-django = "5.2.7"
 dnspython = "2.8.0"
 exceptiongroup = "1.3.0"
 fastapi = "0.116.1"
@@ -89,6 +88,7 @@ win32-setctime = "1.2.0"
 yarl = "1.20.1"
 zstandard = "0.24.0"
 lxml = ">=6.0.2"
+isort = "^7.0.0"
 [tool.nonebot]
 adapters = [
     {name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11"},

@@ -6,7 +6,7 @@
         ^unmute [@人]: 取消禁言 [@人]
 
     修改了帮助文件。
-    
+
     修复了 LiangCai 64 功能无法正确读取参数的 Bug。
 
                                                             -- Bot Developer: BlueLighting

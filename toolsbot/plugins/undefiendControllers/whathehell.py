@@ -1,19 +1,9 @@
-from nonebot import *
-from nonebot.adapters import Message
-from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import *
-from nonebot.permission import SUPERUSER
-import nonebot,random,json,requests
-from time import sleep as wait
-from random import uniform as wrd
-import os
 import datetime
-import logging, re
+import logging
 
-from nonebot.rule import to_me
-
-import toolsbot.plugins.userInfoController as uic
-from lxml import html as hi
+from nonebot import on_command
+from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
+                                         PrivateMessageEvent)
 
 logging.basicConfig(
     filename='botlog.log',
