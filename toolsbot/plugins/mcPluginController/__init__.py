@@ -1,9 +1,12 @@
 
-from nonebot import *
-from nonebot.adapters.onebot.v11 import Message, Bot, MessageEvent
-from nonebot.params import CommandArg
+import json
+import re
+
 from mcstatus import JavaServer
-import re, json
+from nonebot import on_command
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
+from nonebot.params import CommandArg
+
 
 # 去除颜色代码
 def strip_minecraft_colors(text: str) -> str:

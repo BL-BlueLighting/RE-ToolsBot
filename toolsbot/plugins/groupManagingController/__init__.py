@@ -1,18 +1,24 @@
-from nonebot import *
-from nonebot.adapters import Message
-from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import *
-from nonebot.adapters.onebot.v11 import GroupMessageEvent
+import json
+import logging
+import re
+from typing import Union
+
+import nonebot
 import nonebot.adapters.onebot.v11
-from nonebot.permission import SUPERUSER
-import nonebot,random,json,requests
-from time import sleep as wait
-from random import uniform as wrd
-import os
-from nonebot.typing import *
-import toolsbot.plugins.userInfoController as dc
-import logging, re, datetime
+from nonebot import on_command, on_notice, on_request
+from nonebot.adapters import Message
+from nonebot.adapters.onebot.v11 import (FriendRequestEvent,
+                                         GroupDecreaseNoticeEvent,
+                                         GroupIncreaseNoticeEvent,
+                                         GroupMessageEvent)
 from nonebot.adapters.onebot.v11 import Message as OneBotMessage
+from nonebot.adapters.onebot.v11 import PrivateMessageEvent
+from nonebot.exception import ActionFailed
+from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
+from nonebot.typing import T_State
+
+import toolsbot.plugins.userInfoController as dc
 
 logging.basicConfig(
     filename='botlog.log',
@@ -43,14 +49,14 @@ async def welcome(bot: Bot, event: GroupIncreaseNoticeEvent, state: T_State):
         await welcom.finish(message=Message(f'{msg}'))
 """
 
-def replacing(bot: nonebot.adapters.onebot.v11.Bot, string: str, qqNumber: str) -> str:
+async def replacing(bot: nonebot.adapters.onebot.v11.Bot, string: str, qqNumber: str) -> str:
     # replacing string using qqNumber and CQ:at
     res = string
 
     res = res.replace("[@]", "[CQ:at,qq={}]".format(qqNumber))
     # replacing "Name" using api
     try:
-        user_info = bot.call_api("get_user_info", user_id=int(qqNumber))
+        user_info = await bot.call_api("get_user_info", user_id=int(qqNumber))
         res = res.replace("[Name]", user_info["name"])
     except Exception as e:
         _warn(f"Failed to get user info using qq number {qqNumber}. This is why:\n{e}")
@@ -77,14 +83,14 @@ async def welcome(bot: nonebot.adapters.onebot.v11.Bot, event: GroupIncreaseNoti
         except ActionFailed:
             _crit("Failed to auto ban a sb.")
 
-    await welcomejoin_event.finish(OneBotMessage(replacing(bot, config ["WelcomeMessage"], user)))
+    await welcomejoin_event.finish(OneBotMessage(await replacing(bot, config ["WelcomeMessage"], user)))
 
 goodbye_event = on_notice()
 
 @goodbye_event.handle()
 async def goodbye(bot: nonebot.adapters.onebot.v11.Bot, event: GroupDecreaseNoticeEvent, state: T_State):
     user = event.get_user_id()
-    await goodbye_event.finish(OneBotMessage(replacing(bot, config ["EscapeMessage"], user)))
+    await goodbye_event.finish(OneBotMessage(await replacing(bot, config ["EscapeMessage"], user)))
 
 # auto agree friend adding
 

@@ -1,13 +1,14 @@
+import base64
+from random import uniform as wrd
+from time import sleep as wait
+
+import base58
 from nonebot import on_command
 from nonebot.adapters import Message
-from nonebot.params import CommandArg
-import base64,base58
 from nonebot.adapters.onebot.v11 import MessageEvent
-import nonebot
-from time import sleep as wait
-from random import uniform as wrd
+from nonebot.params import CommandArg
+
 import toolsbot.plugins.userInfoController as dc
-import configparser
 
 """
 Re: ToolsBot
@@ -27,7 +28,7 @@ BaseXX Function
 base64_eventer = on_command("base64", aliases={"b64"}, priority=10)
 
 @base64_eventer.handle()
-async def handle_function(event: MessageEvent,args: Message = CommandArg()):
+async def _(event: MessageEvent,args: Message = CommandArg()):
     user = dc.User(event.get_user_id())
     if not user.isBanned():
         msg = ""
@@ -58,7 +59,7 @@ async def handle_function(event: MessageEvent,args: Message = CommandArg()):
 base32_eventer = on_command("base32", aliases={"b32"}, priority=10)
 
 @base32_eventer.handle()
-async def handle_function(event: MessageEvent,args: Message = CommandArg()):
+async def _(event: MessageEvent,args: Message = CommandArg()):
     user = dc.User(event.get_user_id())
     if not user.isBanned():
         msg = ""
@@ -88,7 +89,7 @@ async def handle_function(event: MessageEvent,args: Message = CommandArg()):
 base16_eventer = on_command("base16", aliases={"b16"}, priority=10)
 
 @base16_eventer.handle()
-async def handle_function(event: MessageEvent,args: Message = CommandArg()):
+async def _(event: MessageEvent,args: Message = CommandArg()):
     user = dc.User(event.get_user_id())
     if not user.isBanned():
         msg = ""
@@ -119,7 +120,7 @@ async def handle_function(event: MessageEvent,args: Message = CommandArg()):
 base85_eventer = on_command("base85", aliases={"b85"}, priority=10)
 
 @base85_eventer.handle()
-async def handle_function(event: MessageEvent,args: Message = CommandArg()):
+async def _(event: MessageEvent,args: Message = CommandArg()):
     user = dc.User(event.get_user_id())
     if not user.isBanned():
         msg = ""
@@ -149,7 +150,7 @@ async def handle_function(event: MessageEvent,args: Message = CommandArg()):
 base58_eventer = on_command("base58", aliases={"b58"}, priority=10)
 
 @base58_eventer.handle()
-async def handle_function(event: MessageEvent,args: Message = CommandArg()):
+async def _(event: MessageEvent,args: Message = CommandArg()):
     user = dc.User(event.get_user_id())
     if not user.isBanned():
         msg = ""

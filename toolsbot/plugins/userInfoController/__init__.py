@@ -1,17 +1,22 @@
-from nonebot import *
-from nonebot.adapters import Message
-from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import *
-from nonebot.permission import SUPERUSER
-import nonebot,random,json,requests
-from time import sleep as wait
-from random import uniform as wrd
-import os
 import datetime
-import logging, re
-from collections import Counter
+import json
+import logging
+import os
+import random
+import re
 import sqlite3
-from typing import Dict, List, Any
+from collections import Counter
+from typing import Any, Dict
+
+import nonebot
+import requests
+from nonebot import on_command
+from nonebot.adapters import Message
+from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
+                                         PrivateMessageEvent)
+from nonebot.exception import ActionFailed
+from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
 
 logging.basicConfig(
     filename='botlog.log',

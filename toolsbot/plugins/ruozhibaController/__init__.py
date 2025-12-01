@@ -1,10 +1,11 @@
 import json
-import random
 import os
+import random
+
 from nonebot import on_command
 from nonebot.adapters import Message
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import MessageEvent, Bot
 
 # 假设 TITLE 变量已在其他地方定义，这里为了完整性添加
 TITLE = "RE: ToolsBot"

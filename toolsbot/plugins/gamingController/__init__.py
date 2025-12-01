@@ -1,17 +1,9 @@
-from nonebot import *
-from nonebot.adapters import Message
-from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import *
-from nonebot.permission import SUPERUSER
-import nonebot,random,json,requests
-from time import sleep as wait
-from random import uniform as wrd
+import json
+import logging
 import os
-import datetime
-import logging, re
-from collections import Counter
-import toolsbot.plugins.userInfoController as uic
+
 import toolsbot.plugins.gamingController.mapInterpreter as mapi
+import toolsbot.plugins.userInfoController as uic
 
 logging.basicConfig(
     filename='botlog.log',

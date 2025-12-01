@@ -1,13 +1,7 @@
-from nonebot import *
-from nonebot.adapters import Message
-from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import *
-from nonebot.permission import SUPERUSER
-import nonebot,random,json,requests
-from time import sleep as wait
-from random import uniform as wrd
+import json
+import logging
 import os
-import datetime, logging
+import random
 
 logging.basicConfig(
     filename='botlog.log',

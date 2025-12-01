@@ -2,8 +2,10 @@
 mapInterpreter
 """
 
-import toolsbot.plugins.gamingController.mapInterpreterLib as lib
 from typing import Literal
+
+import toolsbot.plugins.gamingController.mapInterpreterLib as lib
+
 
 def run(data: str):
     # data is a file under data/map/areas/.

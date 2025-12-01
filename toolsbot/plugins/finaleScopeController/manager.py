@@ -1,8 +1,10 @@
 """
 Control finalescope_data \\ fs_data more file interpret.
 """
-import toolsbot.plugins.userInfoController as dc
 import configparser
+
+import toolsbot.plugins.userInfoController as dc
+
 
 class Door:
     def __init__(self, name: str, unlockCondition: list[str], reward: int):

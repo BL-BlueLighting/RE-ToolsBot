@@ -1,9 +1,10 @@
 # 该模块建造了 MapContent 相关内容，作为解释器的主要加载 library.
 
-from typing import Literal
 #from toolsbot.plugins.gamingController import MapUser
 #上面这行造成循环引用了，删了
 import json
+from typing import Literal
+
 
 class MapContent:
 

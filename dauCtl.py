@@ -1,12 +1,7 @@
-from nonebot import on_command
-from nonebot.adapters import Message
-from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import *
-from nonebot.permission import SUPERUSER
-import nonebot,random,json
-from time import sleep as wait
-from random import uniform as wrd
+import json
 import os
+import random
+
 
 class Database:
     def __init__(self, db_name:str, id:str):
