@@ -67,22 +67,22 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         await aes_eventer.finish(f"{TITLE} AES 加密解密\n"
                                  "    - 用法: *aes [encrypt|decrypt] [内容] [密钥]\n"
                                  "    - 示例: *aes encrypt Hello my_key")
-    
+
     params_list = params.split(" ", 2)
-    
+
     # 检查参数数量
     if len(params_list) < 3:
         await aes_eventer.finish(f"{TITLE} AES 加密解密\n"
                                  "    - 错误: 参数不足。用法: *aes [encrypt|decrypt] [内容] [密钥]")
 
     action, content, key = params_list
-    
+
     # 异步操作通常不使用 sleep，但为了模拟原代码的延迟效果，这里保留
     # 在实际项目中，应避免使用 sleep，因为它会阻塞事件循环
     # await asyncio.sleep(random.uniform(0.5, 0.9))
 
     msg = f"{TITLE} AES 加密解密"
-    
+
     if action == "encrypt":
         result = encrypt_aes(content, key)
         msg += f"\n    - 内容: {content}\n    - 密钥: {key}\n    - 加密结果:\n{result}"

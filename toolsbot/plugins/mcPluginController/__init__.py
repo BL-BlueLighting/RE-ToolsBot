@@ -46,17 +46,17 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             )
         except Exception as e:
             await mc_status.finish(f"RE: ToolsBot Minecraft Plugin\n    - 查询失败：{type(e).__name__} - {e}")
-            
+
     elif _args [0] == "look":
         servers: list[dict] = json.loads(open("./data/mcServers.json", "r", encoding="utf-8").read())
         server = {}
-        
+
         for _server in servers:
             print("Name:" + _server.get("Name"))
             print("Looking Name:" + " " +target.replace("look ", ""))
             if _server.get("Name") == target.replace("look ", ""):
                 server = _server
-        
+
         if server == {}:
             msg = (
                 f"RE: ToolsBot Minecraft Plugin\n"
@@ -64,9 +64,9 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
                 f"    - 未找到该服务器的任何信息。"
             )
             await mc_status.finish(msg)
-        
+
         host, port = server.get("Address", ["", 0])
-        
+
         if host == "" and port == 0:
             msg = (
                 f"RE: ToolsBot Minecraft Plugin\n"
@@ -74,7 +74,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
                 f"    - 很抱歉，配置错误导致该服务器无法被查询。"
             )
             await mc_status.finish(msg)
-        
+
         try:
             server = JavaServer(host, port)
             status = server.status()
@@ -93,28 +93,28 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             )
         except Exception as e:
             await mc_status.finish(f"RE: ToolsBot Minecraft Plugin\n    - 查询失败：{type(e).__name__} - {e}")
-    
+
     elif _args [0] == "add":
         # split name and address
         _name, _address = target.split("ipaddress=")
         _name = _name.replace("add ", "")
-        
+
         _l_address = _address.split(":")
-        
+
         _ip = ""
         _port = 0
-        
+
         if len(_l_address) == 1:
             _ip = _l_address [0]
             _port = 25565
         else:
             _ip = _l_address [0]
             _port = _l_address [1]
-            
+
         # test
         print(_l_address)
         print(_ip, _port)
-        
+
         try:
             server = JavaServer(_ip, int(_port))
             status = server.status()
@@ -131,18 +131,18 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
                 f"    - 无法添加，原因：服务器无法联通或端口不正确\\封禁 Bot IP"
             )
             await mc_status.finish(msg)
-        
+
         # make configuration file
         _config = {
             "Name": _name,
             "Address": [_ip, int(_port)]
         }
-        
+
         # write in
         servers: list[dict] = json.loads(open("./data/mcServers.json", "r", encoding="utf-8").read())
         servers.append(_config)
         json.dump(servers, open("./data/mcServers.json", "w", encoding="utf-8"))
-        
+
         # result send
         msg = (
             f"RE: ToolsBot Minecraft Plugin\n"

@@ -58,7 +58,7 @@ class Data:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT OR REPLACE INTO users 
+                INSERT OR REPLACE INTO users
                 (ID, Name, Score, boughtItems, Ban, Warningd, DynamicExts)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (

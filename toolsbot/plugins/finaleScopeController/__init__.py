@@ -18,7 +18,7 @@ User = dc.User
 
 logging.basicConfig(
     filename='botlog.log',
-    filemode='a',       
+    filemode='a',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
@@ -35,7 +35,7 @@ _crit = logging.critical
 RE: ToolsBot
 Tools Bot 的第二版。
 
-@author: Latingtude 
+@author: Latingtude
 
 finaleScopeController
 
@@ -58,17 +58,17 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     msg = TITLE + " FiNALE SCOPE 信息查询。\n"
     user = User(event.get_user_id())
     _msg = args.extract_plain_text()
-    
+
     # query data
-    
+
     scope = runner.run("doors.finalescope_data")
-    
+
     if scope == None:
         msg += "    - FiNALE SCOPE 没有 Doors 的数据文件。\n    - 请询问 Bot 主，向 2733392694 索取文件。"
         await query_function.finish(msg)
-    
+
     msg += "    - 目前 FiNALE SCOPE 有 " + str(len(scope.doors)) + " 个门。\n"
-    
+
     # get unlocked doors
     try:
         open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
@@ -78,16 +78,16 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as f:
             f.write(template)
             _info("Create new finaleScope data file for user " + user.id)
-            
+
     config = configparser.ConfigParser()
     config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
                 encoding="utf-8")
-    
+
     if config.get("Scope", "DoorsUnlock") != "":
         unlockedDoors = config.get("Scope", "DoorsUnlock").split(", ")
     else:
         unlockedDoors = []
-        
+
     if len(unlockedDoors) == 0:
         msg += "    - 你目前还没有解锁任何门。\n"
     else:
@@ -100,9 +100,9 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             msg += "    - 你目前解锁了 " + str(len(unlockedDoors)) + " 个门，分别是：\n"
             for doorName in unlockedDoors:
                 msg += "        - " + doorName + "\n"
-    
+
     await query_function.finish(msg) # 不给看其他的
-    
+
 """
 unlockNext 函数
 
@@ -117,13 +117,13 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     msg = TITLE + " FiNALE SCOPE UNLOCK NEXT\n"
     user = User(event.get_user_id())
     _msg = args.extract_plain_text()
-    
+
     # query data
     scope = runner.run("doors.finalescope_data")
     if scope == None:
         msg += "    - FiNALE SCOPE 没有 Doors 的数据文件。\n    - 请询问 Bot 主，向 2733392694 索取文件。"
         await unlock_next_function.finish(msg)
-    
+
     # get unlocked doors
     try:
         open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
@@ -133,16 +133,16 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as f:
             f.write(template)
             _info("Create new finaleScope data file for user " + user.id)
-            
+
     config = configparser.ConfigParser()
     config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
                 encoding="utf-8")
-    
+
     if config.get("Scope", "DoorsUnlock") != "":
         unlockedDoors = config.get("Scope", "DoorsUnlock").split(", ")
     else:
         unlockedDoors = []
-        
+
     # check next door
     nextDoor = None
     for door in scope.doors:
@@ -153,25 +153,25 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     if nextDoor == None:
         msg += "    - 目前还没有更多的门出现。请等待后面新门加入。\n"
         await unlock_next_function.finish(msg)
-        
+
     if nextDoor.condition(user):
         # unlock
         if config.get("Scope", "DoorsUnlock") == "":
             config.set("Scope", "DoorsUnlock", nextDoor.name)
         else:
             config.set("Scope", "DoorsUnlock", config.get("Scope", "DoorsUnlock") + ", " + nextDoor.name)
-        
+
         with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as configfile:
             config.write(configfile)
-        
+
         msg += "    - 你解锁了 " + nextDoor.name + " 门。\n"
         msg += "    - 你获得了 " + str(nextDoor.reward) + " 点数。\n"
-        
+
         user.addScore(nextDoor.reward)
         user.save()
         await unlock_next_function.finish(msg)
     else:
         msg += "    - 下一个门你还未满足打开条件。\n"
         msg += "    - 请自己探索或询问 Bot 主条件。\n"
-        
+
         await unlock_next_function.finish(msg)
