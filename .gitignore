@@ -167,3 +167,5 @@ activate.sh
 *.gmdata
 
 *.db
+RE-ToolsBot.code-workspace
+poetry.lock
