@@ -23,7 +23,8 @@ class Door:
         for condition in self.unlockCondition:
             if "finish" in condition:
                 condition = condition.replace("finish ", "")
-                open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
+                with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8") as f:
+                    f.read() # this is a ini
                 config = configparser.ConfigParser()
                 config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
                             encoding="utf-8")
@@ -54,7 +55,8 @@ class Door:
 
             elif "lc64use" in condition:
                 # check
-                open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
+                with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8") as f:
+                    f.read() # this is a ini
                 config = configparser.ConfigParser()
                 config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
                             encoding="utf-8")
@@ -65,7 +67,8 @@ class Door:
             elif "asked" in condition:
                 condition = condition.replace("asked ", "")
                 # check
-                open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
+                with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8")as f:
+                    f.read() # this is a ini
                 config = configparser.ConfigParser()
                 config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
                             encoding="utf-8")

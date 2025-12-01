@@ -52,7 +52,8 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             await mc_status.finish(f"RE: ToolsBot Minecraft Plugin\n    - 查询失败：{type(e).__name__} - {e}")
 
     elif _args [0] == "look":
-        servers = json.loads(open("./data/mcServers.json", "r", encoding="utf-8").read())
+        with open("./data/mcServers.json", "r", encoding="utf-8") as f:
+            servers = json.load(f)
         server = {}
 
         for _server in servers:
@@ -143,9 +144,11 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         }
 
         # write in
-        servers: list[dict] = json.loads(open("./data/mcServers.json", "r", encoding="utf-8").read())
+        with open("./data/mcServers.json", "r", encoding="utf-8") as f:
+            servers: list[dict] = json.load(f)
         servers.append(_config)
-        json.dump(servers, open("./data/mcServers.json", "w", encoding="utf-8"))
+        with open("./data/mcServers.json", "w", encoding="utf-8") as f:
+            json.dump(servers, f)
 
         # result send
         msg = (

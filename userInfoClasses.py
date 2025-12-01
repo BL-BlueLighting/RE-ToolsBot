@@ -65,14 +65,16 @@ class Data:
         }
 
         # write in
-        open(self.mainPath, "w", encoding="utf-8").write(json.dumps(userData))
+        with open(self.mainPath, "w", encoding="utf-8") as f:
+            f.write(json.dumps(userData))
 
         # return
         return
 
     def readData(self) -> dict:
         try:
-            return json.loads(open(self.mainPath, "r", encoding="utf-8").read())
+            with open(self.mainPath, "r", encoding="utf-8") as f:
+                return json.load(f)
         except Exception as ex:
             _erro("Error: Failed to read data.\nInformation: \n" + ex.__str__())
             return {}
@@ -138,7 +140,8 @@ class User:
             item (str): Item name.
         """
         # load
-        itemJson: list[dict] = json.load(open("./data/item.json", "r", encoding="utf-8"))
+        with open("./data/item.json", "r", encoding="utf-8") as f:
+            itemJson: list[dict] = json.load(f)
 
         itemEffect = ""
         # fetch
@@ -170,13 +173,15 @@ class User:
             _x.replace("x", "")
 
             # read boost
-            boosts = json.load(open("./data/boostMorningd.json", "r", encoding="utf-8"))
+            with open("./data/boostMorningd.json", "r", encoding="utf-8") as f:
+                boosts = json.load(f)
 
             # append boost
             boosts.append({self.id: int(_x)})
 
             # write boost
-            json.dump(boosts, open("./data/boostMorningd.json", "w", encoding="utf-8"))
+            with open("./data/boostMorningd.json", "w", encoding="utf-8") as f:
+                json.dump(boosts, f)
 
             self.boughtItems.remove(item)
             return f"{_x}x 倍票已使用。下次签到将会获得更多积分。"

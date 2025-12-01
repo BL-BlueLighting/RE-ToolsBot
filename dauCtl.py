@@ -10,11 +10,13 @@ class Database:
         self.id = id
 
     def write(self, data:str):
-        open(f"./database/{self.id}","w+").write(data)
+        with open(f"./database/{self.id}","w+") as f:
+            f.write(data)
 
     def read(self) -> str:
         if os.path.exists(f"./database/{self.id}"):
-            return open(f"./database/{self.id}","r").read()
+            with open(f"./database/{self.id}","r") as f:
+                return f.read()
         else:
             return ""
 
@@ -47,7 +49,8 @@ class User:
         self.score = database.get("score", 0)
         self.buied = database.get("buied", [])
 
-        banneds = eval(open("./banned.json","r",encoding="utf-8").read())
+        with open("./banned.json","r",encoding="utf-8") as f: # 原来用的eval是何意味
+            banneds = json.load(f)
         if userid in banneds:
             self.banned = True
         else:
@@ -90,7 +93,8 @@ class User:
             self.buied.append(item)
 
     def useItem(self,item:str):
-        howcando:dict = eval(open("./howCanDo.json","r",encoding="utf-8").read())
+        with open("./howCanDo.json","r",encoding="utf-8") as f:
+            howcando:dict = json.load(f)
         for name in self.buied:
             for namer,do in howcando.items():
                 if name == namer:
@@ -100,9 +104,11 @@ class User:
     def do(self,action:str) -> str | None:
         if "morning.score.x" in action:
             add_x = int(action.replace("morning.score.x",""))
-            todayScorePlus:dict = eval(open("./todayScorePlus.json","r",encoding="utf-8").read())
+            with open("./todayScorePlus.json","r",encoding="utf-8") as f:
+                todayScorePlus:dict = json.load(f)
             todayScorePlus.update({self.id:add_x})
-            open("./todayScorePlus.json","w+",encoding="utf-8").write(str(todayScorePlus))
+            with open("./todayScorePlus.json","w+",encoding="utf-8") as f:
+                f.write(str(todayScorePlus))
             return "    - 使用成功，如果您今天没有 /morning，使用 /morning 即可获得积分。"
         elif "guess.money.try" in action:
             cp_money = random.randint(10,10000000)

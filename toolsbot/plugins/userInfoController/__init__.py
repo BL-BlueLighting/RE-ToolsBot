@@ -205,7 +205,8 @@ class User:
             item (str): Item name.
         """
         # load
-        itemJson: list[dict] = json.load(open("./data/item.json", "r", encoding="utf-8"))
+        with open("./data/item.json", "r", encoding="utf-8") as f:
+            itemJson: list[dict] = json.load(f)
 
         itemEffect = ""
         # fetch
@@ -249,13 +250,15 @@ class User:
             _x = _x.replace("x", "")
 
             # read boost
-            boosts = json.load(open("./data/boostMorningd.json", "r", encoding="utf-8"))
+            with open("./data/boostMorningd.json", "r", encoding="utf-8") as f:
+                boosts = json.load(f)
 
             # append boost
             boosts.append({self.id: int(_x)})
 
             # write boost
-            json.dump(boosts, open("./data/boostMorningd.json", "w", encoding="utf-8"))
+            with open("./data/boostMorningd.json", "w", encoding="utf-8") as f:
+                json.dump(boosts, f)
 
             self.boughtItems.remove(item)
             return f"{_x}x 倍票已使用。下次签到将会获得更多积分。"
@@ -611,7 +614,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         msg += "\n    - 使用 ^buy list 来查看列表"
         await buy_function.finish(msg)
 
-    items = json.load(open("./data/item.json", "r", encoding="utf-8"))
+    with open("./data/item.json", "r", encoding="utf-8") as f:
+        items = json.load(f)
     arg = args.extract_plain_text().split(" ")
 
     if arg [0] == "list":
@@ -711,7 +715,8 @@ ai_eventer = on_command("ai", aliases={"人工智能"}, priority=10)
 @ai_eventer.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Message = CommandArg()):
     # API Key, 硅基流动
-    api_key = json.loads(open("./data/configuration.json", "r", encoding="utf-8").read()).get("AI-ApiKEY", "")
+    with open("./data/configuration.json", "r", encoding="utf-8") as f:
+        api_key = json.load(f).get("AI-ApiKEY", "")
 
     user = User(event.get_user_id())
 
@@ -867,7 +872,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             msg += f"\n    - 输入 *usecode [兑换码] 以兑换"
         else:
             msg += f"\nRE: Toolsbot 兑换码兑换"
-            present_code_dict = eval(open("./data/codes.json","r").read())
+            with open("./data/codes.json","r") as f:
+                present_code_dict = json.load(f)
             present_codes = list(present_code_dict.keys())
             code = msgr.extract_plain_text().split(" ")[0]
             if code in present_codes:
@@ -880,7 +886,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
                 msg += "\n    - 兑换码: " + code
                 msg += "\n    - 兑换积分: " + present_code_dict[code]
                 del present_code_dict [code]
-                open("./codes.json","w+").write(str(present_code_dict))
+                with open("./codes.json","w+") as f:
+                    f.write(str(present_code_dict))
                 await code_function.finish(msg)
             else:
                 msg += "\n    - 兑换失败: 兑换码无效"
@@ -1010,7 +1017,8 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
         await echo_eventer.finish(f"{TITLE} ECHO\n    - 用法: ^echo [内容]")
 
     #  检测词语
-    failedWords = open("./data/echoFailedWords.json", "r", encoding="utf-8").read()
+    with open("./data/echoFailedWords.json", "r", encoding="utf-8") as f:
+        failedWords = f.read()
     failedWordsList = json.loads(failedWords)["chinese_keywords"]
     failedRegexs = json.loads(failedWords)["regex_patterns"]
     failedEngWordsList = json.loads(failedWords)["exact_matches"]
@@ -1425,7 +1433,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
 
     # 写入
-    open("./data/redpackets.json", "w", encoding="utf-8").write(json.dumps(redpackets, ensure_ascii=False, indent=4))
+    with open("./data/redpackets.json", "w", encoding="utf-8") as f:
+        f.write(json.dumps(redpackets, ensure_ascii=False, indent=4))
 
     await openredpacket_function.finish(msg)
 
@@ -1598,7 +1607,8 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent, args: Message = 
 
     # get vote data
     if os.path.exists("./data/voting.json"):
-        vote_data = json.load(open("./data/voting.json", "r", encoding="utf-8"))
+        with open("./data/voting.json", "r", encoding="utf-8") as f:
+            vote_data = json.load(f)
     else:
         vote_data = []
 
@@ -1651,7 +1661,8 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent, args: Message = 
 
         vote_data.append(_cfg)
 
-        json.dump(vote_data, open("./data/voting.json", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+        with open("./data/voting.json", "w", encoding="utf-8") as f:
+            json.dump(vote_data, f, ensure_ascii=False, indent=4)
         # write in
         msg += f"\n    - 已创建投票 {title}，类型 {vtype}，时长 {duration} 分钟。"
         await voting_function.finish(msg)
@@ -1750,7 +1761,8 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent, args: Message = 
             # check duration:
             if (datetime.datetime.now() - datetime.datetime.fromisoformat(vote["begintime"])).total_seconds() > vote["duration"] * 60:
                 vote["status"] = "已结束"
-                json.dump(vote_data, open("./data/voting.json", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+                with open("./data/voting.json", "w", encoding="utf-8") as f:
+                    json.dump(vote_data, f, ensure_ascii=False, indent=4)
                 if vote["type"] == "kick":
                     if vote["agree"] > vote["objection"]:
                         # kick the creator
@@ -1783,7 +1795,8 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent, args: Message = 
 
         vote["voters"].append({user.id: choice})
 
-        json.dump(vote_data, open("./data/voting.json", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+        with open("./data/voting.json", "w", encoding="utf-8") as f:
+            json.dump(vote_data, f, ensure_ascii=False, indent=4)
 
         msg += f"\n    - 你已在投票 {title} 中投下 {choice} 一票。"
         await voting_function.finish(msg)

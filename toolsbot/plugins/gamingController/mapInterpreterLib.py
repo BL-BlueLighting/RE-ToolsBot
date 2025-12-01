@@ -95,7 +95,8 @@ class MainInterpret:
         user_id = userObject.super.id
 
         # read data
-        mapData = json.loads(open('./data/map/' + user_id + ".gmData", "r", encoding="utf-8").read())
+        with open('./data/map/' + user_id + ".gmData", "r", encoding="utf-8") as f:
+            mapData = json.load(f)
 
         if action == "select":
             mapData ["MapSelect"] = self.mapName
@@ -104,14 +105,16 @@ class MainInterpret:
             mapData ["MapRecentKMetres"] = 0 # 之前走的总和路程
             mapData ["MapRecentRedeems"] = []
             # dump
-            json.dump(mapData, open('./data/map/' + user_id + ".gmData", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+            with open('./data/map/' + user_id + ".gmData", "w", encoding="utf-8") as f:
+                json.dump(mapData, f, ensure_ascii=False, indent=4)
 
         elif action == "addkm":
             mapData ["MapKilometres"] += params [0]
             mapData ["MapRecentKMetres"] += params [0]
             mapData ["MapNextRedeem"] -= params [0]
             # dump
-            json.dump(mapData, open('./data/map/' + user_id + ".gmData", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+            with open('./data/map/' + user_id + ".gmData", "w", encoding="utf-8") as f:
+                json.dump(mapData, f, ensure_ascii=False, indent=4)
 
         elif action == "checkredeem":
             if mapData ["MapKilometres"] >= self.redeems [len(mapData ["MapRecentRedeems"]) + 1].need:
@@ -157,7 +160,8 @@ class MainInterpret:
             mapData ["MapRecentRedeems"].append(self.redeems [len(mapData ["MapRecentRedeems"]) + 1].id)
             mapData ["MapNextRedeem"] = self.redeems [len(mapData ["MapRecentRedeems"]) + 1].need
             # dump
-            json.dump(mapData, open('./data/map/' + user_id + ".gmData", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+            with open('./data/map/' + user_id + ".gmData", "w", encoding="utf-8") as f:
+                json.dump(mapData, f, ensure_ascii=False, indent=4)
 
         elif action == "isend":
             if mapData ["MapKilometres"] >= self.end:
@@ -169,7 +173,8 @@ class MainInterpret:
             mapData ["MapRecentRedeems"].append(self.redeems [len(mapData ["MapRecentRedeems"]) + 1].id)
             mapData ["MapNextRedeem"] = self.redeems [params [0] + 1].need
             # dump
-            json.dump(mapData, open('./data/map/' + user_id + ".gmData", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
+            with open('./data/map/' + user_id + ".gmData", "w", encoding="utf-8") as f:
+                json.dump(mapData, f, ensure_ascii=False, indent=4)
             # this is force next redeem, redeem is trigger by user, but nextRedeem is trigger by bot self.
 
         userObject.save()

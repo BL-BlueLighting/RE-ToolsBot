@@ -85,7 +85,8 @@ class MapUser :
 
     def mapSelects(self):
         # get maps
-        maps = json.loads(open("./data/map.json", "r", encoding="utf-8").read())
+        with open("./data/map.json", "r", encoding="utf-8") as f:
+            maps = json.load(f)
 
         # get map informations
         mapInfo = []
@@ -104,9 +105,10 @@ class MapUser :
         return True
 
     def getMapPath(self):
-        for _map, _mapPath in json.loads(open("./data/map.json", "r", encoding="utf-8").read())["Maps"].items():
-            if _map == self.mapSelect:
-                return _mapPath
+        with open("./data/map.json", "r", encoding="utf-8") as f:
+            for _map, _mapPath in json.load(f)["Maps"].items():
+                if _map == self.mapSelect:
+                    return _mapPath
 
         raise Exception("Invaild map in userdata.")
 

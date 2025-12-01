@@ -11,8 +11,10 @@ def run(data: str):
     # data is a file under data/map/areas/.
 
     # add manage.py before file
-    file = open("./data/map/areas/" + data, "r", encoding="utf-8").read()
-    manageFile = open("./toolsbot/plugins/gamingController/mapInterpreterLib.py", "r", encoding="utf-8").read() + "\n\n"
+    with open("./data/map/areas/" + data, "r", encoding="utf-8") as f:
+        file = f.read()
+    with open("./toolsbot/plugins/gamingController/mapInterpreterLib.py", "r", encoding="utf-8") as f:
+        manageFile = f.read() + "\n\n"
 
     # remove contents before # BEGIN and after # EOF
     file = file.split("# BEGIN")[1].split("# EOF")[0]

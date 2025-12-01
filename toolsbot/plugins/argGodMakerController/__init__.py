@@ -376,7 +376,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
     elif act == "pk":
         rmsg = "RE: ToolsBot - ARG 修仙 - Global PK"
-        gmConfig = json.load(open("./data/gmConfig.json", "r", encoding="utf-8"))
+        with open("./data/gmConfig.json", "r", encoding="utf-8") as f:
+            gmConfig = json.load(f)
 
         rmsg += "\n    - 当前赛季：" + gmConfig.get("Status", "???") + ""
         rmsg += "\n    - 您的 Rating：" + str(gmUser.rating) + ""
@@ -396,7 +397,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
                 rmsg += "\n    - P.K. 暂时未揭幕。"
                 await fns(rmsg)
 
-            _pking = json.load(open("./data/gmPKing.json", "r", encoding="utf-8"))
+            with open("./data/gmPKing.json", "r", encoding="utf-8") as f:
+                _pking = json.load(f)
             pking = {}
             pkusers = []
 
@@ -415,12 +417,15 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
                 "Redeem": random.randint(1000, 9999)
             }
 
-            _pki = json.load(open("./data/gmPKinfo.json", "r"))
+            with open("./data/gmPKinfo.json", "r") as f:
+                _pki = json.load(f)
             _pki.append(pkinfo)
-            json.dump(_pki, open("./data/gmPKinfo.json", "r+"))
+            with open("./data/gmPKinfo.json", "r+") as f:
+                json.dump(_pki, f)
 
             _pking.append(f"{gmUser.user.id}:{qq}")
-            json.dump(_pking, open("./data/gmPKing", "r+"))
+            with open("./data/gmPKing", "r+") as f:
+                json.dump(_pking, f)
 
             rmsg += "\n    - 你与 " + qq + " 开始 P.K."
             rmsg += "\n    - 对方目前段位：" + GMUser(uic.User(qq)).getStatus()
@@ -431,7 +436,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
         elif cargs [1] == "status":
             rmsg = "RE: ToolsBot - ARG 修仙 - P.K. 过程"
-            _pking = json.load(open("./data/gmPKing.json", "r", encoding="utf-8"))
+            with open("./data/gmPKing.json", "r", encoding="utf-8") as f:
+                _pking = json.load(f)
             pking = {}
             pkusers = []
             otherUserQQ = ""
@@ -491,7 +497,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
             # 检查是否超时
 
-            _pki = json.load(open("./data/gmPKinfo.json", "r"))
+            with open("./data/gmPKinfo.json", "r") as f:
+                _pki = json.load(f)
             users = pkStr.split(":")
             pki = {}
 
@@ -521,7 +528,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
                 # 删除
                 del _pki [_pki.index(pki)]
-                json.dump(_pki, open("./data/gmPKinfo.json", "w"))
+                with open("./data/gmPKinfo.json", "w") as f:
+                    json.dump(_pki, f)
 
             await fns(rmsg)
         elif cargs [1] == "season":
@@ -530,7 +538,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             rmsg += "\n    - 您的 Rating：" + str(gmUser.rating) + ""
             rmsg += "\n    - G L O B A L . P . K . - 开场"
             rmsg += "\n    - 目前正在进行的 PK："
-            _pking = json.load(open("./data/gmPKing.json", "r", encoding="utf-8"))
+            with open("./data/gmPKing.json", "r", encoding="utf-8") as f:
+                _pking = json.load(f)
 
             for pk in _pking:
                 rmsg += f"\n        - {pk.split(":") [0]} 对战 {pk.split(":") [1]}"

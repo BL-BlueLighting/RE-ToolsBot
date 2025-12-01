@@ -35,7 +35,8 @@ _crit = logging.critical
 
 # nonebot.adapters.onebot.v11.Bot
 
-config = json.load(open("./data/configuration.json", "r", encoding="utf-8"))
+with open("./data/configuration.json", "r", encoding="utf-8") as f:
+    config = json.load(f)
 """
 welcom=on_notice()
 
@@ -236,9 +237,10 @@ def replace_gunmu(text: str) -> str:
     pattern = f"[{GUNMU_CHARS}]"
     return re.sub(pattern, "█", text)
 
-gunmu_checking_option = json.loads(open("./data/configuration.json", "r", encoding="utf-8").read()).get("openOttoMother")
-_info(json.loads(open("./data/configuration.json", "r", encoding="utf-8").read()))
-_info(gunmu_checking_option)
+with open("./data/configuration.json", "r", encoding="utf-8") as f:
+    cfg = json.load(f)
+    _info(cfg)
+    _info(cfg.get("openOttoMother"))
 """
 otto_mother = on_message(priority=1, block=False)
 

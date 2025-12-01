@@ -67,10 +67,12 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
     # get unlocked doors
     try:
-        open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
+        with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8") as f:
+            f.read() # this is a ini
     except FileNotFoundError:
         # create new file from template
-        template = open("./userdata/finaleScope/template.finaleScope_data", "r", encoding="utf-8").read()
+        with open("./userdata/finaleScope/template.finaleScope_data", "r", encoding="utf-8") as f:
+            template = f.read()
         with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as f:
             f.write(template)
             _info("Create new finaleScope data file for user " + user.id)
@@ -122,10 +124,12 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
     # get unlocked doors
     try:
-        open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8").read() # this is a ini
+        with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8") as f:
+            f.read() # this is a ini
     except FileNotFoundError:
         # create new file from template
-        template = open("./userdata/finaleScope/template.finaleScope_data", "r", encoding="utf-8").read()
+        with open("./userdata/finaleScope/template.finaleScope_data", "r", encoding="utf-8") as f:
+            template = f.read()
         with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as f:
             f.write(template)
             _info("Create new finaleScope data file for user " + user.id)

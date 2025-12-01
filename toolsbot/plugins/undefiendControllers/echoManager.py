@@ -54,13 +54,15 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     keyword = _msg.split(" ")[0]
     content = _msg.split(" ")[1:]
 
-    keywords = json.load(open("./data/echoThings.json", "r", encoding="utf-8"))
+    with open("./data/echoThings.json", "r", encoding="utf-8") as f:
+        keywords = json.load(f)
 
     if keyword in keywords.keys():
         await echot_add_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 该项目已存在。")
     else:
         keywords[keyword] = " ".join(content)
-        json.dump(keywords, open("./data/echoThings.json", "w", encoding="utf-8"))
+        with open("./data/echoThings.json", "w", encoding="utf-8") as f:
+            json.dump(keywords, f)
         await echot_add_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 内容：\n        " + " ".join(content))
 
 """
@@ -79,13 +81,15 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
     keyword = _msg.split(" ")[0]
 
-    keywords = json.load(open("./data/echoThings.json", "r", encoding="utf-8"))
+    with open("./data/echoThings.json", "r", encoding="utf-8") as f:
+        keywords = json.load(f)
 
     if not keyword in keywords.keys():
         await echot_del_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 该项目不存在。")
     else:
         del keywords [keyword]
-        json.dump(keywords, open("./data/echoThings.json", "w", encoding="utf-8"))
+        with open("./data/echoThings.json", "w", encoding="utf-8") as f:
+            json.dump(keywords, f)
         await echot_del_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 内容：\n        棍母")
 
 """
@@ -104,7 +108,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     _msg = args.extract_plain_text()
 
     # read echoT.json
-    keywords = json.load(open("./data/echoThings.json", "r", encoding="utf-8"))
+    with open("./data/echoThings.json", "r", encoding="utf-8") as f:
+        keywords = json.load(f)
 
     if _msg in keywords.keys():
         await echot_function.finish(msg + "\n    - 关键词：" + _msg + "\n    - 内容：\n    " + keywords[_msg])
