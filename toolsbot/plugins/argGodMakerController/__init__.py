@@ -321,6 +321,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     目前 ARG 修仙系统共有 {len(STATUSES)} 个段位。""")
 
     elif act == "begin":
+
         if gmUser.pausing == False:
             gmUser.pause()
             await fns(f"""RE: ToolsBot - ARG 修仙系统
@@ -328,6 +329,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         - 正在尝试晋升：{gmUser.status} {gmUser.level + 1} 层
         - 请等待一分钟后再来 break，或者 break 掉来继续操作。""")
         else:
+            if gmUser.beginPause is None:
+                await fns("""RE: ToolsBot - ARG 修仙系统
+        - 发生了一些预料之外的错误，请联系管理员处理。
+        - 搜索关键词 beginPause is None""")
             await fns(f"""RE: ToolsBot - ARG 修仙系统
         - 您正在试图晋升，请不要再次使用。
         - 距离 break 时间：{str((datetime.datetime.now() - gmUser.beginPause).seconds - 60).replace("-", "")}""")

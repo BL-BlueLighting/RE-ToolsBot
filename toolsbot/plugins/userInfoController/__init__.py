@@ -1146,7 +1146,7 @@ ban 函数
 ban_function = on_command("ban", priority=10, permission=SUPERUSER)
 
 @ban_function.handle()
-async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+async def _ (bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()): # 备注:我问你,私聊哪来的at
     msg = f"{TITLE} 管理系统"
     ats = At(event.json())
 
@@ -1588,7 +1588,7 @@ Voting 函数
 voting_function = on_command("voting", priority=10)
 
 @voting_function.handle()
-async def _voting_function (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+async def _voting_function (bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()): # 备注: 你都投票了还用什么私聊啊
     msg = "RE: ToolsBot VOTING MODULE."
     user = User(event.get_user_id())
     _msg = args.extract_plain_text()

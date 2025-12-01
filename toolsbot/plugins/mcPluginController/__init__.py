@@ -1,6 +1,7 @@
 
 import json
 import re
+from typing import Dict, List
 
 from mcstatus import JavaServer
 from nonebot import on_command
@@ -51,11 +52,11 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             await mc_status.finish(f"RE: ToolsBot Minecraft Plugin\n    - 查询失败：{type(e).__name__} - {e}")
 
     elif _args [0] == "look":
-        servers: list[dict] = json.loads(open("./data/mcServers.json", "r", encoding="utf-8").read())
+        servers = json.loads(open("./data/mcServers.json", "r", encoding="utf-8").read())
         server = {}
 
         for _server in servers:
-            print("Name:" + _server.get("Name"))
+            print("Name:" + _server.get("Name")) # type: ignore
             print("Looking Name:" + " " +target.replace("look ", ""))
             if _server.get("Name") == target.replace("look ", ""):
                 server = _server
