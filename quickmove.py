@@ -1,8 +1,11 @@
 
+import json
 import os
+import random
+import sqlite3
+from typing import Any, Dict
+
 import userInfoClasses as dc
-import sqlite3, json, random
-from typing import *
 
 print("RE: ToolsBot - Userdata 迁移工具")
 print("迁移所有 userdata 下 .userdata 文件到 sqlite3 userdata.db")
@@ -58,7 +61,7 @@ class Data:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT OR REPLACE INTO users 
+                INSERT OR REPLACE INTO users
                 (ID, Name, Score, boughtItems, Ban, Warningd, DynamicExts)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
@@ -175,7 +178,8 @@ class User:
             item (str): Item name.
         """
         # load
-        itemJson: list[dict] = json.load(open("./data/item.json", "r", encoding="utf-8"))
+        with open("./data/item.json", "r", encoding="utf-8") as f:
+            itemJson: list[dict] = json.load(f)
 
         itemEffect = ""
         # fetch
@@ -219,13 +223,15 @@ class User:
             _x = _x.replace("x", "")
 
             # read boost
-            boosts = json.load(open("./data/boostMorningd.json", "r", encoding="utf-8"))
+            with open("./data/boostMorningd.json", "r", encoding="utf-8") as f:
+                boosts = json.load(f)
 
             # append boost
             boosts.append({self.id: int(_x)})
 
             # write boost
-            json.dump(boosts, open("./data/boostMorningd.json", "w", encoding="utf-8"))
+            with open("./data/boostMorningd.json", "w", encoding="utf-8") as f:
+                json.dump(boosts, f)
 
             self.boughtItems.remove(item)
             return f"{_x}x 倍票已使用。下次签到将会获得更多积分。"

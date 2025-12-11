@@ -31,7 +31,12 @@
 git clone https://github.com/Latingtude/RE-ToolsBot.git
 `
 
-然后，使用下面这行命令安装所有依赖。
+以下操作二选一
+
+<details>
+<summary>安装依赖(主环境内)</summary>
+
+使用下面这行命令安装所有依赖。
 
 `
 python ./install/installTB.py
@@ -42,6 +47,21 @@ python ./install/installTB.py
 `
 pip install -r ./install/requirements.txt
 `
+
+</details>
+
+<details>
+<summary>安装依赖(虚拟环境)</summary>
+
+1.安装版本>=3.10的python
+
+2.运行`pip install poetry`
+
+3.运行`poetry install`
+
+(备注:真的有人会想把这个项目部署在主环境里吗)
+
+</details>
 
 (只创建一个空项目，选择全局安装)
 

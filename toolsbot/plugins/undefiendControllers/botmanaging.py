@@ -1,19 +1,16 @@
-from nonebot import *
+import logging
+import json
+import nonebot
+from nonebot import on_command
 from nonebot.adapters import Message
+from nonebot.adapters.onebot.v11 import MessageEvent
+from nonebot.exception import ActionFailed
 from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import *
 from nonebot.permission import SUPERUSER
-import nonebot,random,json,requests
-from time import sleep as wait
-from random import uniform as wrd
-import os
-import datetime
-import logging, re
-import toolsbot.plugins.userInfoController as uic
 
 logging.basicConfig(
     filename='botlog.log',
-    filemode='a',       
+    filemode='a',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
@@ -41,19 +38,19 @@ async def stop_bot(event: MessageEvent):
     msg = """RE: ToolsBot - 停机公告
     由于维护原因，RE: ToolsBot 将停止运行，直到 RE: ToolsBot 重新启动。
     """
-    
+
     # get all group ids
     bot = nonebot.get_bot()
     group_list = await bot.get_group_list()
-    
+
     for group in group_list:
         try:
-            await bot.send_group_msg(group_id=group["group_id"], message=msg) 
+            await bot.send_group_msg(group_id=group["group_id"], message=msg)
         except ActionFailed as e:
             _warn(f"Failed to send stop message to group {group['group_id']}. This is why:\n{e}")
-            
+
         # use native api
-    
+
 start_command = on_command("botstart", priority=5, permission=SUPERUSER)
 
 @start_command.handle()
@@ -66,15 +63,15 @@ async def start_bot(event: MessageEvent):
     # get all group ids
     bot = nonebot.get_bot()
     group_list = await bot.get_group_list()
-    
+
     for group in group_list:
         try:
-            await bot.send_group_msg(group_id=group["group_id"], message=msg) 
+            await bot.send_group_msg(group_id=group["group_id"], message=msg)
         except ActionFailed as e:
             _warn(f"Failed to send stop message to group {group['group_id']}. This is why:\n{e}")
-            
+
         # use native api
-    
+
 update_command = on_command("botupdate", priority=5, permission=SUPERUSER)
 
 @update_command.handle()
@@ -139,4 +136,38 @@ async def send_to_bot(event: MessageEvent, arg: Message = CommandArg()):
         await bot.send_group_msg(group_id=group_id, message=msg)
     except ActionFailed as e:
         _warn(f"Failed to send stop message to group {group_id}. This is why:\n{e}")
+
+signnow_handler = on_command("signnow", permission=SUPERUSER)
+
+@signnow_handler.handle()
+async def _ ( event: MessageEvent, args: Message = CommandArg()):
+    msg = "RE: ToolsBot - SIGN"
+    msg += "    - Bot sign process running..."
+    bot = nonebot.get_bot()
+    group_list = await bot.get_group_list()
+
+    for group in group_list:
+        try:
+            msg += f"    - {group['group_id']} bot signed."
+            await bot.call_api("set_group_sign", group_id = group ['group_id'])
+        except ActionFailed as e:
+            _warn(f"Failed to send stop message to group {group['group_id']}. This is why:\n{e}")
+
+send_emoji_like = on_command("sendelike", permission=SUPERUSER)
+
+@send_emoji_like.handle()
+async def _(event: MessageEvent, args: Message = CommandArg()):
+    emoji_name = args.extract_plain_text()
+    global _emoji_id
+    with open("./data/emojiIds.json", "r") as f:
+        _ids = json.load(f)
+        try:
+            _emoji_id = int(_ids [emoji_name])
+        except:
+            _emoji_id = 424
+    if not event.reply:
+        await send_emoji_like.finish("请回复消息.")
+
+    await nonebot.get_bot().call_api("set_msg_emoji_like", message_id = event.reply.message_id, emoji_id = _emoji_id)
+    await send_emoji_like.finish()
 

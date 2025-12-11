@@ -2,7 +2,8 @@
 RE: ToolsBot 全自动安装
 """
 
-import os, platform
+import os
+import platform
 
 print("RE: ToolsBot 全自动安装向导")
 print(":: 请稍等，正在检查系统环境")

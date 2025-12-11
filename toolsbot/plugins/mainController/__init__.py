@@ -1,22 +1,21 @@
-from nonebot import *
+import json
+import random
+
+import requests
+from nonebot import get_driver, on_command
 from nonebot.adapters import Message
-from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import *
-from nonebot.permission import SUPERUSER
-import nonebot,random,json,requests
-from nonebot.matcher import Matcher
-from nonebot.params import EventMessage
-from nonebot.adapters import Message
-from time import sleep as wait
-from random import uniform as wrd
-import os, pathlib
+from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
+                                         PrivateMessageEvent)
 from nonebot.adapters.onebot.v11.message import Message as v11message
+from nonebot.matcher import Matcher
+from nonebot.params import CommandArg, EventMessage
+from nonebot.permission import SUPERUSER
 
 """
 RE: ToolsBot
 Tools Bot 的第二版。
 
-@author: Latingtude 
+@author: Latingtude
 
 mainController
 """
@@ -40,7 +39,7 @@ def is_unmatched_command(msg: Message) -> bool:
 async def _(msg: Message = EventMessage(), matcher: Matcher = Matcher()):
     if is_unmatched_command(msg):
         await matcher.finish("未知指令，请检查输入是否正确。")
-        
+
 """
 Help 函数
 用于基本的介绍
@@ -55,7 +54,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     # 添加图片
     # 获得绝对路径
     await help_function.finish(v11message(f"[CQ:image,file=https://airoj.latingtude-studios.icu/helpdocument.png,id=400000]"))
-    
+
 """
 check 函数
 检测 bot 是否存活
@@ -68,7 +67,7 @@ check_function = on_command("check", priority=10)
 @check_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     await check_function.finish("RE: ToolsBot 还活着呢，没死。")
-    
+
 """
 ^ping & ^pong 函数
 和 bot 打乒乓球
@@ -147,6 +146,6 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     msg += f"""
     {hitokoto}
                 —— {_from} --- {creator}"""
-    
+
     # finish
     await goodsaying_function.finish(msg)

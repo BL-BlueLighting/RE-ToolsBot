@@ -1,13 +1,14 @@
+import base64
+from random import uniform as wrd
+from time import sleep as wait
+
+import base58
 from nonebot import on_command
 from nonebot.adapters import Message
-from nonebot.params import CommandArg
-import base64,base58
 from nonebot.adapters.onebot.v11 import MessageEvent
-import nonebot
-from time import sleep as wait
-from random import uniform as wrd
+from nonebot.params import CommandArg
+
 import toolsbot.plugins.userInfoController as dc
-import configparser
 
 """
 Re: ToolsBot
@@ -27,7 +28,7 @@ BaseXX Function
 base64_eventer = on_command("base64", aliases={"b64"}, priority=10)
 
 @base64_eventer.handle()
-async def handle_function(event: MessageEvent,args: Message = CommandArg()):
+async def _(event: MessageEvent,args: Message = CommandArg()):
     user = dc.User(event.get_user_id())
     if not user.isBanned():
         msg = ""
@@ -58,7 +59,7 @@ async def handle_function(event: MessageEvent,args: Message = CommandArg()):
 base32_eventer = on_command("base32", aliases={"b32"}, priority=10)
 
 @base32_eventer.handle()
-async def handle_function(event: MessageEvent,args: Message = CommandArg()):
+async def _(event: MessageEvent,args: Message = CommandArg()):
     user = dc.User(event.get_user_id())
     if not user.isBanned():
         msg = ""
@@ -88,7 +89,7 @@ async def handle_function(event: MessageEvent,args: Message = CommandArg()):
 base16_eventer = on_command("base16", aliases={"b16"}, priority=10)
 
 @base16_eventer.handle()
-async def handle_function(event: MessageEvent,args: Message = CommandArg()):
+async def _(event: MessageEvent,args: Message = CommandArg()):
     user = dc.User(event.get_user_id())
     if not user.isBanned():
         msg = ""
@@ -119,7 +120,7 @@ async def handle_function(event: MessageEvent,args: Message = CommandArg()):
 base85_eventer = on_command("base85", aliases={"b85"}, priority=10)
 
 @base85_eventer.handle()
-async def handle_function(event: MessageEvent,args: Message = CommandArg()):
+async def _(event: MessageEvent,args: Message = CommandArg()):
     user = dc.User(event.get_user_id())
     if not user.isBanned():
         msg = ""
@@ -149,7 +150,7 @@ async def handle_function(event: MessageEvent,args: Message = CommandArg()):
 base58_eventer = on_command("base58", aliases={"b58"}, priority=10)
 
 @base58_eventer.handle()
-async def handle_function(event: MessageEvent,args: Message = CommandArg()):
+async def _(event: MessageEvent,args: Message = CommandArg()):
     user = dc.User(event.get_user_id())
     if not user.isBanned():
         msg = ""
@@ -176,7 +177,7 @@ async def handle_function(event: MessageEvent,args: Message = CommandArg()):
         await base58_eventer.finish(msg)
     else:
         await base58_eventer.finish("RE: ToolsBot Base58 编解码\n  您的账号已被封禁，无法使用此功能")
-        
+
 # 神经病用的 base64
 # 凉菜64编码表
 liangcai64 = [
@@ -196,9 +197,9 @@ reverse_map = {word: index for index, word in enumerate(liangcai64)}
 def encode_to_liangcai(text: list[str]) -> str:
     """
     编码函数：将文本编码为凉菜64词汇
-    
+
     :param text: 要编码的文本
-    
+
     :return: 凉菜64编码字符串
     """
     if not text:
@@ -207,10 +208,10 @@ def encode_to_liangcai(text: list[str]) -> str:
     _text = ""
     for _t in text:
         _text += _t
-    
+
     # 将文本转换为UTF-8字节
     bytes_data = _text.encode('utf-8')
-    
+
     binary = ''
     # 将每个字节转换为8位二进制字符串
     for byte in bytes_data:
@@ -232,9 +233,9 @@ def encode_to_liangcai(text: list[str]) -> str:
 def decode_from_liangcai(encoded_text: list[str]) -> str:
     """
     解码函数：将凉菜64编码解码为文本
-    
+
     :param encoded_text: 凉菜64编码字符串
-    
+
     :return: 解码后的文本
     """
     if not encoded_text:
@@ -271,15 +272,15 @@ def encode_to_liangcai2(text: list[str]) -> str:
     for n in [word for word in liangcai64__]:
         _reverse = reverse
         reverse = n + _reverse
-        
+
     l_lc64 = len(liangcai64__)
-    
+
     for lcc in [word for word in liangcai64__]:
         if lcc == " ":
             l_lc64 -= 1
-            
+
     liangcai64__ += " " + reverse
-    
+
     return liangcai64__ + " " + str(l_lc64)
 
 def decode_from_liangcai2(text: list[str]) -> str:
@@ -289,23 +290,23 @@ def decode_from_liangcai2(text: list[str]) -> str:
     except Exception as ex:
         print(ex.__str__())
         return "ERROR, Developer please see log."
-    
+
     # calc real length
     if length % 2 != 0:
         length -= 1
-    
+
     print(length)
     length = int(length / 2)
-    
+
     print(length)
     # get source text
     _text = text[0:length]
-    
+
     print(_text)
-    
+
     # decode
     return decode_from_liangcai(_text)
-    
+
 """
 LiangCai 64 编码
 神经病一般的编码
@@ -343,7 +344,7 @@ async def _ (event: MessageEvent,args: Message = CommandArg()):
         await liangcai64_function.finish(msg)
     else:
         await liangcai64_function.finish("RE: ToolsBot LiangCai64 编解码\n  您的账号已被封禁，无法使用此功能")
-        
+
 """
 LiangCai 64/2 编码
 神经病一般的的般一病经神
