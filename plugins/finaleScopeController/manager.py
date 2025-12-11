@@ -5,6 +5,8 @@ import configparser
 
 import plugins.userInfoController as dc
 
+from toolsbot.configs import USER_PATH
+
 
 class Door:
     def __init__(self, name: str, unlockCondition: list[str], reward: int):
@@ -20,13 +22,15 @@ class Door:
         # check must condition
         global _condition_pass
         _condition_pass = False
+
+        file_path = USER_PATH / "userdata" / "finaleScope" /  f"{user.id}.finalescope_data"
         for condition in self.unlockCondition:
             if "finish" in condition:
                 condition = condition.replace("finish ", "")
-                with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8") as f:
+                with open(file_path, "r", encoding="utf-8") as f:
                     f.read() # this is a ini
                 config = configparser.ConfigParser()
-                config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
+                config.read(file_path,
                             encoding="utf-8")
 
                 if config.get("Scope", "DoorsUnlock") != "":
@@ -55,10 +59,10 @@ class Door:
 
             elif "lc64use" in condition:
                 # check
-                with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8") as f:
+                with open(file_path, "r", encoding="utf-8") as f:
                     f.read() # this is a ini
                 config = configparser.ConfigParser()
-                config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
+                config.read(file_path,
                             encoding="utf-8")
                 if config.get("Status", "LiangCai64Used") != "True":
                     _condition_pass = False
@@ -67,10 +71,10 @@ class Door:
             elif "asked" in condition:
                 condition = condition.replace("asked ", "")
                 # check
-                with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8")as f:
+                with open(file_path, "r", encoding="utf-8")as f:
                     f.read() # this is a ini
                 config = configparser.ConfigParser()
-                config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
+                config.read(file_path,
                             encoding="utf-8")
                 if not condition in config.get("Status", "asked"):
                     _condition_pass = False

@@ -8,13 +8,14 @@ from pathlib import Path
 # TEXT_PATH = Path() / "resources" / "text"
 # 日志路径
 LOG_PATH = Path() / "logs"
-# # 字体路径
+# 字体路径
 # FONT_PATH = Path() / "resources" / "font"
-# # 数据路径
+# 数据路径
 DATA_PATH = Path() / "data"
-# # 临时数据路径
+USER_PATH = Path() / "userdata"
+# 临时数据路径
 # TEMP_PATH = Path() / "resources" / "temp"
-
+PLUG_PATH = Path() / "plugins"
 
 def load_path():
     # IMAGE_PATH.mkdir(parents=True, exist_ok=True)
@@ -23,7 +24,9 @@ def load_path():
     LOG_PATH.mkdir(parents=True, exist_ok=True)
     # FONT_PATH.mkdir(parents=True, exist_ok=True)
     DATA_PATH.mkdir(parents=True, exist_ok=True)
+    USER_PATH.mkdir(parents=True, exist_ok=True)
     # TEMP_PATH.mkdir(parents=True, exist_ok=True)
+    PLUG_PATH.mkdir(parents=True, exist_ok=True)
 
 
 load_path()

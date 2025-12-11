@@ -3,6 +3,8 @@ import os
 
 from . import mapInterpreter as mapi
 import plugins.userInfoController as uic
+from toolsbot.configs import DATA_PATH
+
 
 """
 RE: ToolsBot
@@ -25,6 +27,8 @@ class MapUser :
         self.locking = [False, {}]
         self.kmNext = 0
         self.mapRecentRedeems = []
+        self.gm_data_path = DATA_PATH / "map" / f"{self.super.id}.gmdata"
+        self.map_path = DATA_PATH / "map.json"
         self.load()
 
     def save(self):
@@ -50,12 +54,12 @@ class MapUser :
             "MapRecentRedeems": self.mapRecentRedeems
         }
 
-        with open(f"./data/map/{self.super.id}.gmdata", "w", encoding="utf-8") as f:
+        with open(self.gm_data_path, "w", encoding="utf-8") as f:
             json.dump(mapInfo, f, indent=4, ensure_ascii=False)
 
     def load(self):
-        if os.path.exists(f"./data/map/{self.super.id}.gmdata"):
-            with open(f"./data/map/{self.super.id}.gmdata", "r", encoding="utf-8") as f:
+        if os.path.exists(self.gm_data_path):
+            with open(self.gm_data_path, "r", encoding="utf-8") as f:
                 mapInfo = json.load(f)
                 self.mapSelect = mapInfo["MapSelect"]
                 self.mapKMs = mapInfo["MapKilometres"]
@@ -69,7 +73,7 @@ class MapUser :
 
     def mapSelects(self):
         # get maps
-        with open("./data/map.json", "r", encoding="utf-8") as f:
+        with open(self.map_path, "r", encoding="utf-8") as f:
             maps = json.load(f)
 
         # get map informations
@@ -89,7 +93,7 @@ class MapUser :
         return True
 
     def getMapPath(self):
-        with open("./data/map.json", "r", encoding="utf-8") as f:
+        with open(self.map_path, "r", encoding="utf-8") as f:
             for _map, _mapPath in json.load(f)["Maps"].items():
                 if _map == self.mapSelect:
                     return _mapPath

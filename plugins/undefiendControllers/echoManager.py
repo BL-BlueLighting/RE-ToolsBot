@@ -9,6 +9,8 @@ from nonebot.permission import SUPERUSER
 
 from plugins.userInfoController import User
 
+from toolsbot.configs import DATA_PATH
+
 """
 RE: ToolsBot
 Tools Bot 的第二版。
@@ -27,6 +29,8 @@ echotadd 函数
 @author: Latingtude
 """
 
+echo_path = DATA_PATH / "echoThings.json"
+
 echot_add_function = on_command("echotadd", aliases={"echoThingAdd"}, priority=10, permission=SUPERUSER)
 
 @echot_add_function.handle()
@@ -38,14 +42,14 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     keyword = _msg.split(" ")[0]
     content = _msg.split(" ")[1:]
 
-    with open("./data/echoThings.json", "r", encoding="utf-8") as f:
+    with open(echo_path, "r", encoding="utf-8") as f:
         keywords = json.load(f)
 
     if keyword in keywords.keys():
         await echot_add_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 该项目已存在。")
     else:
         keywords[keyword] = " ".join(content)
-        with open("./data/echoThings.json", "w", encoding="utf-8") as f:
+        with open(echo_path, "w", encoding="utf-8") as f:
             json.dump(keywords, f)
         await echot_add_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 内容：\n        " + " ".join(content))
 
@@ -65,14 +69,14 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
     keyword = _msg.split(" ")[0]
 
-    with open("./data/echoThings.json", "r", encoding="utf-8") as f:
+    with open(echo_path, "r", encoding="utf-8") as f:
         keywords = json.load(f)
 
     if not keyword in keywords.keys():
         await echot_del_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 该项目不存在。")
     else:
         del keywords [keyword]
-        with open("./data/echoThings.json", "w", encoding="utf-8") as f:
+        with open(echo_path, "w", encoding="utf-8") as f:
             json.dump(keywords, f)
         await echot_del_function.finish(msg + "\n    - 关键词：" + keyword + "\n    - 内容：\n        棍母")
 
@@ -92,7 +96,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     _msg = args.extract_plain_text()
 
     # read echoT.json
-    with open("./data/echoThings.json", "r", encoding="utf-8") as f:
+    with open(echo_path, "r", encoding="utf-8") as f:
         keywords = json.load(f)
 
     if _msg in keywords.keys():

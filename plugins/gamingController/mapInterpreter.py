@@ -6,14 +6,15 @@ from typing import Literal
 
 from . import mapInterpreterLib as lib
 
+from toolsbot.configs import DATA_PATH,PLUG_PATH
 
 def run(data: str):
     # data is a file under data/map/areas/.
 
     # add manage.py before file
-    with open("./data/map/areas/" + data, "r", encoding="utf-8") as f:
+    with open(DATA_PATH / "map" / "areas" / data, "r", encoding="utf-8") as f:
         file = f.read()
-    with open("./toolsbot/plugins/gamingController/mapInterpreterLib.py", "r", encoding="utf-8") as f:
+    with open(PLUG_PATH / "gamingController" / "mapInterpreterLib.py", "r", encoding="utf-8") as f:
         manageFile = f.read() + "\n\n"
 
     # remove contents before # BEGIN and after # EOF

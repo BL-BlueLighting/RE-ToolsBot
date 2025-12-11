@@ -13,6 +13,8 @@ from nonebot.params import CommandArg
 
 import plugins.userInfoController as uic
 
+from toolsbot.configs import DATA_PATH
+
 """
 RE: ToolsBot
 Tools Bot 的第二版。
@@ -25,11 +27,10 @@ argGodMakerController
 TITLE = "RE: ToolsBot"
 TIMEDATESTR = "%Y-%d-%m-%H-%M-%S"
 
-import datetime
-import random
-import sqlite3
-from typing import Optional
-
+cfg_path = DATA_PATH / "gmConfig.json"
+pking_json_path = DATA_PATH / "gmPKing.json"
+pk_info_path = DATA_PATH / "gmPKinfo.json"
+pking_path = DATA_PATH / "gmPKing"
 
 class GMUser:
     def __init__(self, userEntity, status: str = "凉菜起"):
@@ -39,7 +40,7 @@ class GMUser:
         self.level = 1
         self.pausing = False
         self.beginPause: Optional[datetime.datetime] = None
-        self.db_path = "./userdata.db"
+        self.db_path = DATA_PATH / "userdata.db"
         self._init_db()
         self.load()
 
@@ -360,7 +361,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
     elif act == "pk":
         rmsg = "RE: ToolsBot - ARG 修仙 - Global PK"
-        with open("./data/gmConfig.json", "r", encoding="utf-8") as f:
+        with open(cfg_path, "r", encoding="utf-8") as f:
             gmConfig = json.load(f)
 
         rmsg += "\n    - 当前赛季：" + gmConfig.get("Status", "???") + ""
@@ -381,7 +382,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
                 rmsg += "\n    - P.K. 暂时未揭幕。"
                 await fns(rmsg)
 
-            with open("./data/gmPKing.json", "r", encoding="utf-8") as f:
+            with open(pking_json_path, "r", encoding="utf-8") as f:
                 _pking = json.load(f)
             pking = {}
             pkusers = []
@@ -401,14 +402,14 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
                 "Redeem": random.randint(1000, 9999)
             }
 
-            with open("./data/gmPKinfo.json", "r") as f:
+            with open(pk_info_path, "r") as f:
                 _pki = json.load(f)
             _pki.append(pkinfo)
-            with open("./data/gmPKinfo.json", "r+") as f:
+            with open(pk_info_path, "r+") as f:
                 json.dump(_pki, f)
 
             _pking.append(f"{gmUser.user.id}:{qq}")
-            with open("./data/gmPKing", "r+") as f:
+            with open(pking_path, "r+") as f:
                 json.dump(_pking, f)
 
             rmsg += "\n    - 你与 " + qq + " 开始 P.K."
@@ -420,7 +421,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
         elif cargs [1] == "status":
             rmsg = "RE: ToolsBot - ARG 修仙 - P.K. 过程"
-            with open("./data/gmPKing.json", "r", encoding="utf-8") as f:
+            with open(pking_json_path, "r", encoding="utf-8") as f:
                 _pking = json.load(f)
             pking = {}
             pkusers = []
@@ -481,7 +482,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
             # 检查是否超时
 
-            with open("./data/gmPKinfo.json", "r") as f:
+            with open(pk_info_path, "r") as f:
                 _pki = json.load(f)
             users = pkStr.split(":")
             pki = {}
@@ -512,7 +513,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
                 # 删除
                 del _pki [_pki.index(pki)]
-                with open("./data/gmPKinfo.json", "w") as f:
+                with open(pk_info_path, "w") as f:
                     json.dump(_pki, f)
 
             await fns(rmsg)
@@ -522,7 +523,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
             rmsg += "\n    - 您的 Rating：" + str(gmUser.rating) + ""
             rmsg += "\n    - G L O B A L . P . K . - 开场"
             rmsg += "\n    - 目前正在进行的 PK："
-            with open("./data/gmPKing.json", "r", encoding="utf-8") as f:
+            with open(pking_json_path, "r", encoding="utf-8") as f:
                 _pking = json.load(f)
 
             for pk in _pking:
@@ -543,7 +544,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     elif act == "best":
         rmsg = "RE: ToolsBot - ARG 修仙排行榜\n"
         # 确保文件夹存在，避免 os.listdir 报错
-        data_path = "./data/godmaker" # 注意: 这里应该使用 userInfoController.Data 中定义的路径
+        data_path = DATA_PATH / "godmaker" # 注意: 这里应该使用 userInfoController.Data 中定义的路径
         if not os.path.exists(data_path):
             await fns(rmsg + "    - 暂无数据可供排名。")
 

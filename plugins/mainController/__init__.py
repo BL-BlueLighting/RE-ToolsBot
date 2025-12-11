@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 import random
 
 import requests
@@ -6,7 +7,7 @@ from nonebot import get_driver, on_command
 from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
                                          PrivateMessageEvent)
-from nonebot.adapters.onebot.v11.message import Message as v11message
+from nonebot.adapters.onebot.v11.message import MessageSegment
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, EventMessage
 from nonebot.permission import SUPERUSER
@@ -53,7 +54,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     msg = TITLE
     # 添加图片
     # 获得绝对路径
-    await help_function.finish(v11message(f"[CQ:image,file=https://airoj.latingtude-studios.icu/helpdocument.png,id=400000]"))
+    await help_function.finish(MessageSegment.image(Path() / "helpdocument.png"))
 
 """
 check 函数

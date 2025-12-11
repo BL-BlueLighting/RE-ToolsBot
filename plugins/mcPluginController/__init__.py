@@ -1,13 +1,15 @@
 
 import json
 import re
-from typing import Dict, List
 
 from mcstatus import JavaServer
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 from nonebot.params import CommandArg
 
+from toolsbot.configs import DATA_PATH
+
+server_path = DATA_PATH / "mcServers.json"
 
 # 去除颜色代码
 def strip_minecraft_colors(text: str) -> str:
@@ -52,7 +54,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             await mc_status.finish(f"RE: ToolsBot Minecraft Plugin\n    - 查询失败：{type(e).__name__} - {e}")
 
     elif _args [0] == "look":
-        with open("./data/mcServers.json", "r", encoding="utf-8") as f:
+        with open(server_path, "r", encoding="utf-8") as f:
             servers = json.load(f)
         server = {}
 
@@ -144,10 +146,10 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         }
 
         # write in
-        with open("./data/mcServers.json", "r", encoding="utf-8") as f:
+        with open(server_path, "r", encoding="utf-8") as f:
             servers: list[dict] = json.load(f)
         servers.append(_config)
-        with open("./data/mcServers.json", "w", encoding="utf-8") as f:
+        with open(server_path, "w", encoding="utf-8") as f:
             json.dump(servers, f)
 
         # result send

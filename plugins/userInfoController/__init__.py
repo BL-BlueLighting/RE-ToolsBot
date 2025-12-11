@@ -18,6 +18,8 @@ from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 
 from toolsbot.services import _info,_error
+from toolsbot.configs import DATA_PATH
+
 
 """
 RE: ToolsBot
@@ -39,7 +41,7 @@ class Data:
             id (str): Platform ID.
         """
         self.id = id
-        self.db_path = "./userdata.db"
+        self.db_path = DATA_PATH / "userdata.db"
         self._init_db()
 
     def _init_db(self):
@@ -191,7 +193,7 @@ class User:
             item (str): Item name.
         """
         # load
-        with open("./data/item.json", "r", encoding="utf-8") as f:
+        with open(DATA_PATH / "item.json", "r", encoding="utf-8") as f:
             itemJson: list[dict] = json.load(f)
 
         itemEffect = ""
@@ -236,14 +238,14 @@ class User:
             _x = _x.replace("x", "")
 
             # read boost
-            with open("./data/boostMorningd.json", "r", encoding="utf-8") as f:
+            with open(DATA_PATH / "boostMorningd.json", "r", encoding="utf-8") as f:
                 boosts = json.load(f)
 
             # append boost
             boosts.append({self.id: int(_x)})
 
             # write boost
-            with open("./data/boostMorningd.json", "w", encoding="utf-8") as f:
+            with open(DATA_PATH / "boostMorningd.json", "w", encoding="utf-8") as f:
                 json.dump(boosts, f)
 
             self.boughtItems.remove(item)
@@ -409,8 +411,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 """
 
 # 定义数据文件路径
-BOOST_DATA_PATH = "./data/boostMorningd.json"
-MORNING_DATA_PATH = "./data/morningd.json"
+BOOST_DATA_PATH = DATA_PATH / "boostMorningd.json"
+MORNING_DATA_PATH = DATA_PATH / "morningd.json"
 
 morningToday_function = on_command("morning", aliases={"早上好"}, priority=10)
 
@@ -600,7 +602,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         msg += "\n    - 使用 ^buy list 来查看列表"
         await buy_function.finish(msg)
 
-    with open("./data/item.json", "r", encoding="utf-8") as f:
+    with open(DATA_PATH / "item.json", "r", encoding="utf-8") as f:
         items = json.load(f)
     arg = args.extract_plain_text().split(" ")
 
@@ -701,7 +703,7 @@ ai_eventer = on_command("ai", aliases={"人工智能"}, priority=10)
 @ai_eventer.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Message = CommandArg()):
     # API Key, 硅基流动
-    with open("./data/configuration.json", "r", encoding="utf-8") as f:
+    with open(DATA_PATH / "configuration.json", "r", encoding="utf-8") as f:
         api_key = json.load(f).get("AI-ApiKEY", "")
 
     user = User(event.get_user_id())
@@ -858,7 +860,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
             msg += f"\n    - 输入 *usecode [兑换码] 以兑换"
         else:
             msg += f"\nRE: Toolsbot 兑换码兑换"
-            with open("./data/codes.json","r") as f:
+            with open(DATA_PATH / "codes.json","r") as f:
                 present_code_dict = json.load(f)
             present_codes = list(present_code_dict.keys())
             code = msgr.extract_plain_text().split(" ")[0]
@@ -872,7 +874,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
                 msg += "\n    - 兑换码: " + code
                 msg += "\n    - 兑换积分: " + present_code_dict[code]
                 del present_code_dict [code]
-                with open("./codes.json","w+") as f:
+                with open(DATA_PATH / "codes.json","w+") as f:
                     f.write(str(present_code_dict))
                 await code_function.finish(msg)
             else:
@@ -1003,7 +1005,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
         await echo_eventer.finish(f"{TITLE} ECHO\n    - 用法: ^echo [内容]")
 
     #  检测词语
-    with open("./data/echoFailedWords.json", "r", encoding="utf-8") as f:
+    with open(DATA_PATH / "echoFailedWords.json", "r", encoding="utf-8") as f:
         failedWords = f.read()
     failedWordsList = json.loads(failedWords)["chinese_keywords"]
     failedRegexs = json.loads(failedWords)["regex_patterns"]
@@ -1091,7 +1093,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     msg = f"{TITLE} - 排行榜\n"
 
     # 确保文件夹存在，避免 os.listdir 报错
-    data_path = "./userdata" # 注意: 这里应该使用 userInfoController.Data 中定义的路径
+    data_path = DATA_PATH / "userdata" # 注意: 这里应该使用 userInfoController.Data 中定义的路径
     if not os.path.exists(data_path):
         await list_eventer.finish(msg + "    - 暂无数据可供排名。")
 
@@ -1207,7 +1209,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     msg = f"{TITLE} 管理系统"
 
     # users
-    users = os.listdir("./userdata")
+    users = os.listdir(DATA_PATH / "userdata")
 
     for _user in users:
         _user = _user.replace(".toolsbot_data", "")
@@ -1333,7 +1335,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     }
 
     # open redpacket data
-    redpacket_data_path = "./data/redpackets.json"
+    redpacket_data_path = DATA_PATH / "redpackets.json"
 
     if os.path.exists(redpacket_data_path):
         try:
@@ -1373,7 +1375,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         await openredpacket_function.finish(msg)
 
     # open redpacket data
-    redpacket_data_path = "./data/redpackets.json"
+    redpacket_data_path = DATA_PATH / "redpackets.json"
 
     if os.path.exists(redpacket_data_path):
         try:
@@ -1419,7 +1421,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
 
     # 写入
-    with open("./data/redpackets.json", "w", encoding="utf-8") as f:
+    with open(DATA_PATH / "redpackets.json", "w", encoding="utf-8") as f:
         f.write(json.dumps(redpackets, ensure_ascii=False, indent=4))
 
     await openredpacket_function.finish(msg)
@@ -1506,6 +1508,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     if len(msg.split(" ")) != 1:
         _content = _msg.split(" ")[1:]
 
+    bottle_data_path = DATA_PATH / "bottles.json"
     if _arg == "throw":
         if len(_content) == 0:
             msg += "\n    - 使用 ^browsingbottle throw [内容] 来扔漂流瓶"
@@ -1514,7 +1517,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         content = " ".join(_content)
 
         # open data
-        bottle_data_path = "./data/bottles.json"
+
 
         if os.path.exists(bottle_data_path):
             try:
@@ -1539,9 +1542,6 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         msg += "\n    - 你扔下了一个漂流瓶。"
         await browsingbottle_function.finish(msg)
     elif _arg == "pick":
-        # open data
-        bottle_data_path = "./data/bottles.json"
-
         if os.path.exists(bottle_data_path):
             try:
                 with open(bottle_data_path, "r", encoding="utf-8") as f:
@@ -1591,9 +1591,11 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent, args: Message = 
     # get args
     _arg = _msg.split(" ")
 
+    vote_path = DATA_PATH / "voting.json"
+
     # get vote data
-    if os.path.exists("./data/voting.json"):
-        with open("./data/voting.json", "r", encoding="utf-8") as f:
+    if os.path.exists(vote_path):
+        with open(vote_path, "r", encoding="utf-8") as f:
             vote_data = json.load(f)
     else:
         vote_data = []
@@ -1647,7 +1649,7 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent, args: Message = 
 
         vote_data.append(_cfg)
 
-        with open("./data/voting.json", "w", encoding="utf-8") as f:
+        with open(vote_path, "w", encoding="utf-8") as f:
             json.dump(vote_data, f, ensure_ascii=False, indent=4)
         # write in
         msg += f"\n    - 已创建投票 {title}，类型 {vtype}，时长 {duration} 分钟。"
@@ -1747,7 +1749,7 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent, args: Message = 
             # check duration:
             if (datetime.datetime.now() - datetime.datetime.fromisoformat(vote["begintime"])).total_seconds() > vote["duration"] * 60:
                 vote["status"] = "已结束"
-                with open("./data/voting.json", "w", encoding="utf-8") as f:
+                with open(vote_path, "w", encoding="utf-8") as f:
                     json.dump(vote_data, f, ensure_ascii=False, indent=4)
                 if vote["type"] == "kick":
                     if vote["agree"] > vote["objection"]:
@@ -1781,7 +1783,7 @@ async def _voting_function (bot: Bot, event: GroupMessageEvent, args: Message = 
 
         vote["voters"].append({user.id: choice})
 
-        with open("./data/voting.json", "w", encoding="utf-8") as f:
+        with open(vote_path, "w", encoding="utf-8") as f:
             json.dump(vote_data, f, ensure_ascii=False, indent=4)
 
         msg += f"\n    - 你已在投票 {title} 中投下 {choice} 一票。"

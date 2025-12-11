@@ -11,6 +11,10 @@ import plugins.userInfoController as dc  # old name = dauCtl
 
 from toolsbot.services import _info
 
+from toolsbot.configs import USER_PATH
+
+template_path = USER_PATH / "finaleScope" / "template.finaleScope_data"
+
 User = dc.User
 
 
@@ -44,6 +48,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     user = User(event.get_user_id())
     _msg = args.extract_plain_text()
 
+    user_file_path = USER_PATH / "finaleScope" / f"{user.id}.finalescope_data"
+
     # query data
 
     scope = runner.run("doors.finalescope_data")
@@ -56,18 +62,18 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
     # get unlocked doors
     try:
-        with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8") as f:
+        with open(user_file_path, "r", encoding="utf-8") as f:
             f.read() # this is a ini
     except FileNotFoundError:
         # create new file from template
-        with open("./userdata/finaleScope/template.finaleScope_data", "r", encoding="utf-8") as f:
+        with open(template_path, "r", encoding="utf-8") as f:
             template = f.read()
-        with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as f:
+        with open(user_file_path, "w", encoding="utf-8") as f:
             f.write(template)
             _info("Create new finaleScope data file for user " + user.id)
 
     config = configparser.ConfigParser()
-    config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
+    config.read(user_file_path,
                 encoding="utf-8")
 
     if config.get("Scope", "DoorsUnlock") != "":
@@ -105,6 +111,8 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     user = User(event.get_user_id())
     _msg = args.extract_plain_text()
 
+    user_file_path = USER_PATH / "finaleScope" / f"{user.id}.finalescope_data"
+
     # query data
     scope = runner.run("doors.finalescope_data")
     if scope == None:
@@ -113,18 +121,18 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
 
     # get unlocked doors
     try:
-        with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "r", encoding="utf-8") as f:
+        with open(user_file_path, "r", encoding="utf-8") as f:
             f.read() # this is a ini
     except FileNotFoundError:
         # create new file from template
-        with open("./userdata/finaleScope/template.finaleScope_data", "r", encoding="utf-8") as f:
+        with open(template_path, "r", encoding="utf-8") as f:
             template = f.read()
-        with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as f:
+        with open(user_file_path, "w", encoding="utf-8") as f:
             f.write(template)
             _info("Create new finaleScope data file for user " + user.id)
 
     config = configparser.ConfigParser()
-    config.read("./userdata/finaleScope/" + user.id + ".finalescope_data",
+    config.read(user_file_path,
                 encoding="utf-8")
 
     if config.get("Scope", "DoorsUnlock") != "":
@@ -150,7 +158,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
         else:
             config.set("Scope", "DoorsUnlock", config.get("Scope", "DoorsUnlock") + ", " + nextDoor.name)
 
-        with open("./userdata/finaleScope/" + user.id + ".finalescope_data", "w", encoding="utf-8") as configfile:
+        with open(user_file_path, "w", encoding="utf-8") as configfile:
             config.write(configfile)
 
         msg += "    - 你解锁了 " + nextDoor.name + " 门。\n"

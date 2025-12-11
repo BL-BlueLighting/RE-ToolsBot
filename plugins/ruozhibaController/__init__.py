@@ -7,6 +7,9 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 from nonebot.params import CommandArg
 
+from toolsbot.configs import DATA_PATH
+
+
 # 假设 TITLE 变量已在其他地方定义，这里为了完整性添加
 TITLE = "RE: ToolsBot"
 
@@ -16,7 +19,7 @@ TITLE = "RE: ToolsBot"
 @author: Latingtude
 """
 
-QUESTION_FILE_PATH = "./data/ruozhiba_question.json"
+QUESTION_FILE_PATH = DATA_PATH / "ruozhiba_question.json"
 
 question_eventer = on_command("question", aliases={"弱智吧"}, priority=5, block=True)
 

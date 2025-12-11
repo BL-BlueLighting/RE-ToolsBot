@@ -19,10 +19,13 @@ from nonebot.typing import T_State
 
 import plugins.userInfoController as dc
 from toolsbot.services import _info,_warn,_crit
+from toolsbot.configs import DATA_PATH
+
+cfg_path = DATA_PATH / "configuration.json"
 
 # nonebot.adapters.onebot.v11.Bot
 
-with open("./data/configuration.json", "r", encoding="utf-8") as f:
+with open(cfg_path, "r", encoding="utf-8") as f:
     config = json.load(f)
 """
 welcom=on_notice()
@@ -224,7 +227,7 @@ def replace_gunmu(text: str) -> str:
     pattern = f"[{GUNMU_CHARS}]"
     return re.sub(pattern, "█", text)
 
-with open("./data/configuration.json", "r", encoding="utf-8") as f:
+with open(cfg_path, "r", encoding="utf-8") as f:
     cfg = json.load(f)
     _info(cfg)
     _info(cfg.get("openOttoMother"))
