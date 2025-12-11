@@ -1,5 +1,5 @@
-import sqlite3
 import json
+import sqlite3
 
 print("RE: ToolsBot - SQLite3 命令行 - EASY\n该命令行过于简陋，请最好使用 SQLite Browser 等 SQLite 专业浏览器。")
 print("请先稍等，正在打开链接...")

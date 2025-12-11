@@ -80,7 +80,7 @@ Go https://github.com/NapNeko/NapCatQQ.
 > [!Warning]
 >
 > This project is **not** stable.
-> 
+>
 > Please don't direct clone this repo.
 >
 > I can't do check my code anytime.
