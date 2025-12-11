@@ -1,5 +1,3 @@
-import logging
-
 import nonebot
 from nonebot import on_command
 from nonebot.adapters import Message
@@ -8,18 +6,7 @@ from nonebot.exception import ActionFailed
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 
-logging.basicConfig(
-    filename='botlog.log',
-    filemode='a',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-
-# logging pointers
-_info = logging.info
-_warn = logging.warning
-_erro = logging.error
-_crit = logging.critical
+from toolsbot.services import _warn
 
 """
 RE: ToolsBot

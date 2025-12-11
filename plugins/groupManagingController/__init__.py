@@ -1,5 +1,4 @@
 import json
-import logging
 import re
 from typing import Union
 
@@ -19,19 +18,7 @@ from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
 
 import plugins.userInfoController as dc
-
-logging.basicConfig(
-    filename='botlog.log',
-    filemode='a',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-
-# logging pointers
-_info = logging.info
-_warn = logging.warning
-_erro = logging.error
-_crit = logging.critical
+from toolsbot.services import _info,_warn,_crit
 
 # nonebot.adapters.onebot.v11.Bot
 

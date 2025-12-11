@@ -13,7 +13,7 @@ logging.basicConfig(
 # logging pointers
 _info = logging.info
 _warn = logging.warning
-_erro = logging.error
+_error = logging.error
 _crit = logging.critical
 
 """
@@ -76,7 +76,7 @@ class Data:
             with open(self.mainPath, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as ex:
-            _erro("Error: Failed to read data.\nInformation: \n" + ex.__str__())
+            _error("Error: Failed to read data.\nInformation: \n" + ex.__str__())
             return {}
 
 """

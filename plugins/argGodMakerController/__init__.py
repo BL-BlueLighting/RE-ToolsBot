@@ -1,6 +1,5 @@
 import datetime
 import json
-import logging
 import os
 import random
 import sqlite3
@@ -13,21 +12,6 @@ from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
 from nonebot.params import CommandArg
 
 import plugins.userInfoController as uic
-
-logging.basicConfig(
-    filename='botlog.log',
-    filemode='a',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-
-# logging pointers
-_info = logging.info
-_warn = logging.warning
-_erro = logging.error
-_crit = logging.critical
-
-# logging settings
 
 """
 RE: ToolsBot
@@ -296,7 +280,7 @@ lcgodmaker 函数
 lcgodmaker_function = on_command("lcgodmaker", priority=10)
 
 @lcgodmaker_function.handle()
-async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
+async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     user = uic.User(event.get_user_id())
     gmUser = GMUser(user)
     _msg = args.extract_plain_text()

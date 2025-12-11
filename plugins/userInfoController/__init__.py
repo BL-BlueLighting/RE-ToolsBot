@@ -1,6 +1,5 @@
 import datetime
 import json
-import logging
 import os
 import random
 import re
@@ -18,20 +17,7 @@ from nonebot.exception import ActionFailed
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 
-logging.basicConfig(
-    filename='botlog.log',
-    filemode='a',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-
-# logging pointers
-_info = logging.info
-_warn = logging.warning
-_erro = logging.error
-_crit = logging.critical
-
-# logging settings
+from toolsbot.services import _info,_error
 
 """
 RE: ToolsBot
@@ -128,7 +114,7 @@ class Data:
                     "DynamicExts": json.loads(row[6])
                 }
         except Exception as ex:
-            _erro("Error: Failed to read data.\nInformation: \n" + str(ex))
+            _error("Error: Failed to read data.\nInformation: \n" + str(ex))
             return {}
 
 """
@@ -173,7 +159,7 @@ class User:
                 _info("Data Not Found.")
                 self.data.writeData(self)
         except Exception as ex:
-            _erro("Error: Failed to read or write data." + ex.__str__())
+            _error("Error: Failed to read or write data." + ex.__str__())
 
         if self.warningd >= 10:
             self.banned = True
@@ -770,7 +756,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             - 提示：
                 AI 内容处理过程中请求错误，请联系管理员。"""
 
-            _erro(_response.text)
+            _error(_response.text)
             await ai_eventer.finish(msg)
 
         response = _response.text

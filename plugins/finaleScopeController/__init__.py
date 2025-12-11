@@ -1,5 +1,4 @@
 import configparser
-import logging
 
 from nonebot import on_command
 from nonebot.adapters import Message
@@ -10,20 +9,10 @@ from nonebot.params import CommandArg
 from . import runner
 import plugins.userInfoController as dc  # old name = dauCtl
 
+from toolsbot.services import _info
+
 User = dc.User
 
-logging.basicConfig(
-    filename='botlog.log',
-    filemode='a',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-
-# logging pointers
-_info = logging.info
-_warn = logging.warning
-_erro = logging.error
-_crit = logging.critical
 
 # logging settings
 

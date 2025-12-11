@@ -1,24 +1,8 @@
 import json
-import logging
 import os
 
 from . import mapInterpreter as mapi
 import plugins.userInfoController as uic
-
-logging.basicConfig(
-    filename='botlog.log',
-    filemode='a',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-
-# logging pointers
-_info = logging.info
-_warn = logging.warning
-_erro = logging.error
-_crit = logging.critical
-
-# logging settings
 
 """
 RE: ToolsBot

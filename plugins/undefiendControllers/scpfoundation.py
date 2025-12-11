@@ -1,5 +1,3 @@
-import logging
-
 import requests
 from lxml import html as hi
 from nonebot import on_command
@@ -10,18 +8,7 @@ from nonebot.params import CommandArg
 
 import plugins.userInfoController as uic
 
-logging.basicConfig(
-    filename='botlog.log',
-    filemode='a',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-
-# logging pointers
-_info = logging.info
-_warn = logging.warning
-_erro = logging.error
-_crit = logging.critical
+from toolsbot.services import _info,_error
 
 """
 RE: ToolsBot
@@ -119,7 +106,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, _args: Me
             msg += f"\n        - 链接：{scpurl}"
         except Exception as e:
             msg += "\n    - 处理过程出现问题。"
-            _erro(e.__str__())
+            _error(e.__str__())
             await scp_function.finish(msg)
 
         await scp_function.finish(msg)
