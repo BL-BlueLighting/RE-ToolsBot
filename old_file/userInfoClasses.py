@@ -3,8 +3,6 @@ import logging
 import os
 import random
 
-# 按理来说这个可以删了的，再说了也跑不了
-
 logging.basicConfig(
     filename='botlog.log',
     filemode='a',

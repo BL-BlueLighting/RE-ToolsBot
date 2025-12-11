@@ -2,6 +2,8 @@ import json
 import os
 import random
 
+from toolsbot.configs.path_config import DATA_PATH
+
 
 class Database:
     def __init__(self, db_name:str, id:str):
@@ -49,7 +51,7 @@ class User:
         self.score = database.get("score", 0)
         self.buied = database.get("buied", [])
 
-        with open("./banned.json","r",encoding="utf-8") as f: # 原来用的eval是何意味
+        with open(DATA_PATH / "banned.json","r",encoding="utf-8") as f: # 原来用的eval是何意味
             banneds = json.load(f)
         if userid in banneds:
             self.banned = True

@@ -5,7 +5,7 @@ import random
 import sqlite3
 from typing import Any, Dict
 
-import scripts.userInfoClasses as dc
+import old_file.userInfoClasses as dc
 
 print("RE: ToolsBot - Userdata 迁移工具")
 print("迁移所有 userdata 下 .userdata 文件到 sqlite3 userdata.db")
