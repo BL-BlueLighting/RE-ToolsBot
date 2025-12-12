@@ -10,5 +10,4 @@ driver.register_adapter(ONEBOT_V11Adapter)
 nonebot.load_from_toml("pyproject.toml")
 
 if __name__ == "__main__":
-    app = nonebot.get_asgi()
-    nonebot.run(app="bot:app")
+    nonebot.run()

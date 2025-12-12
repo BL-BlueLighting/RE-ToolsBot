@@ -33,13 +33,13 @@ Choose one of the following two actions
 Install requirements using this python script:
 
 `
-python ./scripts/install/installTB.py
+python ./installTB.py
 `
 
 Or, install requirements directly
 
 `
-pip install -r ./scripts/install/requirements.txt
+pip install -r ./install/requirements.txt
 `
 
 </details>
