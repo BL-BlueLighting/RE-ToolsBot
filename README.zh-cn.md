@@ -22,7 +22,7 @@
 
 > [!Warning]
 >
-> ToolsBot 已更新，请在 git pull 下来后，执行 python ./quickmove.py 来迁移用户数据
+> ToolsBot 已更新，请在 git pull 下来后，执行 python ./scripts/quickmove.py 来迁移用户数据
 
 ## 如何使用
 先 git clone 下来整个项目。
@@ -39,13 +39,13 @@ git clone https://github.com/Latingtude/RE-ToolsBot.git
 使用下面这行命令安装所有依赖。
 
 `
-python ./install/installTB.py
+python ./scripts/install/installTB.py
 `
 
 或者，直接通过 pip 安装：
 
 `
-pip install -r ./install/requirements.txt
+pip install -r ./scripts/install/requirements.txt
 `
 
 </details>
