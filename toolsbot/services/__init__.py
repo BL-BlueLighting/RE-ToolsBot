@@ -1,1 +1,1 @@
-from .log import _info, _warn, _error, _crit, logger
+from .log import _info, _warn, _error, _crit, logger_bind as logger

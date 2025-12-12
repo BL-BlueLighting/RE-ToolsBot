@@ -703,7 +703,15 @@ ai_eventer = on_command("ai", aliases={"人工智能"}, priority=10)
 @ai_eventer.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Message = CommandArg()):
     # API Key, 硅基流动
-    with open(DATA_PATH / "configuration.json", "r", encoding="utf-8") as f:
+    cfg_path = DATA_PATH / "configuration.json"
+
+    if not cfg_path.exists():
+        with open(DATA_PATH / "configuration_template.json", "r", encoding="utf-8") as f:
+            data = f.read()
+        with open(cfg_path, "w", encoding="utf-8") as f:
+            f.write(data)
+
+    with open(cfg_path, "r", encoding="utf-8") as f:
         api_key = json.load(f).get("AI-ApiKEY", "")
 
     user = User(event.get_user_id())

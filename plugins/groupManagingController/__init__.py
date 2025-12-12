@@ -23,6 +23,12 @@ from toolsbot.configs import DATA_PATH
 
 cfg_path = DATA_PATH / "configuration.json"
 
+if not cfg_path.exists():
+    with open(DATA_PATH / "configuration_template.json", "r", encoding="utf-8") as f:
+        data = f.read()
+    with open(cfg_path, "w", encoding="utf-8") as f:
+        f.write(data)
+
 # nonebot.adapters.onebot.v11.Bot
 
 with open(cfg_path, "r", encoding="utf-8") as f:
