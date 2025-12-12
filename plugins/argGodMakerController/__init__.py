@@ -1,3 +1,6 @@
+from nonebot.adapters import Message
+from nonebot.params import CommandArg
+import os
 import datetime
 import json
 import os
@@ -306,18 +309,15 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     目前 ARG 修仙系统共有 {len(STATUSES)} 个段位。""")
 
     elif act == "begin":
-
         if gmUser.pausing == False:
             gmUser.pause()
             await fns(f"""RE: ToolsBot - ARG 修仙系统
         - 您当前段位：{gmUser.getStatus()};
         - 正在尝试晋升：{gmUser.status} {gmUser.level + 1} 层
         - 请等待一分钟后再来 break，或者 break 掉来继续操作。""")
+        elif gmUser.beginPause is None:
+            pass # 类型检查报错，你也别问我
         else:
-            if gmUser.beginPause is None:
-                await fns("""RE: ToolsBot - ARG 修仙系统
-        - 发生了一些预料之外的错误，请联系管理员处理。
-        - 搜索关键词 beginPause is None""")
             await fns(f"""RE: ToolsBot - ARG 修仙系统
         - 您正在试图晋升，请不要再次使用。
         - 距离 break 时间：{str((datetime.datetime.now() - gmUser.beginPause).seconds - 60).replace("-", "")}""")
@@ -361,8 +361,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
     elif act == "pk":
         rmsg = "RE: ToolsBot - ARG 修仙 - Global PK"
-        with open(cfg_path, "r", encoding="utf-8") as f:
-            gmConfig = json.load(f)
+        gmConfig = json.load(open(cfg_path, "r", encoding="utf-8"))
 
         rmsg += "\n    - 当前赛季：" + gmConfig.get("Status", "???") + ""
         rmsg += "\n    - 您的 Rating：" + str(gmUser.rating) + ""
@@ -382,8 +381,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
                 rmsg += "\n    - P.K. 暂时未揭幕。"
                 await fns(rmsg)
 
-            with open(pking_json_path, "r", encoding="utf-8") as f:
-                _pking = json.load(f)
+            _pking = json.load(open(pking_json_path, "r", encoding="utf-8"))
             pking = {}
             pkusers = []
 
@@ -402,15 +400,12 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
                 "Redeem": random.randint(1000, 9999)
             }
 
-            with open(pk_info_path, "r") as f:
-                _pki = json.load(f)
+            _pki = json.load(open(pk_info_path, "r"))
             _pki.append(pkinfo)
-            with open(pk_info_path, "r+") as f:
-                json.dump(_pki, f)
+            json.dump(_pki, open(pk_info_path, "r+"))
 
             _pking.append(f"{gmUser.user.id}:{qq}")
-            with open(pking_path, "r+") as f:
-                json.dump(_pking, f)
+            json.dump(_pking, open(pking_path, "r+"))
 
             rmsg += "\n    - 你与 " + qq + " 开始 P.K."
             rmsg += "\n    - 对方目前段位：" + GMUser(uic.User(qq)).getStatus()
@@ -421,8 +416,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
         elif cargs [1] == "status":
             rmsg = "RE: ToolsBot - ARG 修仙 - P.K. 过程"
-            with open(pking_json_path, "r", encoding="utf-8") as f:
-                _pking = json.load(f)
+            _pking = json.load(open(pking_json_path, "r", encoding="utf-8"))
             pking = {}
             pkusers = []
             otherUserQQ = ""
@@ -482,8 +476,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
             # 检查是否超时
 
-            with open(pk_info_path, "r") as f:
-                _pki = json.load(f)
+            _pki = json.load(open(pk_info_path, "r"))
             users = pkStr.split(":")
             pki = {}
 
@@ -513,8 +506,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
                 # 删除
                 del _pki [_pki.index(pki)]
-                with open(pk_info_path, "w") as f:
-                    json.dump(_pki, f)
+                json.dump(_pki, open(pk_info_path, "w"))
 
             await fns(rmsg)
         elif cargs [1] == "season":
@@ -523,8 +515,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
             rmsg += "\n    - 您的 Rating：" + str(gmUser.rating) + ""
             rmsg += "\n    - G L O B A L . P . K . - 开场"
             rmsg += "\n    - 目前正在进行的 PK："
-            with open(pking_json_path, "r", encoding="utf-8") as f:
-                _pking = json.load(f)
+            _pking = json.load(open(pking_json_path, "r", encoding="utf-8"))
 
             for pk in _pking:
                 rmsg += f"\n        - {pk.split(":") [0]} 对战 {pk.split(":") [1]}"
