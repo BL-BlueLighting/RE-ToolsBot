@@ -1,33 +1,10 @@
-from nonebot import *
+from nonebot import on_command
 from nonebot.adapters import Message
 from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import *
-from nonebot.permission import SUPERUSER
-import nonebot,random,json,requests
-from time import sleep as wait
-from random import uniform as wrd
-import os
-import datetime
-import logging, re
-from collections import Counter
+from nonebot.adapters.onebot.v11 import Bot,GroupMessageEvent,PrivateMessageEvent
+
 import sqlite3
-from typing import Dict, List, Any
-from plugins.userInfoController import *
-
-logging.basicConfig(
-    filename='botlog.log',
-    filemode='a',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-
-# logging pointers
-_info = logging.info
-_warn = logging.warning
-_erro = logging.error
-_crit = logging.critical
-
-# logging settings
+from plugins.userInfoController import User
 
 """
 RE: ToolsBot
