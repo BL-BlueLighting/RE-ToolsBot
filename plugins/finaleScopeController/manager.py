@@ -4,7 +4,6 @@ Control finalescope_data \\ fs_data more file interpret.
 import configparser
 
 import plugins.userInfoController as dc
-
 from toolsbot.configs import USER_PATH
 
 

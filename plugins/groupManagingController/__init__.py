@@ -18,8 +18,8 @@ from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
 
 import plugins.userInfoController as dc
-from toolsbot.services import _info,_warn,_crit
 from toolsbot.configs import DATA_PATH
+from toolsbot.services import _crit, _info, _warn
 
 cfg_path = DATA_PATH / "configuration.json"
 

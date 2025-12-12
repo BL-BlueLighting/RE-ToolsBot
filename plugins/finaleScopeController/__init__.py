@@ -6,12 +6,11 @@ from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
                                          PrivateMessageEvent)
 from nonebot.params import CommandArg
 
-from . import runner
 import plugins.userInfoController as dc  # old name = dauCtl
-
+from toolsbot.configs import USER_PATH
 from toolsbot.services import _info
 
-from toolsbot.configs import USER_PATH
+from . import runner
 
 template_path = USER_PATH / "finaleScope" / "template.finaleScope_data"
 

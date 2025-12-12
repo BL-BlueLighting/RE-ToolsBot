@@ -1,10 +1,10 @@
 import json
 import os
 
-from . import mapInterpreter as mapi
 import plugins.userInfoController as uic
 from toolsbot.configs import DATA_PATH
 
+from . import mapInterpreter as mapi
 
 """
 RE: ToolsBot

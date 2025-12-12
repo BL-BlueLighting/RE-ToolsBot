@@ -4,9 +4,10 @@ mapInterpreter
 
 from typing import Literal
 
+from toolsbot.configs import DATA_PATH, PLUG_PATH
+
 from . import mapInterpreterLib as lib
 
-from toolsbot.configs import DATA_PATH,PLUG_PATH
 
 def run(data: str):
     # data is a file under data/map/areas/.

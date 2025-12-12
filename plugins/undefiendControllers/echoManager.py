@@ -8,7 +8,6 @@ from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 
 from plugins.userInfoController import User
-
 from toolsbot.configs import DATA_PATH
 
 """

@@ -3,9 +3,12 @@ from sys import stdout
 from typing import TYPE_CHECKING
 
 from loguru import logger as logger_
+
 if TYPE_CHECKING:
     from loguru import Record
-from nonebot.log import logger as nb_logger,default_filter
+
+from nonebot.log import default_filter
+from nonebot.log import logger as nb_logger
 from nonebot.log import logger_id
 
 from ..configs import LOG_PATH
@@ -58,8 +61,8 @@ logger.add(
 
 logger_bind = logger.bind(application="toolsbot")
 
-_debug = logger_bind.debug
 _trace = logger_bind.trace
+_debug = logger_bind.debug
 _info = logger_bind.info
 _warn = logger_bind.warning
 _error = logger_bind.error

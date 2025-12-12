@@ -9,7 +9,6 @@ from nonebot.params import CommandArg
 
 from toolsbot.configs import DATA_PATH
 
-
 # 假设 TITLE 变量已在其他地方定义，这里为了完整性添加
 TITLE = "RE: ToolsBot"
 

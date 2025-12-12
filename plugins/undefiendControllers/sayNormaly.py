@@ -1,9 +1,11 @@
+import sqlite3
+
 from nonebot import on_command
 from nonebot.adapters import Message
+from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
+                                         PrivateMessageEvent)
 from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import Bot,GroupMessageEvent,PrivateMessageEvent
 
-import sqlite3
 from plugins.userInfoController import User
 
 """

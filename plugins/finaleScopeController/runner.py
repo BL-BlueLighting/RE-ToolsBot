@@ -1,6 +1,6 @@
 # Run information file
 
-from toolsbot.configs import DATA_PATH,PLUG_PATH
+from toolsbot.configs import DATA_PATH, PLUG_PATH
 
 
 def run(data: str):

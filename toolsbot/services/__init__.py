@@ -1,1 +1,2 @@
-from .log import _info, _warn, _error, _crit, logger_bind as logger
+from .log import _crit, _debug, _done, _error, _info, _trace, _warn
+from .log import logger_bind as logger
