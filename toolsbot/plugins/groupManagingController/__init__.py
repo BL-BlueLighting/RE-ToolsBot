@@ -2,6 +2,7 @@ import json
 import logging
 import re
 from typing import Union
+import toml
 
 import nonebot
 import nonebot.adapters.onebot.v11
@@ -35,8 +36,8 @@ _crit = logging.critical
 
 # nonebot.adapters.onebot.v11.Bot
 
-with open("./data/configuration.json", "r", encoding="utf-8") as f:
-    config = json.load(f)
+with open("./data/configuration.toml", "r", encoding="utf-8") as f:
+    config = toml.load(f)
 """
 welcom=on_notice()
 
@@ -84,14 +85,14 @@ async def welcome(bot: nonebot.adapters.onebot.v11.Bot, event: GroupIncreaseNoti
         except ActionFailed:
             _crit("Failed to auto ban a sb.")
 
-    await welcomejoin_event.finish(OneBotMessage(await replacing(bot, config ["WelcomeMessage"], user)))
+    await welcomejoin_event.finish(OneBotMessage(await replacing(bot, config["WelcomeMessage"], user)))
 
 goodbye_event = on_notice()
 
 @goodbye_event.handle()
 async def goodbye(bot: nonebot.adapters.onebot.v11.Bot, event: GroupDecreaseNoticeEvent, state: T_State):
     user = event.get_user_id()
-    await goodbye_event.finish(OneBotMessage(await replacing(bot, config ["EscapeMessage"], user)))
+    await goodbye_event.finish(OneBotMessage(await replacing(bot, config["EscapeMessage"], user)))
 
 # auto agree friend adding
 
@@ -237,8 +238,8 @@ def replace_gunmu(text: str) -> str:
     pattern = f"[{GUNMU_CHARS}]"
     return re.sub(pattern, "█", text)
 
-with open("./data/configuration.json", "r", encoding="utf-8") as f:
-    cfg = json.load(f)
+with open("./data/configuration.toml", "r", encoding="utf-8") as f:
+    cfg = toml.load(f)
     _info(cfg)
     _info(cfg.get("openOttoMother"))
 """
