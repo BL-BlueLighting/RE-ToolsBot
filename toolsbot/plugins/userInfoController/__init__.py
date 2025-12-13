@@ -5,6 +5,7 @@ import os
 import random
 import re
 import sqlite3
+import toml
 from collections import Counter
 from typing import Any, Dict
 
@@ -711,13 +712,22 @@ AI 函数
 @author: Latingtude
 """
 ai_eventer = on_command("ai", aliases={"人工智能"}, priority=10)
+today_date = datetime.date.today()
 
 @ai_eventer.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Message = CommandArg()):
     # API Key, 硅基流动
-    with open("./data/configuration.json", "r", encoding="utf-8") as f:
-        api_key = json.load(f).get("AI-ApiKEY", "")
+    with open("./data/configuration.toml", "r", encoding="utf-8") as f:
+        config = toml.load(f)
+        config_model = config["model"]
+        model_config = next((m for m in config["models"] if m["name"] == config_model), None)
+        provider_config = next((p for p in config["api_providers"] if p["name"] == model_config["api_provider"]),
+                               None) if model_config else None
 
+        if model_config and provider_config:
+            base_url = provider_config["base_url"]
+            api_key = provider_config["api_key"]
+            model_identifier = model_config["model_identifier"]
     user = User(event.get_user_id())
 
     if not user.isBanned():
@@ -728,12 +738,12 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             await ai_eventer.finish("RE: ToolsBot AI\n    - 使用 ^ai [内容] 来进行聊天。(注：不会保留上下文)")
 
         payload = {
-            "model": "Qwen/Qwen3-8B",
+            "model": f"{model_identifier}",
             "messages": [
                 {
                     "role": "system",
-                    "content": """你是一个名叫 ToolsBot 的 Bot。
-现在是 2025 年。
+                    "content": f"""你是一个名叫 ToolsBot 的 Bot。
+现在是 {today_date} 日 。
 接下来用户会给你发送消息，请直接发送结果并使用简洁的语言。
 
 你可以使用以下函数：
@@ -761,12 +771,12 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
 
         await ai_eventer.send("RE: ToolsBot AI 提示：\n    - 请稍等，AI 正在生成")
 
-        _response = requests.post("https://api.siliconflow.cn/v1/chat/completions", json=payload, headers=headers)
+        _response = requests.post(base_url, json=payload, headers=headers)
 
         if _response.status_code != 200:
-            msg = """RE: ToolsBot AI
+            msg = f"""RE: ToolsBot AI
             - 模型：
-                Qwen\\Qwen3-8B
+                {model_identifier}
             - 提示：
                 AI 内容处理过程中请求错误，请联系管理员。"""
 
@@ -785,13 +795,13 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             choices = js_resp.get("choices")
 
             # message
-            messag_ = choices [0].get("message")
+            message_ = choices [0].get("message")
 
             # content
-            ctnt = messag_.get("content").replace("\n", "")
+            ctnt = message_.get("content").replace("\n", "")
 
             # reasoning_content
-            rea_ctnt = messag_.get("reasoning_content").replace("\n", "")
+            rea_ctnt = message_.get("reasoning_content").replace("\n", "")
 
             # usage
             usage = js_resp.get("usage")
@@ -799,12 +809,12 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             # total token
             total_token = usage.get("total_tokens")
         except AttributeError:
-            rea_ctnt = "通义千问没思考就回答你"
+            rea_ctnt = "模型没思考就回答你"
             total_token = js_resp.get("usage").get("total_tokens")
 
         msg = f"""RE: ToolsBot AI
         - 模型:
-            Qwen\\Qwen3-8B
+            {model_identifier}
         - 思考内容
             {rea_ctnt}
         - 回复内容：
@@ -816,7 +826,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
         if ctnt == 'Failed("18Disabled")':
             msg = f"""ToolsBot AI
         - 模型：
-            Qwen\\Qwen3-8B
+            {model_identifier}
         - 提示：
             请勿询问此种内容。
         """
@@ -826,7 +836,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
         elif ctnt == 'Failed("AboutWorld")':
             msg = f"""ToolsBot AI
         - 模型：
-            Qwen\\Qwen3-8B
+            {model_identifier}
         - 提示：
             你因涉嫌讨论政治而被强制停止聊天。
             请不要谈论政治。
