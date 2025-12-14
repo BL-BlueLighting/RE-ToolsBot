@@ -1,0 +1,26 @@
+WelcomeMessage = "[@]\n欢迎来到本群！\n这里是 RE: ToolsBot，使用 ^help 来获取帮助！\n本 Bot 出现 Bug 了请及时 @Bot 主。"
+EscapeMessage = "一位挚友离开了本群。\n祂的 QQ 号是：[QQ]。"
+openOttoMother = false
+model = "deepseek-v3" #选择模型，默认为SiliconFlow的DeepSeek V3。名称为在models中配置的模型名称
+
+
+[[api_providers]] # SiliconFlow的API服务商配置（可以配置多个）
+name = "SiliconFlow"                        # API服务商名称（可随意命名，在models的api-provider中需使用这个命名）
+base_url = "https://api.siliconflow.cn/v1/chat/completions"  # API服务商的URL
+api_key = "your-api-key"        # API密钥
+
+[[api_providers]] #自定义API服务商配置
+name = ""
+base_url = ""
+api_key = ""
+
+
+[[models]] # 模型（可以配置多个）
+model_identifier = "deepseek-ai/DeepSeek-V3" # 模型标识符（API服务商提供的模型标识符）
+name = "deepseek-v3"               # 模型名称（可随意命名，在后面中需使用这个命名）
+api_provider = "SiliconFlow"       # API服务商名称（对应在api_providers中配置的服务商名称）
+
+[[models]] #自定义模型配置
+model_identifier = ""
+name = ""
+api_provider = ""
