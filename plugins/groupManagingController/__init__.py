@@ -228,7 +228,7 @@ def replace_gunmu(text: str) -> str:
     pattern = f"[{GUNMU_CHARS}]"
     return re.sub(pattern, "█", text)
 
-with open("./data/configuration.toml", "r", encoding="utf-8") as f:
+with open(cfg_path, "r", encoding="utf-8") as f:
     cfg = toml.load(f)
     _info(cfg)
     _info(cfg.get("openOttoMother"))
