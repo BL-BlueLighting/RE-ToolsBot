@@ -142,6 +142,7 @@ redpackets.json
 morningd.json
 boostMorningd.json
 configuration.json
+configuration.toml
 
 GitPusher.py
 GitPush.bat
