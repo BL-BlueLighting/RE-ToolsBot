@@ -2,6 +2,7 @@
     <img src="./README.Logo.jpg" style="width: 128px;">
 </div>
 
+
 <h1 align="center">RE: ToolsBot</h1>
 
 <p align="center">
@@ -14,75 +15,83 @@
 </p>
 
 <div align="center">
-    <a href="./README.zh-cn.md">中文</a> | <a href="./README.md">English</a>
+    <a href="README.md">中文</a> | <a href="README.en.md">English</a>
 </div>
 
-<p align="center"><i>Perfect Bot for QQ.</i></p>
+<p align="center"><i>优秀的 QQ Bot 实例</i></p>
 
-## How to use it?
-First, clone this project.
+> [!Warning]
+>
+> ToolsBot 已更新，请在 git pull 下来后，执行 python ./quickmove.py 来迁移用户数据
+
+## 如何使用
+先 git clone 下来整个项目。
 
 `
 git clone https://github.com/Latingtude/RE-ToolsBot.git
 `
 
-Choose one of the following two actions
+以下操作二选一
 
 <details>
-<summary>Install dependencies(Main Environment)</summary>
-Install requirements using this python script:
+<summary>安装依赖(主环境内)</summary>
+
+使用下面这行命令安装所有依赖。
 
 `
-python ./scripts/install/installTB.py
+python ./install/installTB.py
 `
 
-Or, install requirements directly
+或者，直接通过 pip 安装：
 
 `
-pip install -r ./scripts/install/requirements.txt
+pip install -r ./install/requirements.txt
 `
 
 </details>
 
 <details>
-<summary>Install dependencies(Virtual Environment)</summary>
-1.Install Python version 3.10 or higher
+<summary>安装依赖(虚拟环境)</summary>
 
-2.Run `pip install poetry`
+1.安装版本>=3.10的python
 
-3.Run `poetry install`
+2.运行`pip install poetry`
 
-(Note: Are there really people who would want to deploy this project in the main environment?)
+3.运行`poetry install`
+
+(备注:真的有人会想把这个项目部署在主环境里吗)
 
 </details>
 
-(Only create a blank project, use global install)
+(只创建一个空项目，选择全局安装)
 
-After all actions, edit `.env.prod` `.env.dev` `bot.py` 'SUPERUSER' configure section to your qq Number.
+在所有的事情干完后，修改 `.env.prod` `bot.py` 中的 SUPERUSER 为你自己的 QQ号码。
 
-Then, open `data/configuration_template.json`, edit `AI-ApiKEY`. Rename it to `data/configuration.json`
-If you do not need AI skill, just `data/configuration_template.json` to `data/configuration.json` is best choice.
+接下来，打开 `data/configuration_template.toml`，修改其中的 api_key 项目为你的服务提供商 API Key。随后重命名为 `configuration.toml`。
+若不需要，请直接重命名为 `configuration.toml`。
 
-Run `nb run --reload` to boot this bot.
+随后，运行 `nb run --reload` 来启动 bot.
 
-## How to connect bot to QQ?
+## 这个 bot 怎么链接到 QQ？
 
-Go https://github.com/NapNeko/NapCatQQ.
+先安装NapCat并登录Bot的QQ账号 https://github.com/NapNeko/NapCatQQ.
 
-## Thanks
+随后在“网络配置” --> 新建 --> Websocket客户端 中填写名称，URL和token
+
+![Napcat1](./README.NAPCAT.1.png)
+![Napcat2](./README.NAPCAT.2.png)
+
+## 感谢
 > [!Note]
 >
-> Thanks for project under. I used some code from them.
+> 感谢以下项目，我参考了以下项目的部分代码。
 
 <a href="https://github.com/yzyyz1387/nonebot_plugin_admin/">NoneBot Plugin Admin</a>
 
-## Tips
+## 警告
+
 > [!Warning]
 >
-> This project is **not** stable.
+> 该项目目前并不稳定。请不要直接克隆该项目，我没办法做到自检查代码的每一处角落。
 >
-> Please don't direct clone this repo.
->
-> I can't do check my code anytime.
->
-> If you found a issue, please make a issue context in `Github Issues` !
+> 如果你发现了任何问题，请在 `Github Issues` 中发表一个 Issue。
