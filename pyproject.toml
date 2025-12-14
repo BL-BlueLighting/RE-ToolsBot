@@ -89,10 +89,12 @@ yarl = "1.20.1"
 zstandard = "0.24.0"
 lxml = ">=6.0.2"
 isort = "^7.0.0"
+toml = "^0.10.2"
+
 [tool.nonebot]
 adapters = [
     {name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11"},
 ]
 plugins = []
-plugin_dirs = ["toolsbot/plugins"]
+plugin_dirs = ["plugins"]
 builtin_plugins = []
