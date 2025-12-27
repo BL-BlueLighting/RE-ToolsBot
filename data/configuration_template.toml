@@ -13,7 +13,7 @@ api_key = "your-api-key"        # API密钥
 name = ""
 base_url = ""
 api_key = ""
-
+# 所有空白部分上线时均需删除
 
 [[models]] # 模型（可以配置多个）
 model_identifier = "deepseek-ai/DeepSeek-V3" # 模型标识符（API服务商提供的模型标识符）
@@ -24,3 +24,4 @@ api_provider = "SiliconFlow"       # API服务商名称（对应在api_providers
 model_identifier = ""
 name = ""
 api_provider = ""
+# 所有空白部分上线时均需删除

@@ -23,6 +23,7 @@ import plugins.userInfoController as dc
 from toolsbot.configs import DATA_PATH
 from toolsbot.services import _crit, _info, _warn
 
+THIRTY_DAYS_BAN = 2591940 # 30 * 24 * 60 * 60
 cfg_path = DATA_PATH / "configuration.toml"
 
 with open(cfg_path, "r", encoding="utf-8") as f:
@@ -71,7 +72,7 @@ async def welcome(bot: nonebot.adapters.onebot.v11.Bot, event: GroupIncreaseNoti
     # check if it in banned, auto ban
     if dc.User(user).banned:
         try:
-            await bot.call_api("set_group_ban", group_id=event.group_id, user_id = user, duration=2591940)
+            await bot.call_api("set_group_ban", group_id=event.group_id, user_id = user, duration=THIRTY_DAYS_BAN)
         except ActionFailed:
             _crit("Failed to auto ban a sb.")
 
