@@ -12,9 +12,6 @@ _plat = "Win"
 
 if platform.system() == "Linux":
     _plat = "Linux"
-else:
-    print(":: 很抱歉，您当前系统并不支持全自动安装。请手动安装。")
-    exit()
 
 run = os.system
 
