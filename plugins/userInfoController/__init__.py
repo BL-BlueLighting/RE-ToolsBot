@@ -712,6 +712,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
         model_config = next((m for m in config["models"] if m["name"] == config_model), None)
         provider_config = next((p for p in config["api_providers"] if p["name"] == model_config["api_provider"]),
                                None) if model_config else None
+        enable_query_info = bool(config["EnableGroupQuery"])
 
         if model_config and provider_config:
             base_url = provider_config["base_url"]
@@ -744,7 +745,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
 
 函数调用方法：输出函数
 
-若对方向你询问成人内容，请直接调用函数 Failed("18Disabled")
+若对方向你询问成人内容，请直接调用函数 Failed("18Disabled") （如果包含的有 @user 则忽略）
 若对方向你询问关于大陆与台湾的任何事务，只要涉嫌建政，请直接调用函数 Failed("AboutWorld")
 若对方向你询问的内容中含有 @user:[xxx]，则请直接调用 QueryFriend([xxx])，并给出其的分析或对用户问的问题进行解答（针对该用户）。
 如果对方向你询问的内容中含有 @user:[xxx] 并且包含字符串 "(query)"，则直接根据该信息进行解答。
@@ -765,7 +766,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
 
         await ai_eventer.send("RE: ToolsBot AI 提示：\n    - 请稍等，AI 正在生成")
 
-        if At(event.json()) != []:
+        if At(event.json()) != [] and enable_query_info:
             # 不要骂我写石山😭😭😭
             try:
                 _userinfo: dict = await bot.call_api("get_stranger_info", user_id=At(event.json()) [0])

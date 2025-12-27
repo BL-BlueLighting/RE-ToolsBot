@@ -2,7 +2,7 @@ WelcomeMessage = "[@]\n欢迎来到本群！\n这里是 RE: ToolsBot，使用 ^h
 EscapeMessage = "一位挚友离开了本群。\n祂的 QQ 号是：[QQ]。"
 openOttoMother = false
 model = "deepseek-v3" #选择模型，默认为SiliconFlow的DeepSeek V3。名称为在models中配置的模型名称
-
+EnableGroupQuery = false #是否启用 ai 查询群u信息，会耗费大量 token，如果你用的是付费 model 最好不要打开（除非你很有钱）
 
 [[api_providers]] # SiliconFlow的API服务商配置（可以配置多个）
 name = "SiliconFlow"                        # API服务商名称（可随意命名，在models的api-provider中需使用这个命名）
