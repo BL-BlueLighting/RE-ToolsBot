@@ -739,11 +739,15 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
 你可以使用以下函数：
     - Failed("18Disabled / AboutWorld"):
         强行停止聊天，并返回原因。
+    - QueryFriend("Name") -> array:
+        在群里查询一个人的信息
 
 函数调用方法：输出函数
 
 若对方向你询问成人内容，请直接调用函数 Failed("18Disabled")
 若对方向你询问关于大陆与台湾的任何事务，只要涉嫌建政，请直接调用函数 Failed("AboutWorld")
+若对方向你询问的内容中含有 @user:[xxx]，则请直接调用 QueryFriend([xxx])，并给出其的分析或对用户问的问题进行解答（针对该用户）。
+如果对方向你询问的内容中含有 @user:[xxx] 并且包含字符串 "(query)"，则直接根据该信息进行解答。
 若不是类似内容，请不要想这些内容。
 """
                 },
@@ -761,6 +765,21 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
 
         await ai_eventer.send("RE: ToolsBot AI 提示：\n    - 请稍等，AI 正在生成")
 
+        if At(event.json()) != []:
+            # 不要骂我写石山😭😭😭
+            try:
+                _userinfo: dict = await bot.call_api("get_stranger_info", user_id=At(event.json()) [0])
+                userinfo = ""
+                for key, value in _userinfo.items():
+                    userinfo += f"    (个人信息) {key}: {value}\n"
+
+                _groupuserinfo: dict = await bot.call_api("get_group_member_info", group_id=event.group_id, user_id=At(event.json()) [0])
+                for key, value in _groupuserinfo.items():
+                    userinfo += f"    (群聊信息) {key}: {value}\n"
+            except ActionFailed:
+                await ai_eventer.finish("RE: ToolsBot AI 提示：\n    - 无法查询 QQ 号码为 " + At(event.json()) [0] + " 的用户信息")
+            payload["messages"][1]["content"] = f"@user:{userinfo} (query) \n {text}"
+
         _response = requests.post(base_url, json=payload, headers=headers)
 
         if _response.status_code != 200:
@@ -774,6 +793,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             await ai_eventer.finish(msg)
 
         response = _response.text
+
 
         global js_resp, choices, message_, ctnt, rea_ctnt, usage, total_token
 
@@ -833,6 +853,9 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, arg: Mess
             此次为警告，下次为封禁。
         """
             user.aiWarningd()
+
+
+
         """
         if user.getScore() < int(total_token):
             msg = fToolsBot AI
