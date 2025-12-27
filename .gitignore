@@ -8,9 +8,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
-*.so
-
 # Distribution / packaging
 .Python
 build/
@@ -109,7 +106,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -146,6 +142,7 @@ redpackets.json
 morningd.json
 boostMorningd.json
 configuration.json
+configuration.toml
 
 GitPusher.py
 GitPush.bat

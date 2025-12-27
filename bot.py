@@ -1,11 +1,14 @@
 import nonebot
 from nonebot.adapters.onebot.v11 import Adapter as ONEBOT_V11Adapter
 
+from toolsbot.services import init, shutdown
+
 nonebot.init()
 
 driver = nonebot.get_driver()
 driver.register_adapter(ONEBOT_V11Adapter)
-
+driver.on_startup(init)
+driver.on_shutdown(shutdown)
 
 nonebot.load_from_toml("pyproject.toml")
 
