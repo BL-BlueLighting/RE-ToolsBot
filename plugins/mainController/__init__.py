@@ -54,7 +54,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     msg = TITLE
     # 添加图片
     # 获得绝对路径
-    await help_function.finish(MessageSegment.image(Path() / "helpdocument.png"))
+    await help_function.finish(MessageSegment.image(Path() / "helpdocuments/PNG/HelpDocument v1.png"))
 
 """
 check 函数

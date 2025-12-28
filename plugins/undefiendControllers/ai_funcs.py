@@ -234,7 +234,7 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
         else:
             # 使用默认提示词
             system_content = f"""你是一个名叫 ToolsBot 的 Bot。
-现在是 {today_date} 日 。
+现在是 {today_date}, {datetime.datetime.now().strftime("%H:%M:%S")}。
 接下来用户会给你发送消息，请直接发送结果并使用简洁的语言。
 
 你可以使用以下函数：
@@ -326,7 +326,7 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
             payload["messages"][-1]["content"] = f"@user:{userinfo} (query) \n {text}"
 
         # 处理 回复消息
-        if event.reply.message_id:
+        if event.reply:
             # 有回复，自动引用
             try:
                 _reply_msg = await bot.get_msg(message_id=event.reply.message_id)
