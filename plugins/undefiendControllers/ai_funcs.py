@@ -154,6 +154,19 @@ async def handle_aiprompt(bot: Bot, event: PrivateMessageEvent, arg: Message = C
 
     await aiprompt_eventer.finish(f"AI 提示词已设置为：{text}")
 
+clearai_eventer = on_command("clearai", priority=10, block=True)
+
+@clearai_eventer.handle()
+async def _ (bot:Bot, event: PrivateMessageEvent | GroupMessageEvent, arg: Message = CommandArg()):
+    user_id = event.get_user_id()
+    sessions = load_sessions()
+    prompts = load_prompts()
+    del sessions[user_id]
+    del prompts[user_id]
+    save_sessions(sessions)
+    save_prompts(prompts)
+    await clearai_eventer.finish("已清空 AI 聊天记录和提示词。")
+
 """
 AI 函数
 用于 AI 相关功能
@@ -237,6 +250,7 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
 若对方向你询问关于大陆与台湾的任何事务，只要涉嫌建政，请直接调用函数 Failed("AboutWorld")
 若对方向你询问的内容中含有 @user:[xxx]，则请直接调用 QueryFriend([xxx])，并给出其的分析或对用户问的问题进行解答（针对该用户）。
 如果对方向你询问的内容中含有 @user:[xxx] 并且包含字符串 "(query)"，则直接根据该信息进行解答。
+如果对方向你询问的内容中含有 @reply_message [xxx]，则你可以根据这个进行回复。
 若不是类似内容，请不要想这些内容。
 """
 
@@ -310,6 +324,17 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
                 await ai_eventer.finish(
                     "RE: ToolsBot AI 提示：\n    - 无法查询 QQ 号码为 " + At(event.json())[0] + " 的用户信息")
             payload["messages"][-1]["content"] = f"@user:{userinfo} (query) \n {text}"
+
+        # 处理 回复消息
+        if event.reply.message_id:
+            # 有回复，自动引用
+            try:
+                _reply_msg = await bot.get_msg(message_id=event.reply.message_id)
+                _reply_msg = _reply_msg["message"]
+            except Exception:
+                await ai_eventer.finish("RE: ToolsBot AI 提示：\n    - 无法获取回复消息")
+
+            payload["messages"][-1]["content"] += f"\n@reply_message: {_reply_msg}"
 
         # 发送请求
         _response = requests.post(base_url, json=payload, headers=headers)
