@@ -49,7 +49,7 @@ async def replacing(bot: nonebot.adapters.onebot.v11.Bot, string: str, qqNumber:
     res = res.replace("[@]", "[CQ:at,qq={}]".format(qqNumber))
     # replacing "Name" using api
     try:
-        user_info = await bot.call_api("get_user_info", user_id=int(qqNumber))
+        user_info = await bot.call_api("get_stranger_info", user_id=int(qqNumber))
         res = res.replace("[Name]", user_info["name"])
     except Exception as e:
         _warn(f"Failed to get user info using qq number {qqNumber}. This is why:\n{e}")

@@ -14,6 +14,7 @@ from nonebot import on_command, on_message
 from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
                                          PrivateMessageEvent)
+from nonebot.adapters.onebot.v11.message import MessageSegment
 from nonebot.exception import ActionFailed
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
@@ -215,6 +216,63 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
 
         if text == "":
             await ai_eventer.finish("RE: ToolsBot AI\n    - 使用 ^ai [内容] 来进行聊天。")
+
+        if text == "@photo":
+            # 生成图片
+            url = "https://api.siliconflow.cn/v1/images/generations"
+
+            try:
+                # 解析 photo 语法
+                photostr = text.split("=") [0]
+                prompt = text.split("=") [1]
+
+                payload = {
+                    "model": "Kwai-Kolors/Kolors", # 目前只推荐使用硅基流动上的该模型，其他模型请自行修改。
+                    "prompt": prompt,
+                    "negative_prompt": "<string>",
+                    "image_size": "<string>",
+                    "batch_size": 1,
+                    "seed": 4999999999,
+                    "num_inference_steps": 20,
+                    "guidance_scale": 7.5,
+                    "cfg": 10.05,
+                    "image": "https://inews.gtimg.com/om_bt/Os3eJ8u3SgB3Kd-zrRRhgfR5hUvdwcVPKUTNO6O7sZfUwAA/641",
+                    "image2": "https://inews.gtimg.com/om_bt/Os3eJ8u3SgB3Kd-zrRRhgfR5hUvdwcVPKUTNO6O7sZfUwAA/641",
+                    "image3": "https://inews.gtimg.com/om_bt/Os3eJ8u3SgB3Kd-zrRRhgfR5hUvdwcVPKUTNO6O7sZfUwAA/641"
+                }
+
+                if photostr != "@photo":
+                    for _param in photostr.replace("@photo", "").split(","):
+                        head = _param.split(":")[0]
+                        content = _param.split(":")[1]
+
+                        if head == "negative":
+                            payload["negative_prompt"] = content
+                        elif head == "size":
+                            sizes = ["1024x1024", "960x1280", "768x1024", "720x1440", "720x1280"]
+                            if content not in sizes:
+                                await ai_eventer.finish("图片尺寸错误，请输入 \n1024x1024, \n960x1280, \n768x1024, \n720x1440, \n720x1280 \n或者不写，默认为 1024x1024。")
+                            else:
+                                payload["image_size"] = content
+
+                if payload["negative_prompt"] == "<string>":
+                    payload["negative_prompt"] = "nsfw"
+
+                if payload["image_size"] == "<string>":
+                    payload["image_size"] = "1024x1024"
+
+                headers = {
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json"
+                }
+
+                response = requests.post(url, json=payload, headers=headers)
+                if response.status_code == 200:
+                    data = response.json()
+                    image_link = data["images"][0]["url"]
+                    await ai_eventer.finish(MessageSegment.image("" + image_link))
+            except IndexError:
+                await ai_eventer.finish("Syntax 错误。\n请按照以下 Syntax 输入：\n^ai\n    @photo\n        negative:[负面词],\n        size:[1024x1024, 960x1280, 768x1024, 720x1440, 720x1280]\n    =[您的提示词]\n注：发送消息时不需要换行，注意 @photo negative:xxx,size=1024x1024 之间，negative 和 size 之间有个逗号，用 '=' 分割参数和提示词。提示词最好用英文。")
 
         # 构建消息载荷
         payload = {

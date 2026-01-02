@@ -143,6 +143,7 @@ morningd.json
 boostMorningd.json
 configuration.json
 configuration.toml
+*.json
 
 GitPusher.py
 GitPush.bat
