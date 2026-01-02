@@ -215,9 +215,11 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
                     await ai_eventer.finish("请先使用 ^aitalkstart 开启 AI 聊天会话")
 
         if text == "":
-            await ai_eventer.finish("RE: ToolsBot AI\n    - 使用 ^ai [内容] 来进行聊天。")
+            await ai_eventer.finish("RE: ToolsBot AI\n    - 使用 ^ai [内容] 来进行聊天。\n    - 使用 ^ai @photo 来查看图片生成说明。")
 
         if "@photo" in text:
+            await ai_eventer.send("RE: ToolsBot AI\n    - 请稍等，AI 正在生成图片。")
+
             # 生成图片
             url = "https://api.siliconflow.cn/v1/images/generations"
 
