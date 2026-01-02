@@ -155,7 +155,7 @@ async def handle_aiprompt(bot: Bot, event: PrivateMessageEvent, arg: Message = C
 
     await aiprompt_eventer.finish(f"AI 提示词已设置为：{text}")
 
-clearai_eventer = on_command("clearai", priority=10, block=True)
+clearai_eventer = on_command("clearai", priority=1)
 
 @clearai_eventer.handle()
 async def _ (bot:Bot, event: PrivateMessageEvent | GroupMessageEvent, arg: Message = CommandArg()):
@@ -217,7 +217,7 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
         if text == "":
             await ai_eventer.finish("RE: ToolsBot AI\n    - 使用 ^ai [内容] 来进行聊天。")
 
-        if text == "@photo":
+        if "@photo" in text:
             # 生成图片
             url = "https://api.siliconflow.cn/v1/images/generations"
 
