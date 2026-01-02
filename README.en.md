@@ -67,7 +67,12 @@ Run `nb run --reload` to boot this bot.
 
 ## How to connect bot to QQ?
 
-Go https://github.com/NapNeko/NapCatQQ.
+First install NapCat and login with the Bot's QQ account. https://github.com/NapNeko/NapCatQQ.
+
+Then, in "Network Configuration" --> New --> WebSocket Client, fill in the name, URL, and token
+
+![Napcat1](./README.NAPCAT.1.png)
+![Napcat2](./README.NAPCAT.2.png)
 
 ## Thanks
 > [!Note]

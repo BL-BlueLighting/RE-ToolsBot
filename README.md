@@ -81,8 +81,6 @@ pip install -r ./scripts/install/requirements.txt
 ![Napcat1](./README.NAPCAT.1.png)
 ![Napcat2](./README.NAPCAT.2.png)
 
-注意下 Token 填 'homo1145141919810'，必须填这个，否则会认证失败。
-
 ## 使用教程？
 在 Bot 上线之后，用 ^help，或者参考这个图片：
 
