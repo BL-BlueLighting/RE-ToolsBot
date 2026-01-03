@@ -75,8 +75,8 @@ async def welcome(bot: nonebot.adapters.onebot.v11.Bot, event: GroupIncreaseNoti
             await bot.call_api("set_group_ban", group_id=event.group_id, user_id = user, duration=THIRTY_DAYS_BAN)
         except ActionFailed:
             _crit("Failed to auto ban a sb.")
-
-    await welcomejoin_event.finish(OneBotMessage(await replacing(bot, config["WelcomeMessage"], user)))
+    if not user == bot.self_id:
+        await welcomejoin_event.finish(OneBotMessage(await replacing(bot, config["WelcomeMessage"], user)))
 
 goodbye_event = on_notice()
 
