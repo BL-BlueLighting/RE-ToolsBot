@@ -1,8 +1,9 @@
 import datetime
 
-from nonebot import on_command
+from nonebot import *
 from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
-                                         PrivateMessageEvent)
+                                         PrivateMessageEvent, Message)
+from nonebot.params import CommandArg
 
 from toolsbot.services import _info
 
@@ -19,6 +20,12 @@ What the hell 什么魔鬼
 TITLE = "RE: ToolsBot"
 
 hell_funny = on_command("hellfunny", priority=5, block=True)
+
+zale = on_message(priority=100)
+@zale.handle()
+async def _(bot: Bot, event: PrivateMessageEvent, args: Message = CommandArg()):
+    if "咋了" in args.extract_plain_text():
+        await zale.finish("咋了")
 
 
 @hell_funny.handle()
