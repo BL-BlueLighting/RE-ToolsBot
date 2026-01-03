@@ -24,7 +24,7 @@ hell_funny = on_command("hellfunny", priority=5, block=True)
 zale = on_message(priority=100)
 @zale.handle()
 async def _(bot: Bot, event: PrivateMessageEvent, args: Message = CommandArg()):
-    if "咋了" in args.extract_plain_text():
+    if "咋了" in event.get_plaintext():
         await zale.finish("咋了")
 
 
