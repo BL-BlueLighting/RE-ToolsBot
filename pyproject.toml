@@ -4,6 +4,10 @@ version = "0.1.0"
 description = "ToolsBot"
 readme = "README.md"
 requires-python = ">=3.10, <4.0"
+dependencies = [
+    "nonebot-plugin-epicfree>=0.2.12",
+    "nonebot-plugin-bilibilibot>=2.3.4",
+]
 
 [[tool.poetry.source]]
 name = "ali"
@@ -95,6 +99,6 @@ toml = "^0.10.2"
 adapters = [
     {name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11"},
 ]
-plugins = []
+plugins = ["nonebot_plugin_epicfree", "nonebot_plugin_bilibilibot"]
 plugin_dirs = ["plugins"]
 builtin_plugins = []

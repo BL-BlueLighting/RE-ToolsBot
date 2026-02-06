@@ -74,3 +74,5 @@ win32_setctime==1.2.0
 yarl==1.20.1
 zstandard==0.24.0
 lxml>=6.0.2
+nonebot-plugin-bilibilibot>=2.3.4
+nonebot-plugin-epicfree
