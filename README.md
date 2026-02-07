@@ -84,7 +84,7 @@ pip install -r ./scripts/install/requirements.txt
 ## 使用教程？
 在 Bot 上线之后，用 ^help，或者参考这个图片：
 
-<img src="./helpdocuments/PNG/HelpDocument v1.png">
+<img src="./helpdocuments/PNG/HelpDocument v2.png">
 
 ## 感谢
 > [!Note]

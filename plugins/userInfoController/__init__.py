@@ -590,6 +590,8 @@ buy 函数
 TLoH Bot
 PILLAR OF SHAME
 QQ 3829537708
+QQ 3562258276
+QQ 287280700 (GROUP)
 """
 
 buy_function = on_command("buy", priority=10)
