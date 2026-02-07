@@ -23,7 +23,7 @@ from toolsbot.services import _error, _info
 import plugins.userInfoController as uic
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -32,7 +32,7 @@ undefiendControllers.killers
 DEVIL ROUNDS
 """
 
-TITLE = "RE: ToolsBot"
+TITLE = "TLoH Bot"
 
 devil_rounds = on_command("devilrounds", aliases={"恶魔轮盘", "轮盘赌"}, priority=5, block=True)
 
@@ -188,21 +188,21 @@ async def handle_devil_rounds(bot: Bot, event: GroupMessageEvent, args: Message 
     if group_id in games:
         game = games[group_id]
         if not game.game_over:
-            await devil_rounds.finish("RE: ToolsBot - DEVILROUNDS\n    - 当前已有进行中的游戏！")
+            await devil_rounds.finish("TLoH Bot - DEVILROUNDS\n    - 当前已有进行中的游戏！")
     
     # 解析命令参数
     msg = args.extract_plain_text().strip()
     if msg == "开始":
         # 开始新游戏
         if len(uic.At(event.json())) < 4:
-            await devil_rounds.finish("RE: ToolsBot - DEVILROUNDS\n    - 至少需要4个玩家参与游戏！")
+            await devil_rounds.finish("TLoH Bot - DEVILROUNDS\n    - 至少需要4个玩家参与游戏！")
         
         player_ids = uic.At(event.json())
         players = []
         for pid in player_ids:
             user = uic.User(pid)
             if user.isBanned():
-                await devil_rounds.finish(f"RE: ToolsBot - DEVILROUNDS\n    - 玩家 {user.name} 已被封禁，无法参与游戏！")
+                await devil_rounds.finish(f"TLoH Bot - DEVILROUNDS\n    - 玩家 {user.name} 已被封禁，无法参与游戏！")
             players.append(user)
         
         # 创建新游戏
@@ -212,7 +212,7 @@ async def handle_devil_rounds(bot: Bot, event: GroupMessageEvent, args: Message 
         # 随机装填第一轮子弹
         game.load_shells(random.randint(2, 4), random.randint(2, 4))
         
-        await devil_rounds.send(f"RE: ToolsBot - DEVILROUNDS\n    - DEVILROUNDS 开始！\n{game.get_game_status()}\n请 {game.get_current_player().name} 选择行动：\n1. 向自己开枪\n2. 向其他人开枪\n3. 使用道具")
+        await devil_rounds.send(f"TLoH Bot - DEVILROUNDS\n    - DEVILROUNDS 开始！\n{game.get_game_status()}\n请 {game.get_current_player().name} 选择行动：\n1. 向自己开枪\n2. 向其他人开枪\n3. 使用道具")
     
     elif msg.startswith("射击"):
         # 射击命令
@@ -223,12 +223,12 @@ async def handle_devil_rounds(bot: Bot, event: GroupMessageEvent, args: Message 
         current_player = game.get_current_player()
         
         if user_id != current_player.id:
-            await devil_rounds.finish(f"RE: ToolsBot - DEVILROUNDS\n    - 现在不是你的回合！当前是 {current_player.name} 的回合。")
+            await devil_rounds.finish(f"TLoH Bot - DEVILROUNDS\n    - 现在不是你的回合！当前是 {current_player.name} 的回合。")
         
         # 解析射击目标
         parts = msg.split()
         if len(parts) < 2:
-            await devil_rounds.finish("RE: ToolsBot - DEVILROUNDS\n    - 请指定射击目标！例如：射击 自己 或 射击 玩家名")
+            await devil_rounds.finish("TLoH Bot - DEVILROUNDS\n    - 请指定射击目标！例如：射击 自己 或 射击 玩家名")
         
         target_name = parts[1]
         if target_name == "自己":
@@ -242,7 +242,7 @@ async def handle_devil_rounds(bot: Bot, event: GroupMessageEvent, args: Message 
                     break
             
             if not target:
-                await devil_rounds.finish(f"RE: ToolsBot - DEVILROUNDS\n    - 找不到玩家 {target_name}！")
+                await devil_rounds.finish(f"TLoH Bot - DEVILROUNDS\n    - 找不到玩家 {target_name}！")
             
             result = game.shoot(target, self_shoot=False)
         
@@ -254,9 +254,9 @@ async def handle_devil_rounds(bot: Bot, event: GroupMessageEvent, args: Message 
             if len(alive_players) == 1:
                 winner = alive_players[0]
                 winner.addScore(1000)  # 胜利奖励
-                await devil_rounds.send(f"RE: ToolsBot - DEVILROUNDS\n    - 游戏结束！{winner.name} 获胜！获得1000分奖励！")
+                await devil_rounds.send(f"TLoH Bot - DEVILROUNDS\n    - 游戏结束！{winner.name} 获胜！获得1000分奖励！")
             else:
-                await devil_rounds.send("RE: ToolsBot - DEVILROUNDS\n    - 游戏结束！没有玩家存活！")
+                await devil_rounds.send("TLoH Bot - DEVILROUNDS\n    - 游戏结束！没有玩家存活！")
             
             # 保存玩家数据
             for player in game.players:
@@ -268,17 +268,17 @@ async def handle_devil_rounds(bot: Bot, event: GroupMessageEvent, args: Message 
     elif msg.startswith("道具"):
         # 使用道具命令
         if group_id not in games:
-            await devil_rounds.finish("RE: ToolsBot - DEVILROUNDS\n    - 当前没有进行中的游戏！")
+            await devil_rounds.finish("TLoH Bot - DEVILROUNDS\n    - 当前没有进行中的游戏！")
         
         game = games[group_id]
         current_player = game.get_current_player()
         
         if user_id != current_player.id:
-            await devil_rounds.finish(f"RE: ToolsBot - DEVILROUNDS\n    - 现在不是你的回合！当前是 {current_player.name} 的回合。")
+            await devil_rounds.finish(f"TLoH Bot - DEVILROUNDS\n    - 现在不是你的回合！当前是 {current_player.name} 的回合。")
         
         parts = msg.split()
         if len(parts) < 2:
-            await devil_rounds.finish("RE: ToolsBot - DEVILROUNDS\n    - 请指定要使用的道具！例如：道具 啤酒")
+            await devil_rounds.finish("TLoH Bot - DEVILROUNDS\n    - 请指定要使用的道具！例如：道具 啤酒")
         
         item_name = parts[1]
         result = game.use_item(current_player, item_name)
@@ -287,7 +287,7 @@ async def handle_devil_rounds(bot: Bot, event: GroupMessageEvent, args: Message 
     elif msg == "状态":
         # 查看游戏状态
         if group_id not in games:
-            await devil_rounds.finish("RE: ToolsBot - DEVILROUNDS\n    - 当前没有进行中的游戏！")
+            await devil_rounds.finish("TLoH Bot - DEVILROUNDS\n    - 当前没有进行中的游戏！")
         
         game = games[group_id]
         await devil_rounds.send(game.get_game_status())
@@ -295,13 +295,13 @@ async def handle_devil_rounds(bot: Bot, event: GroupMessageEvent, args: Message 
     elif msg == "退出":
         # 退出游戏
         if group_id not in games:
-            await devil_rounds.finish("RE: ToolsBot - DEVILROUNDS\n    - 当前没有进行中的游戏！")
+            await devil_rounds.finish("TLoH Bot - DEVILROUNDS\n    - 当前没有进行中的游戏！")
         
         game = games[group_id]
         current_player = game.get_current_player()
         
         if user_id != current_player.id:
-            await devil_rounds.finish(f"RE: ToolsBot - DEVILROUNDS\n    - 现在不是你的回合！当前是 {current_player.name} 的回合。")
+            await devil_rounds.finish(f"TLoH Bot - DEVILROUNDS\n    - 现在不是你的回合！当前是 {current_player.name} 的回合。")
         
         # 保存玩家数据
         for player in game.players:
@@ -309,12 +309,12 @@ async def handle_devil_rounds(bot: Bot, event: GroupMessageEvent, args: Message 
         
         # 移除游戏
         del games[group_id]
-        await devil_rounds.send("RE: ToolsBot - DEVILROUNDS\n    - 退出游戏")
+        await devil_rounds.send("TLoH Bot - DEVILROUNDS\n    - 退出游戏")
     
     else:
         # 显示帮助信息
         await devil_rounds.send(
-            "RE: ToolsBot - DEVILROUNDS 游戏帮助\n"
+            "TLoH Bot - DEVILROUNDS 游戏帮助\n"
             "    - devilrounds 开始 <玩家1> <玩家2> <玩家3> <玩家4> - 开始新游戏\n"
             "    - devilrounds 射击 <目标> - 向目标开枪（目标可以是'自己'或其他玩家名）\n"
             "    - devilrounds 道具 <道具名> - 使用道具（啤酒、手铐、手锯、香烟、放大镜）\n"

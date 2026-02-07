@@ -20,7 +20,7 @@ User = dc.User
 # logging settings
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -30,7 +30,7 @@ finaleScopeController
 Finale Scope 的相关功能控制器。
 """
 
-TITLE = "RE: ToolsBot"
+TITLE = "TLoH Bot"
 
 """
 scopes 函数

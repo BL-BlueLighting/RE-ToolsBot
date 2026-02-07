@@ -8,7 +8,7 @@ from nonebot.params import CommandArg
 from toolsbot.services import _info
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -17,7 +17,7 @@ undefiendControllers.whathehell MODULE.
 What the hell 什么魔鬼
 """
 
-TITLE = "RE: ToolsBot"
+TITLE = "TLoH Bot"
 
 hell_funny = on_command("hellfunny", priority=5, block=True)
 

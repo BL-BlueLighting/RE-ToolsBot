@@ -10,7 +10,7 @@ import plugins.userInfoController as uic
 from toolsbot.services import _error, _info
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -19,7 +19,7 @@ undefiendControllers.scpfoundation MODULE.
 SCP 基金会相关功能。
 """
 
-TITLE = "RE: ToolsBot"
+TITLE = "TLoH Bot"
 
 """
 SCP 函数
@@ -66,7 +66,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, _args: Me
                 branch = args [2].lower()
             else:
                 branch = "en"
-                msg += "    - 您所要检索的分支目前 RE: ToolsBot 不支持。\n    - 将默认使用 EN 编号查找。"
+                msg += "    - 您所要检索的分支目前 TLoH Bot 不支持。\n    - 将默认使用 EN 编号查找。"
 
         msg += f"\n    - 检索 SCP-{branch}-{args [1]}"
 

@@ -215,10 +215,10 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
                     await ai_eventer.finish("请先使用 ^aitalkstart 开启 AI 聊天会话")
 
         if text == "":
-            await ai_eventer.finish("RE: ToolsBot AI\n    - 使用 ^ai [内容] 来进行聊天。\n    - 使用 ^ai @photo 来查看图片生成说明。")
+            await ai_eventer.finish("TLoH Bot AI\n    - 使用 ^ai [内容] 来进行聊天。\n    - 使用 ^ai @photo 来查看图片生成说明。")
 
         if "@photo" in text:
-            await ai_eventer.send("RE: ToolsBot AI\n    - 请稍等，AI 正在生成图片。")
+            await ai_eventer.send("TLoH Bot AI\n    - 请稍等，AI 正在生成图片。")
 
             # 生成图片
             url = "https://api.siliconflow.cn/v1/images/generations"
@@ -365,7 +365,7 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
             "Content-Type": "application/json"
         }
 
-        await ai_eventer.send("RE: ToolsBot AI 提示：\n    - 请稍等，AI 正在生成")
+        await ai_eventer.send("TLoH Bot AI 提示：\n    - 请稍等，AI 正在生成")
 
         # 处理 @用户查询
         if At(event.json()) != [] and enable_query_info:
@@ -382,7 +382,7 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
                         userinfo += f"    (群聊信息) {key}: {value}\n"
             except ActionFailed:
                 await ai_eventer.finish(
-                    "RE: ToolsBot AI 提示：\n    - 无法查询 QQ 号码为 " + At(event.json())[0] + " 的用户信息")
+                    "TLoH Bot AI 提示：\n    - 无法查询 QQ 号码为 " + At(event.json())[0] + " 的用户信息")
             payload["messages"][-1]["content"] = f"@user:{userinfo} (query) \n {text}"
 
         # 处理 回复消息
@@ -392,7 +392,7 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
                 _reply_msg = await bot.get_msg(message_id=event.reply.message_id)
                 _reply_msg = _reply_msg["message"]
             except Exception:
-                await ai_eventer.finish("RE: ToolsBot AI 提示：\n    - 无法获取回复消息")
+                await ai_eventer.finish("TLoH Bot AI 提示：\n    - 无法获取回复消息")
 
             payload["messages"][-1]["content"] += f"\n@reply_message: {_reply_msg}"
 
@@ -400,7 +400,7 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
         _response = requests.post(base_url, json=payload, headers=headers)
 
         if _response.status_code != 200:
-            msg = f"""RE: ToolsBot AI
+            msg = f"""TLoH Bot AI
             - 模型：
                 {model_identifier}
             - 提示：
@@ -441,7 +441,7 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
         # R18 内容编码处理
         final_content = ctnt
 
-        msg = f"""RE: ToolsBot AI
+        msg = f"""TLoH Bot AI
         - 模型:
             {model_identifier}
         - 思考内容
@@ -505,7 +505,7 @@ async def handle_ai_with_session(bot: Bot, event: GroupMessageEvent | PrivateMes
         await ai_eventer.finish(msg)
 
     else:
-        await ai_eventer.finish("RE: ToolsBot AI\n    - 您的账号已被封禁。无法使用该功能。")
+        await ai_eventer.finish("TLoH Bot AI\n    - 您的账号已被封禁。无法使用该功能。")
 
 
 # 创建一个新的消息监听器来处理开启会话后的所有消息

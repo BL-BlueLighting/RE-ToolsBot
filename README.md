@@ -3,7 +3,7 @@
 </div>
 
 
-<h1 align="center">RE: ToolsBot</h1>
+<h1 align="center">TLoH Bot</h1>
 
 <p align="center">
     <a href="#">

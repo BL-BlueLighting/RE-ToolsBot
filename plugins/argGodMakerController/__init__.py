@@ -15,7 +15,7 @@ import plugins.userInfoController as uic
 from toolsbot.configs import DATA_PATH
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -23,7 +23,7 @@ Tools Bot 的第二版。
 argGodMakerController
 """
 
-TITLE = "RE: ToolsBot"
+TITLE = "TLoH Bot"
 TIMEDATESTR = "%Y-%d-%m-%H-%M-%S"
 
 cfg_path = DATA_PATH / "gmConfig.json"
@@ -293,7 +293,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     fns = _fc.finish
 
     if act == "list" or act == "":
-        await fns(f"""RE: ToolsBot - ARG 修仙系统
+        await fns(f"""TLoH Bot - ARG 修仙系统
     欢迎来到 ARG 修仙系统！
     本命令支持的操作如下：
         - list: 显示操作列表
@@ -307,19 +307,19 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
     elif act == "begin":
         if gmUser.pausing == False:
             gmUser.pause()
-            await fns(f"""RE: ToolsBot - ARG 修仙系统
+            await fns(f"""TLoH Bot - ARG 修仙系统
         - 您当前段位：{gmUser.getStatus()};
         - 正在尝试晋升：{gmUser.status} {gmUser.level + 1} 层
         - 请等待一分钟后再来 break，或者 break 掉来继续操作。""")
         elif gmUser.beginPause is None:
             pass # 类型检查报错，你也别问我
         else:
-            await fns(f"""RE: ToolsBot - ARG 修仙系统
+            await fns(f"""TLoH Bot - ARG 修仙系统
         - 您正在试图晋升，请不要再次使用。
         - 距离 break 时间：{str((datetime.datetime.now() - gmUser.beginPause).seconds - 60).replace("-", "")}""")
 
     elif act == "info":
-        await fns(f"""RE: ToolsBot - ARG 修仙系统
+        await fns(f"""TLoH Bot - ARG 修仙系统
     - 用户 ID：{gmUser.user.id}
     - 用户段位：{gmUser.getStatus()}
     - RATING：{gmUser.rating}""")
@@ -329,11 +329,11 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
         if len(cargs) == 2:
             gmUser.pausing = False
             gmUser.save()
-            await fns(f"""RE: ToolsBot - ARG 修仙系统
+            await fns(f"""TLoH Bot - ARG 修仙系统
     - 已强制结束修仙。""")
         else:
             if gmUser.checkPause():
-                rmsg = "RE: ToolsBot - ARG 修仙系统\n"
+                rmsg = "TLoH Bot - ARG 修仙系统\n"
 
                 # checking level, 5 to up status.
                 if gmUser.level < 5:
@@ -353,10 +353,10 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
                 await fns(rmsg)
             else:
-                await fns("""RE: ToolsBot - ARG 修仙系统\n    - 请使用 ^lcgodmaker break sure 来强制结束修仙。""")
+                await fns("""TLoH Bot - ARG 修仙系统\n    - 请使用 ^lcgodmaker break sure 来强制结束修仙。""")
 
     elif act == "pk":
-        rmsg = "RE: ToolsBot - ARG 修仙 - Global PK"
+        rmsg = "TLoH Bot - ARG 修仙 - Global PK"
         gmConfig = json.load(open(cfg_path, "r", encoding="utf-8"))
 
         rmsg += "\n    - 当前赛季：" + gmConfig.get("Status", "???") + ""
@@ -411,7 +411,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
             await fns(rmsg)
 
         elif cargs [1] == "status":
-            rmsg = "RE: ToolsBot - ARG 修仙 - P.K. 过程"
+            rmsg = "TLoH Bot - ARG 修仙 - P.K. 过程"
             _pking = json.load(open(pking_json_path, "r", encoding="utf-8"))
             pking = {}
             pkusers = []
@@ -506,7 +506,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
             await fns(rmsg)
         elif cargs [1] == "season":
-            rmsg = "RE: ToolsBot - ARG 修仙 GLOBAL.P.K - 赛季信息"
+            rmsg = "TLoH Bot - ARG 修仙 GLOBAL.P.K - 赛季信息"
             rmsg += "\n    - 当前赛季：" + gmConfig.get("Status", "???") + ""
             rmsg += "\n    - 您的 Rating：" + str(gmUser.rating) + ""
             rmsg += "\n    - G L O B A L . P . K . - 开场"
@@ -520,7 +520,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
                 rmsg += f"\n        - 赛季未揭幕或没有一个人开始对战。"
 
         else:
-            rmsg = """RE: ToolsBot - ARG 修仙 GLOBAL.P.K.
+            rmsg = """TLoH Bot - ARG 修仙 GLOBAL.P.K.
     - 使用 ^lcgodmaker pk with @[XXX] 来和一个人发起 PK.
     - 使用 ^lcgodmaker pk status 来查看和另一个人发起的 PK 的相关信息。
     - 使用 ^lcgodmaker pk season 来查看赛季信息。"""
@@ -529,7 +529,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
 
     elif act == "best":
-        rmsg = "RE: ToolsBot - ARG 修仙排行榜\n"
+        rmsg = "TLoH Bot - ARG 修仙排行榜\n"
         # 确保文件夹存在，避免 os.listdir 报错
         data_path = DATA_PATH / "godmaker" # 注意: 这里应该使用 userInfoController.Data 中定义的路径
         if not os.path.exists(data_path):
@@ -567,4 +567,4 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
         await fns(rmsg)
 
     else:
-        await fns("RE: ToolsBot - ARG 修仙系统\n    - 未知指令。")
+        await fns("TLoH Bot - ARG 修仙系统\n    - 未知指令。")

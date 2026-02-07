@@ -22,7 +22,7 @@ from toolsbot.configs import DATA_PATH
 from toolsbot.services import _error, _info
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -30,7 +30,7 @@ Tools Bot 的第二版。
 userInfoController
 """
 
-TITLE = "RE: ToolsBot"
+TITLE = "TLoH Bot"
 
 class Data:
     def __init__(self, id: str):
@@ -587,7 +587,7 @@ buy 函数
 """
 
 """
-RE: ToolsBot
+TLoH Bot
 PILLAR OF SHAME
 QQ 3829537708
 """
@@ -716,10 +716,10 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
     msgr = args
     if not user.isBanned():
         if msgr.extract_plain_text().split(" ")[0] == "":
-            msg += f"\nRE: Toolsbot 兑换码兑换"
+            msg += f"\nTLoH Bot 兑换码兑换"
             msg += f"\n    - 输入 *usecode [兑换码] 以兑换"
         else:
-            msg += f"\nRE: Toolsbot 兑换码兑换"
+            msg += f"\nTLoH Bot 兑换码兑换"
             with open(DATA_PATH / "codes.json","r") as f:
                 present_code_dict = json.load(f)
             present_codes = list(present_code_dict.keys())
@@ -743,7 +743,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mes
                 msg += "\n    - 兑换积分: 0"
                 await code_function.finish(msg)
     else:
-        msg += "\nRE: Toolsbot 兑换码兑换"
+        msg += "\nTLoH Bot 兑换码兑换"
         msg += "\n    - 您的账户已被封禁。\n"
         await code_function.finish(msg)
 
@@ -1335,7 +1335,7 @@ bag_function = on_command("bag", aliases=set(), priority=10)
 async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
     user = User(event.get_user_id())
 
-    msg = "\nRE: Toolsbot 背包"
+    msg = "\nTLoH Bot 背包"
     msg += "\n    - 目前你包里有："
 
     items = user.boughtItems
@@ -1444,7 +1444,7 @@ voting_function = on_command("voting", priority=10)
 
 @voting_function.handle()
 async def _voting_function (bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()): # 备注: 你都投票了还用什么私聊啊
-    msg = "RE: ToolsBot VOTING MODULE."
+    msg = "TLoH Bot VOTING MODULE."
     user = User(event.get_user_id())
     _msg = args.extract_plain_text()
 

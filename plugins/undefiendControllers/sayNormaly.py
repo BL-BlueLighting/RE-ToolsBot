@@ -9,7 +9,7 @@ from nonebot.params import CommandArg
 from plugins.userInfoController import User
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -17,7 +17,7 @@ Tools Bot 的第二版。
 undefiendControllers.sayNormaly
 """
 
-TITLE = "RE: ToolsBot"
+TITLE = "TLoH Bot"
 
 """
 saynormal 函数

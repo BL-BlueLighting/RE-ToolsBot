@@ -22,7 +22,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     # 解析命令参数，例如 ^mcstatus play.example.com:25565
     target = args.extract_plain_text().strip()
     if not target:
-        await mc_status.finish("RE: ToolsBot Minecraft Plugin\n    - 用法：^mcstatus query <地址>[:端口]\n    - 用法：^mcstatus look [服务器名]\n    - 用法：^mcstatus add [名称] ipaddress=[IP]:[端口，不填默认 25565]")
+        await mc_status.finish("TLoH Bot Minecraft Plugin\n    - 用法：^mcstatus query <地址>[:端口]\n    - 用法：^mcstatus look [服务器名]\n    - 用法：^mcstatus add [名称] ipaddress=[IP]:[端口，不填默认 25565]")
 
     _args = args.extract_plain_text().split(" ")
     if _args [0] == "query":
@@ -44,14 +44,14 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             latency = round(status.latency, 1)
 
             msg = (
-                f"RE: ToolsBot Minecraft Plugin\n"
+                f"TLoH Bot Minecraft Plugin\n"
                 f"    - 🌍 服务器：{host}:{port}\n"
                 f"    - 📋 MOTD：\n    {motd}\n"
                 f"    - 👥 在线人数：{online}/{maxp}\n"
                 f"    - 📡 延迟：{latency} ms"
             )
         except Exception as e:
-            await mc_status.finish(f"RE: ToolsBot Minecraft Plugin\n    - 查询失败：{type(e).__name__} - {e}")
+            await mc_status.finish(f"TLoH Bot Minecraft Plugin\n    - 查询失败：{type(e).__name__} - {e}")
 
     elif _args [0] == "look":
         with open(server_path, "r", encoding="utf-8") as f:
@@ -66,7 +66,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
 
         if server == {}:
             msg = (
-                f"RE: ToolsBot Minecraft Plugin\n"
+                f"TLoH Bot Minecraft Plugin\n"
                 f"    - 🌍 服务器：{target.replace('look ', '')} (Undefined)\n"
                 f"    - 未找到该服务器的任何信息。"
             )
@@ -76,7 +76,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
 
         if host == "" and port == 0:
             msg = (
-                f"RE: ToolsBot Minecraft Plugin\n"
+                f"TLoH Bot Minecraft Plugin\n"
                 f"    - 🌍 服务器：{target.replace('look ', '')} ({host}, {port})\n"
                 f"    - 很抱歉，配置错误导致该服务器无法被查询。"
             )
@@ -92,14 +92,14 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             latency = round(status.latency, 1)
 
             msg = (
-                f"RE: ToolsBot Minecraft Plugin\n"
+                f"TLoH Bot Minecraft Plugin\n"
                 f"    - 🌍 服务器：{target.replace('look ', '')} ({host}:{port})\n"
                 f"    - 📋 MOTD：\n    {motd}\n"
                 f"    - 👥 在线人数：{online}/{maxp}\n"
                 f"    - 📡 延迟：{latency} ms"
             )
         except Exception as e:
-            await mc_status.finish(f"RE: ToolsBot Minecraft Plugin\n    - 查询失败：{type(e).__name__} - {e}")
+            await mc_status.finish(f"TLoH Bot Minecraft Plugin\n    - 查询失败：{type(e).__name__} - {e}")
 
     elif _args [0] == "add":
         # split name and address
@@ -127,14 +127,14 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             status = server.status()
         except TypeError:
             msg = (
-                f"RE: ToolsBot Minecraft Plugin\n"
+                f"TLoH Bot Minecraft Plugin\n"
                 f"    - 无法添加，原因：请输入正确的服务器端口"
             )
             await mc_status.finish(msg)
         except Exception as e:
             print(e.__str__())
             msg = (
-                f"RE: ToolsBot Minecraft Plugin\n"
+                f"TLoH Bot Minecraft Plugin\n"
                 f"    - 无法添加，原因：服务器无法联通或端口不正确\\封禁 Bot IP"
             )
             await mc_status.finish(msg)
@@ -154,7 +154,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
 
         # result send
         msg = (
-            f"RE: ToolsBot Minecraft Plugin\n"
+            f"TLoH Bot Minecraft Plugin\n"
             f"    - 添加成功！使用 ^mcserver look {_name} 来查看该服务器。"
         )
     await mc_status.finish(msg)

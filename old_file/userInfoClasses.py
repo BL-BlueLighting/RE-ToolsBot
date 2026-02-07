@@ -17,7 +17,7 @@ _error = logging.error
 _crit = logging.critical
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -25,7 +25,7 @@ Tools Bot 的第二版。
 userInfoClasses: userInfoController public api
 """
 
-TITLE = "RE: ToolsBot"
+TITLE = "TLoH Bot"
 
 """
 Data 类

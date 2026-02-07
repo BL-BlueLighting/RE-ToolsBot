@@ -11,7 +11,7 @@ from nonebot.permission import SUPERUSER
 from toolsbot.services import _warn
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -24,8 +24,8 @@ stop_command = on_command("botstop", priority=5, permission=SUPERUSER)
 @stop_command.handle()
 async def stop_bot(event: MessageEvent):
     # 发送 msg 到 bot 加入的所有群聊
-    msg = """RE: ToolsBot - 停机公告
-    由于维护原因，RE: ToolsBot 将停止运行，直到 RE: ToolsBot 重新启动。
+    msg = """TLoH Bot - 停机公告
+    由于维护原因，TLoH Bot 将停止运行，直到 TLoH Bot 重新启动。
     """
 
     # get all group ids
@@ -45,8 +45,8 @@ start_command = on_command("botstart", priority=5, permission=SUPERUSER)
 @start_command.handle()
 async def start_bot(event: MessageEvent):
     # 发送 msg 到 bot 加入的所有群聊
-    msg = """RE: ToolsBot - 启动公告
-    RE: ToolsBot 已重新启动。
+    msg = """TLoH Bot - 启动公告
+    TLoH Bot 已重新启动。
     """
 
     # get all group ids
@@ -65,7 +65,7 @@ update_command = on_command("botupdate", priority=5, permission=SUPERUSER)
 
 @update_command.handle()
 async def update_bot(event: MessageEvent, arg: Message = CommandArg()):
-    msg = "RE: ToolsBot - Updated - Version "
+    msg = "TLoH Bot - Updated - Version "
     # get version from userinput
     content = arg.extract_plain_text()
 
@@ -98,7 +98,7 @@ async def broadcast_bot(event: MessageEvent, arg: Message = CommandArg()):
 
     # get msg
     content = arg.extract_plain_text()
-    msg = f"RE: ToolsBot - Broadcast\n    - {content}"
+    msg = f"TLoH Bot - Broadcast\n    - {content}"
 
     for group in group_list:
         try:
@@ -117,7 +117,7 @@ async def send_to_bot(event: MessageEvent, arg: Message = CommandArg()):
     __msg = _plt.split(" ")[1:]
 
     # generate msg
-    msg = f"RE: ToolsBot - Send To {group_id} - From SUPERUSER\n"
+    msg = f"TLoH Bot - Send To {group_id} - From SUPERUSER\n"
     for _msg in __msg:
         msg += f"    - {_msg}\n"
 
@@ -130,7 +130,7 @@ signnow_handler = on_command("signnow", permission=SUPERUSER)
 
 @signnow_handler.handle()
 async def _ ( event: MessageEvent, args: Message = CommandArg()):
-    msg = "RE: ToolsBot - SIGN"
+    msg = "TLoH Bot - SIGN"
     msg += "    - Bot sign process running..."
     bot = nonebot.get_bot()
     group_list = await bot.get_group_list()

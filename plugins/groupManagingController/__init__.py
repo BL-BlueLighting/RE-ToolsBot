@@ -92,7 +92,7 @@ friend_add = on_request()
 @friend_add.handle()
 async def addfriend(bot: nonebot.adapters.onebot.v11.Bot, event: FriendRequestEvent, state: T_State):
     await event.approve(bot) # auto approve, f**king nonebot type comments #type: ignore
-    await friend_add.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 已通过您的请求。")
+    await friend_add.finish("TLoH Bot GROUP MANAGING MODULE\n    - 已通过您的请求。")
 
 undo_message = on_command("undo", permission=SUPERUSER, priority=5)
 
@@ -102,15 +102,15 @@ async def undo_msg(bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEven
     reply_id = await msg_reply(event)
 
     if reply_id == None:
-        await undo_message.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 请回复一条消息再撤回")
+        await undo_message.finish("TLoH Bot GROUP MANAGING MODULE\n    - 请回复一条消息再撤回")
     # delete msg
     try:
         await bot.call_api("delete_msg", message_id=reply_id)
     except ActionFailed as afd:
         _crit(f"Failed to undo message using msgid。This is why:\n{afd}")
-        await undo_message.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 未能成功撤回消息。请确认消息存在或发送人不是管理\\群主\\bot自己（虽然会撤回但是还是会报错）")
+        await undo_message.finish("TLoH Bot GROUP MANAGING MODULE\n    - 未能成功撤回消息。请确认消息存在或发送人不是管理\\群主\\bot自己（虽然会撤回但是还是会报错）")
     else:
-        await undo_message.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 成功撤回消息 msg_id=" + str(reply_id) + "。") #type: ignore
+        await undo_message.finish("TLoH Bot GROUP MANAGING MODULE\n    - 成功撤回消息 msg_id=" + str(reply_id) + "。") #type: ignore
 
 
 """
@@ -156,9 +156,9 @@ async def mutesb_command(bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessa
         try:
             await bot.call_api("set_group_ban", group_id=event.group_id, user_id = qq, duration=float(minutes) * SECOND)
         except ActionFailed:
-            await mutesb.finish(f"RE: ToolsBot GROUP MANAGING MODULE\n    - 无法禁言该用户。该用户已被禁言或是管理员\\群主")
+            await mutesb.finish(f"TLoH Bot GROUP MANAGING MODULE\n    - 无法禁言该用户。该用户已被禁言或是管理员\\群主")
 
-    await mutesb.finish(f"RE: ToolsBot GROUP MANAGING MODULE\n    - 已禁言 {sblist} {arg}。")
+    await mutesb.finish(f"TLoH Bot GROUP MANAGING MODULE\n    - 已禁言 {sblist} {arg}。")
 
 # unmutesb
 
@@ -173,7 +173,7 @@ async def unmute_command(bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessa
     for qq in sblist:
         await bot.call_api("set_group_ban", group_id=event.group_id, user_id = qq, duration=0)
 
-    await mutesb.finish(f"RE: ToolsBot GROUP MANAGING MODULE\n    - 已取消禁言 {sblist} {arg}。")
+    await mutesb.finish(f"TLoH Bot GROUP MANAGING MODULE\n    - 已取消禁言 {sblist} {arg}。")
 
 # call_api
 
@@ -201,7 +201,7 @@ async def _ (bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent | Pr
     exec(f"""bot.call_api('{api_name}', {params_text})""")
 
     # finish
-    await call_api_command.finish("RE: ToolsBot GROUP MANAGING MODULE\n    - 已执行该 OneBot V11 api。请检查控制台。")
+    await call_api_command.finish("TLoH Bot GROUP MANAGING MODULE\n    - 已执行该 OneBot V11 api。请检查控制台。")
 
 # test admin permission
 test_admin = on_command("testadmin", permission=SUPERUSER)
@@ -210,7 +210,7 @@ test_admin = on_command("testadmin", permission=SUPERUSER)
 async def _ (bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     # direct run onebot api
     admin_list = await bot.call_api("get_group_member_info", group_id=event.group_id, user_id=bot.self_id)
-    await test_admin.finish(f"RE: ToolsBot GROUP MANAGING MODULE\n    - 该 Bot 在本群的权限是 {admin_list['role']}。")
+    await test_admin.finish(f"TLoH Bot GROUP MANAGING MODULE\n    - 该 Bot 在本群的权限是 {admin_list['role']}。")
 
 """
 棍母检测 函数

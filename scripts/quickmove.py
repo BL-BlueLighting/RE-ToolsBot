@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 import old_file.userInfoClasses as dc
 
-print("RE: ToolsBot - Userdata 迁移工具")
+print("TLoH Bot - Userdata 迁移工具")
 print("迁移所有 userdata 下 .userdata 文件到 sqlite3 userdata.db")
 print("")
 

@@ -11,7 +11,7 @@ from plugins.userInfoController import User
 from toolsbot.configs import DATA_PATH
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -19,7 +19,7 @@ Tools Bot 的第二版。
 undefiendControllers.echoManager
 """
 
-TITLE = "RE: ToolsBot"
+TITLE = "TLoH Bot"
 
 """
 echotadd 函数

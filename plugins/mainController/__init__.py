@@ -13,7 +13,7 @@ from nonebot.params import CommandArg, EventMessage
 from nonebot.permission import SUPERUSER
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -21,7 +21,7 @@ Tools Bot 的第二版。
 mainController
 """
 
-TITLE = "RE: ToolsBot"
+TITLE = "TLoH Bot"
 
 """
 兜底函数
@@ -54,7 +54,7 @@ async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     msg = TITLE
     # 添加图片
     # 获得绝对路径
-    await help_function.finish(MessageSegment.image(Path() / "helpdocuments/PNG/HelpDocument v1.png"))
+    await help_function.finish(MessageSegment.image(Path() / "helpdocuments/PNG/HelpDocument v2.png"))
 
 """
 check 函数
@@ -67,7 +67,7 @@ check_function = on_command("check", priority=10)
 
 @check_function.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
-    await check_function.finish("RE: ToolsBot 还活着呢，没死。")
+    await check_function.finish("TLoH Bot 还活着呢，没死。")
 
 """
 ^ping & ^pong 函数
@@ -107,14 +107,14 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     if event.reply:
         msg_id = event.reply.message_id
     else:
-        await set_essence.finish("RE: ToolsBot Essence Set\n    - 请回复一条消息来设为精华")
+        await set_essence.finish("TLoH Bot Essence Set\n    - 请回复一条消息来设为精华")
 
     try:
         await bot.call_api("set_essence_msg", message_id=msg_id)
     except Exception as e:
-        await set_essence.finish(f"RE: ToolsBot Essence Set\n    - 设置精华失败：{e}")
+        await set_essence.finish(f"TLoH Bot Essence Set\n    - 设置精华失败：{e}")
     else:
-        await set_essence.finish("RE: ToolsBot Essence Set\n    - 已成功将该消息设为精华 ✨")
+        await set_essence.finish("TLoH Bot Essence Set\n    - 已成功将该消息设为精华 ✨")
 
 
 """

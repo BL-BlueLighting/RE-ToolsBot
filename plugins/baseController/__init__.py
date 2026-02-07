@@ -11,7 +11,7 @@ from nonebot.params import CommandArg
 import plugins.userInfoController as dc
 
 """
-Re: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -33,7 +33,7 @@ async def _(event: MessageEvent,args: Message = CommandArg()):
     if not user.isBanned():
         msg = ""
         if params := args.extract_plain_text():
-            msg += "\nRE: ToolsBot Base64 编解码"
+            msg += "\nTLoH Bot Base64 编解码"
             params_l = params.split(" ")
             if params_l[0] == "encode":
                 wait(wrd(0.5,0.9))
@@ -54,7 +54,7 @@ async def _(event: MessageEvent,args: Message = CommandArg()):
             msg += "\n    - ^base64 encode\\decode [内容]"
         await base64_eventer.finish(msg)
     else:
-        await base64_eventer.finish("RE: ToolsBot Base64 编解码\n  您的账号已被封禁，无法使用此功能")
+        await base64_eventer.finish("TLoH Bot Base64 编解码\n  您的账号已被封禁，无法使用此功能")
 
 base32_eventer = on_command("base32", aliases={"b32"}, priority=10)
 
@@ -64,7 +64,7 @@ async def _(event: MessageEvent,args: Message = CommandArg()):
     if not user.isBanned():
         msg = ""
         if params := args.extract_plain_text():
-            msg += "\nRE: ToolsBot Base32 编解码"
+            msg += "\nTLoH Bot Base32 编解码"
             params_l = params.split(" ")
             if params_l[0] == "encode":
                 wait(wrd(0.5,0.9))
@@ -77,14 +77,14 @@ async def _(event: MessageEvent,args: Message = CommandArg()):
                 wait(wrd(0.5,0.9))
                 msg += "\n    - ^base32 encode*decode [内容]"
         else:
-            msg += "\nRE: ToolsBot Base64 编解码"
+            msg += "\nTLoH Bot Base64 编解码"
             wait(wrd(0.5,0.9))
             msg += "\n    - 使用方法："
             wait(wrd(0.5,0.9))
             msg += "\n    - ^base32 encode*decode [内容]"
         await base32_eventer.finish(msg)
     else:
-        await base32_eventer.finish("RE: ToolsBot Base32 编解码\n  您的账号已被封禁，无法使用此功能")
+        await base32_eventer.finish("TLoH Bot Base32 编解码\n  您的账号已被封禁，无法使用此功能")
 
 base16_eventer = on_command("base16", aliases={"b16"}, priority=10)
 
@@ -94,7 +94,7 @@ async def _(event: MessageEvent,args: Message = CommandArg()):
     if not user.isBanned():
         msg = ""
         if params := args.extract_plain_text():
-            msg += "\nRE: ToolsBot Base16 编解码"
+            msg += "\nTLoH Bot Base16 编解码"
             params_l = params.split(" ")
             if params_l[0] == "encode":
                 wait(wrd(0.5,0.9))
@@ -108,14 +108,14 @@ async def _(event: MessageEvent,args: Message = CommandArg()):
                 wait(wrd(0.5,0.9))
                 msg += "\n    - ^base16 encode*decode [内容]"
         else:
-            msg += "\nRE: ToolsBot Base16 编解码"
+            msg += "\nTLoH Bot Base16 编解码"
             wait(wrd(0.5,0.9))
             msg += "\n    - 使用方法："
             wait(wrd(0.5,0.9))
             msg += "\n    - ^base16 encode*decode [内容]"
         await base16_eventer.finish(msg)
     else:
-        await base16_eventer.finish("RE: ToolsBot Base16 编解码\n  您的账号已被封禁，无法使用此功能")
+        await base16_eventer.finish("TLoH Bot Base16 编解码\n  您的账号已被封禁，无法使用此功能")
 
 base85_eventer = on_command("base85", aliases={"b85"}, priority=10)
 
@@ -125,7 +125,7 @@ async def _(event: MessageEvent,args: Message = CommandArg()):
     if not user.isBanned():
         msg = ""
         if params := args.extract_plain_text():
-            msg += "\nRE: ToolsBot Base85 编解码"
+            msg += "\nTLoH Bot Base85 编解码"
             params_l = params.split(" ")
             if params_l[0] == "encode":
                 wait(wrd(0.5,0.9))
@@ -138,14 +138,14 @@ async def _(event: MessageEvent,args: Message = CommandArg()):
                 wait(wrd(0.5,0.9))
                 msg += "\n    - ^base85 encode*decode [内容]"
         else:
-            msg += "\nRE: ToolsBot Base85 编解码"
+            msg += "\nTLoH Bot Base85 编解码"
             wait(wrd(0.5,0.9))
             msg += "\n    - 使用方法："
             wait(wrd(0.5,0.9))
             msg += "\n    - ^base85 encode*decode [内容]"
         await base85_eventer.finish(msg)
     else:
-        await base85_eventer.finish("RE: ToolsBot Base85 编解码\n  您的账号已被封禁，无法使用此功能")
+        await base85_eventer.finish("TLoH Bot Base85 编解码\n  您的账号已被封禁，无法使用此功能")
 
 base58_eventer = on_command("base58", aliases={"b58"}, priority=10)
 
@@ -155,7 +155,7 @@ async def _(event: MessageEvent,args: Message = CommandArg()):
     if not user.isBanned():
         msg = ""
         if params := args.extract_plain_text():
-            msg += "\nRE: ToolsBot Base58 编解码"
+            msg += "\nTLoH Bot Base58 编解码"
             params_l = params.split(" ")
             if params_l[0] == "encode":
                 wait(wrd(0.5,0.9))
@@ -169,14 +169,14 @@ async def _(event: MessageEvent,args: Message = CommandArg()):
                 wait(wrd(0.5,0.9))
                 msg += "\n    - ^base58 encode*decode [内容]"
         else:
-            msg += "\nRE: ToolsBot Base58 编解码"
+            msg += "\nTLoH Bot Base58 编解码"
             wait(wrd(0.5,0.9))
             msg += "\n    - 使用方法："
             wait(wrd(0.5,0.9))
             msg += "\n    - ^base58 encode*decode [内容]"
         await base58_eventer.finish(msg)
     else:
-        await base58_eventer.finish("RE: ToolsBot Base58 编解码\n  您的账号已被封禁，无法使用此功能")
+        await base58_eventer.finish("TLoH Bot Base58 编解码\n  您的账号已被封禁，无法使用此功能")
 
 # 神经病用的 base64
 # 凉菜64编码表
@@ -321,7 +321,7 @@ async def _ (event: MessageEvent,args: Message = CommandArg()):
     if not user.isBanned():
         msg = ""
         if params := args.extract_plain_text():
-            msg += "\nRE: ToolsBot LiangCai64 编解码"
+            msg += "\nTLoH Bot LiangCai64 编解码"
             params_l = params.split(" ")
             if params_l[0] == "encode":
                 wait(wrd(0.5,0.9))
@@ -336,14 +336,14 @@ async def _ (event: MessageEvent,args: Message = CommandArg()):
                 wait(wrd(0.5,0.9))
                 msg += "\n    - ^lc64 encode*decode [内容]"
         else:
-            msg += "\nRE: ToolsBot LiangCai64 编解码"
+            msg += "\nTLoH Bot LiangCai64 编解码"
             wait(wrd(0.5,0.9))
             msg += "\n    - 使用方法："
             wait(wrd(0.5,0.9))
             msg += "\n    - ^lc64 encode*decode [内容]"
         await liangcai64_function.finish(msg)
     else:
-        await liangcai64_function.finish("RE: ToolsBot LiangCai64 编解码\n  您的账号已被封禁，无法使用此功能")
+        await liangcai64_function.finish("TLoH Bot LiangCai64 编解码\n  您的账号已被封禁，无法使用此功能")
 
 """
 LiangCai 64/2 编码
@@ -358,7 +358,7 @@ async def _ (event: MessageEvent,args: Message = CommandArg()):
     if not user.isBanned():
         msg = ""
         if params := args.extract_plain_text():
-            msg += "\nRE: ToolsBot LiangCai64/2 编解码"
+            msg += "\nTLoH Bot LiangCai64/2 编解码"
             params_l = params.split(" ")
             if params_l[0] == "encode":
                 wait(wrd(0.5,0.9))
@@ -372,11 +372,11 @@ async def _ (event: MessageEvent,args: Message = CommandArg()):
                 wait(wrd(0.5,0.9))
                 msg += "\n    - ^lc64_2 encode*decode [内容]"
         else:
-            msg += "\nRE: ToolsBot LiangCai64 编解码"
+            msg += "\nTLoH Bot LiangCai64 编解码"
             wait(wrd(0.5,0.9))
             msg += "\n    - 使用方法："
             wait(wrd(0.5,0.9))
             msg += "\n    - ^lc64_2 encode*decode [内容]"
         await liangcai642_function.finish(msg)
     else:
-        await liangcai642_function.finish("RE: ToolsBot LiangCai64 / 2 编解码\n  您的账号已被封禁，无法使用此功能")
+        await liangcai642_function.finish("TLoH Bot LiangCai64 / 2 编解码\n  您的账号已被封禁，无法使用此功能")

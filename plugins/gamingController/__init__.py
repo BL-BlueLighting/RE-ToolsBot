@@ -7,7 +7,7 @@ from toolsbot.configs import DATA_PATH
 from . import mapInterpreter as mapi
 
 """
-RE: ToolsBot
+TLoH Bot
 Tools Bot 的第二版。
 
 @author: Latingtude
@@ -15,7 +15,7 @@ Tools Bot 的第二版。
 gamingController
 """
 
-TITLE = "RE: ToolsBot"
+TITLE = "TLoH Bot"
 
 class MapUser :
     def __init__(self, user_id: str):
@@ -134,7 +134,7 @@ map_command = on_command("map", priority=5)
 
 @map_command.handle()
 async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Message = CommandArg()):
-    msg = "RE: ToolsBot - 区域功能 - MAP SKILL\n"
+    msg = "TLoH Bot - 区域功能 - MAP SKILL\n"
     arg = args.extract_plain_text()
     head = arg.split(" ") [0]
     _iduser = str(event.user_id)
@@ -217,7 +217,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     mapUser.save()
 
 
-    await global_catcher.send("RE: ToolsBot - 随机幸运事件\n    - 您的地图跑图进度已增加，可以使用 ^map next 来前进了。")
+    await global_catcher.send("TLoH Bot - 随机幸运事件\n    - 您的地图跑图进度已增加，可以使用 ^map next 来前进了。")
     global_catcher.skip()
 
 DISABLED GAMING CONTROLLER

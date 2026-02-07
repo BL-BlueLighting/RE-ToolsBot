@@ -1,11 +1,11 @@
 """
-RE: ToolsBot 全自动安装
+TLoH Bot 全自动安装
 """
 
 import os
 import platform
 
-print("RE: ToolsBot 全自动安装向导")
+print("TLoH Bot 全自动安装向导")
 print(":: 请稍等，正在检查系统环境")
 
 _plat = "Win"
