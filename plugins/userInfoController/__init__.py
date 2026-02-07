@@ -534,7 +534,7 @@ async def _(bot: Bot, event: GroupMessageEvent | PrivateMessageEvent, args: Mess
 
 """
 setinfo 函数 (管理员专用)
-用于设置用户的各项信息
+用于设置用户的各项信息 (乌萨奇行)
 
 @author: Latingtude
 """
@@ -584,6 +584,12 @@ buy 函数
 购买和使用物品
 
 @author: Latingtude
+"""
+
+"""
+RE: ToolsBot
+PILLAR OF SHAME
+QQ 3829537708
 """
 
 buy_function = on_command("buy", priority=10)
