@@ -22,7 +22,7 @@ hell_funny = on_command("hellfunny", priority=5, block=True)
 
 zale = on_message(priority=100)
 @zale.handle()
-async def _(bot: Bot, event: PrivateMessageEvent, args: Message = CommandArg()):
+async def _(bot: Bot, event: PrivateMessageEvent | GroupMessageEvent, args: Message = CommandArg()):
     logger.log("INFO", "收到消息: " + event.get_plaintext())
     if "咋了" in event.get_plaintext():
         await zale.finish("咋了")
@@ -65,7 +65,7 @@ async def handle_hell_funny(bot: Bot, event: GroupMessageEvent | PrivateMessageE
 
 vme50 = on_message(priority=100)
 @vme50.handle()
-async def _(bot: Bot, event: PrivateMessageEvent, args: Message = CommandArg()):
+async def _(bot: Bot, event: PrivateMessageEvent | GroupMessageEvent, args: Message = CommandArg()):
     logger.log("INFO", "收到消息: " + event.get_plaintext())
     pt = event.get_plaintext()
     if "v" in pt.lower() and "50" in pt.lower():
