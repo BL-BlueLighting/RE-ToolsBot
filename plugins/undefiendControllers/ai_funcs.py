@@ -134,11 +134,8 @@ async def handle_aitalkstop(bot: Bot, event: PrivateMessageEvent):
 
 
 @aiprompt_eventer.handle()
-async def handle_aiprompt(bot: Bot, event: PrivateMessageEvent, arg: Message = CommandArg()):
+async def handle_aiprompt(bot: Bot, event: PrivateMessageEvent | GroupMessageEvent, arg: Message = CommandArg()):
     """处理 AI 提示词定制命令（仅限私聊）"""
-    # 检查是否为私聊
-    if not isinstance(event, PrivateMessageEvent):
-        await aiprompt_eventer.finish("此功能仅限私聊使用")
 
     user_id = event.get_user_id()
     text = arg.extract_plain_text()
