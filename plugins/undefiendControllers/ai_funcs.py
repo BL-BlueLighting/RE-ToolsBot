@@ -3,7 +3,7 @@ import json
 import os
 import random
 import re
-import sqlite3
+import base64
 from collections import Counter
 from typing import Any, Dict
 

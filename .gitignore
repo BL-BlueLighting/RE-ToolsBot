@@ -167,3 +167,6 @@ activate.sh
 *.db
 RE-ToolsBot.code-workspace
 poetry.lock
+test.*
+
+*.ign

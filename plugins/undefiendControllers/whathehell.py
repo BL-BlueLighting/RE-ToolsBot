@@ -1,8 +1,7 @@
 import datetime
 
 from nonebot import *
-from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent,
-                                         PrivateMessageEvent, Message)
+from nonebot.adapters.onebot.v11 import *
 from nonebot.params import CommandArg
 
 from toolsbot.services import _info
@@ -24,8 +23,10 @@ hell_funny = on_command("hellfunny", priority=5, block=True)
 zale = on_message(priority=100)
 @zale.handle()
 async def _(bot: Bot, event: PrivateMessageEvent, args: Message = CommandArg()):
+    logger.log("INFO", "收到消息: " + event.get_plaintext())
     if "咋了" in event.get_plaintext():
         await zale.finish("咋了")
+    zale.skip()
 
 
 @hell_funny.handle()
@@ -61,3 +62,23 @@ async def handle_hell_funny(bot: Bot, event: GroupMessageEvent | PrivateMessageE
     # if date = 12.31
     if today.month == 12 and today.day == 31:
         await hell_funny.finish("新年快乐！\n🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉")
+
+vme50 = on_message(priority=100)
+@vme50.handle()
+async def _(bot: Bot, event: PrivateMessageEvent, args: Message = CommandArg()):
+    logger.log("INFO", "收到消息: " + event.get_plaintext())
+    pt = event.get_plaintext()
+    if "v" in pt.lower() and "50" in pt.lower():
+        # 获取今天是星期几
+        today = datetime.datetime.now().weekday() + 1
+        if today != 4:
+            msg = "今天不是星期四，不能发动技能喵"
+            # generate reply message
+            _msg = Message(MessageSegment.reply(event.message_id)) + Message(MessageSegment.at(event.user_id)) + MessageSegment.text(msg)
+            await vme50.finish(_msg)
+        else:
+            msg = "今天虽然是星期四但 bot 没钱喵"
+            # generate reply message
+            _msg = Message(MessageSegment.reply(event.message_id)) + Message(MessageSegment.at(event.user_id)) + MessageSegment.text(msg)
+            await vme50.finish(_msg)
+    vme50.skip()
