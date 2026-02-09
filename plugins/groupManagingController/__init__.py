@@ -50,7 +50,7 @@ async def replacing(bot: nonebot.adapters.onebot.v11.Bot, string: str, qqNumber:
     # replacing "Name" using api
     try:
         user_info = await bot.call_api("get_stranger_info", user_id=int(qqNumber))
-        res = res.replace("[QQ]", user_info["data"]["nick"])
+        res = res.replace("[QQ]", user_info["nick"])
     except Exception as e:
         _warn(f"Failed to get user info using qq number {qqNumber}. This is why:\n{e}")
         res = res.replace("[QQ]", "未知名称")
@@ -198,10 +198,14 @@ async def _ (bot: nonebot.adapters.onebot.v11.Bot, event: GroupMessageEvent | Pr
             params_text += f",{param}"
 
     # run
-    exec(f"""bot.call_api('{api_name}', {params_text})""")
+    result = await bot.call_api(api_name, **{
+        k: v for k, v in (
+            p.split("=", 1) for p in api_params if "=" in p
+        )
+    })
 
     # finish
-    await call_api_command.finish("TLoH Bot GROUP MANAGING MODULE\n    - 已执行该 OneBot V11 api。请检查控制台。")
+    await call_api_command.finish("TLoH Bot GROUP MANAGING MODULE\n    - 已执行。\n    - 以下为具体内容：\n    - " + result.__str__())
 
 # test admin permission
 test_admin = on_command("testadmin", permission=SUPERUSER)

@@ -170,3 +170,4 @@ poetry.lock
 test.*
 
 *.ign
+*.ign.py
