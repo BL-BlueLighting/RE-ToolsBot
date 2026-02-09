@@ -17,5 +17,9 @@ zanwo = btm.on_command("zanwo", aliases={"赞我", "likeme", "like"}, priority=1
 @zanwo.handle()
 async def _ (bot: Bot, event: GroupMessageEvent | PrivateMessageEvent):
     uid = event.get_user_id()
-    await bot.call_api("send_like", user_id=uid, times=10)
-    await zanwo.finish("TLoH Bot\n    - 给你点赞啦。记得查收并回赞哦！")
+    try:
+        await bot.call_api("send_like", user_id=uid, times=10)
+    except:
+        await zanwo.finish("TLoH Bot\n    - 点赞失败。。。我是不是已经给你点过了喵？")
+    else:
+        await zanwo.finish("TLoH Bot\n    - 给你点赞啦。记得查收并回赞哦！")
