@@ -63,6 +63,10 @@ async def handle_hell_funny(bot: Bot, event: GroupMessageEvent | PrivateMessageE
     if today.month == 12 and today.day == 31:
         await hell_funny.finish("新年快乐！\n🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉")
 
+    # if date = 2.8
+    if today.month == 2 and today.day == 8:
+        await hell_funny.finish("RE: ToolsBot -> TLoH Bot")
+
 vme50 = on_message(priority=100)
 @vme50.handle()
 async def _(bot: Bot, event: PrivateMessageEvent | GroupMessageEvent, args: Message = CommandArg()):

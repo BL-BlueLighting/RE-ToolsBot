@@ -4,6 +4,7 @@ from . import scpfoundation as scp
 from . import whathehell as wht
 from . import ai_funcs as aif
 from . import killers as kle
+from . import wordle as wdl
 from nonebot.adapters.onebot.v11 import *
 
 # UNDEFIEND CONTROLLERS PLUGIN INITALIZATION FILE
