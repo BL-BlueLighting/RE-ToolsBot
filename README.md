@@ -20,6 +20,12 @@
 
 <p align="center"><i>优秀的 QQ Bot 实例</i></p>
 
+<hr/>
+> [!Danger]
+>
+> 该版本的 TLoH Bot（基于 nonebot2）将于 2/28 日正式停止维护。感谢您的支持。
+> 新版本的 TLoH Bot 将基于新的框架在后续发布。
+
 > [!Warning]
 >
 > ToolsBot 已更新，请在 git pull 下来后，执行 python ./scripts/quickmove.py 来迁移用户数据
