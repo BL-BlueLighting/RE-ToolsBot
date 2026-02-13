@@ -69,3 +69,4 @@ _error = logger_bind.error
 _crit = logger_bind.critical
 _done = logger_bind.success
 # 不是,你连logger都懒得打了是吗
+# 😡😡😡
