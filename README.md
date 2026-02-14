@@ -20,8 +20,18 @@
 
 <p align="center"><i>优秀的 QQ Bot 实例</i></p>
 
-> [!Warning]
+<hr/>
+
+> [!Note]
+> 
+> (滑跪)
+> 因为该项目的屎山代码太多，且难以迁移至其他框架，
+> 所以目前该项目仍然不会停止维护。
 >
+> 推荐各位配合 TLoH Bot 2 项目与本项目一起使用，提供全部的 TLoH Bot 功能。
+
+> [!Warning]
+> 
 > ToolsBot 已更新，请在 git pull 下来后，执行 python ./scripts/quickmove.py 来迁移用户数据
 
 ## 如何使用
